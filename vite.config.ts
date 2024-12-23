@@ -12,7 +12,7 @@ export default defineConfig({
     vueDevTools(),
     vuetify(),
   ],
-  base: '/Daily-Discipline/',
+  base: '/daily-discipline/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

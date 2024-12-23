@@ -1,0 +1,1 @@
+import{_ as s,c as a,a as o,o as t}from"./index-CyQURCQZ.js";const r={},c={class:"about"};function n(d,e){return t(),a("div",c,e[0]||(e[0]=[o("h1",null,"This is the dashboard page",-1)]))}const i=s(r,[["render",n]]);export{i as default};

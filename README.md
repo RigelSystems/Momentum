@@ -11,6 +11,50 @@ npm run dev
 Settings > Actions > General > Workflow permissions 
 Read and write permissions.
 
+## Adding Auth0
+
+Start with adding the Auth0 package
+
+`npm install @auth0/auth0-vue`
+
+Add the enrionment files
+
+`.env.development`
+`.env.production`
+
+In the main.ts file add the following:
+
+```js
+import { createAuth0 } from '@auth0/auth0-vue'
+
+app.use(
+  createAuth0({
+    domain: import.meta.env.VITE_AUTH0_DOMAIN,
+    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+    authorizationParams: {
+      redirect_uri: import.meta.env.VITE_AUTH0_REDIRECT_URI,
+    },
+  }),
+)
+```
+
+Using authGuard for routes
+
+```js
+import { authGuard } from '@auth0/auth0-vue'
+
+{
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('../views/DashboardView.vue'),
+    beforeEnter: authGuard,
+}
+```
+
+## Adding vuetify
+
+https://yaasir007.medium.com/how-to-add-vuetify-3-to-an-existing-vue-3-project-13cd0409e78b
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).

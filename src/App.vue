@@ -1,23 +1,33 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+<script lang="ts">
+import { defineComponent } from 'vue'
+import Navigation from './components/Navigation.vue'
+import { useAuth0 } from '@auth0/auth0-vue'
+import { useAccessTokenStore } from '@/stores/accessTokenStore'
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    Navigation,
+  },
+  setup() {
+    const accessTokenStore = useAccessTokenStore()
+    const { getAccessTokenSilently } = useAuth0()
+
+    if (!accessTokenStore.accessToken) {
+      getAccessTokenSilently({ cacheMode: 'on' })
+        .then((token) => {
+          accessTokenStore.setAccessToken(token)
+        })
+        .catch((error) => {
+          console.error('Error fetching access token:', error)
+        })
+    }
+  },
+})
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <Navigation />
 </template>
 
 <style scoped>

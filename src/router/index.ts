@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import DashboardView from '../views/DashboardView.vue'
 import { authGuard } from '@auth0/auth0-vue'
 
 const router = createRouter({
@@ -21,7 +22,13 @@ const router = createRouter({
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: () => import('../views/DashboardView.vue'),
+      component: DashboardView,
+      beforeEnter: authGuard,
+    },
+    {
+      path: '/habits',
+      name: 'habits',
+      component: () => import('../views/HabitsView.vue'),
       beforeEnter: authGuard,
     }
   ],

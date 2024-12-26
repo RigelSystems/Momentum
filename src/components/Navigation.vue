@@ -47,20 +47,18 @@ export default defineComponent({
     <v-card>
       <v-layout>
         <v-navigation-drawer expand-on-hover rail>
-          <v-list>
+          <v-list v-if="isAuthenticated && user">
             <v-list-item
-              v-if="isAuthenticated && user"
               :prepend-avatar="user.picture"
               :subtitle="user.email"
               :title="user?.name"
             ></v-list-item>
           </v-list>
 
-          <v-divider></v-divider>
+          <v-divider v-if="isAuthenticated && user"></v-divider>
 
-          <v-list density="compact" nav>
+          <v-list density="compact" nav v-if="isAuthenticated && user">
             <v-list-item
-            v-if="isAuthenticated"
               prepend-icon="mdi-view-dashboard"
               title="Dashboard"
               value="Dashboard"
@@ -68,9 +66,10 @@ export default defineComponent({
               to="/dashboard"
             ></v-list-item>
           </v-list>
-          <v-divider></v-divider>
-          <v-list>
 
+          <v-divider v-if="isAuthenticated && user"></v-divider>
+
+          <v-list>
             <v-list-item
               prepend-icon="mdi-list-status"
               title="Habits"

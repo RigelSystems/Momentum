@@ -45,3 +45,11 @@ body {
 .capitalize {
   text-transform: capitalize;
 }
+
+.habit-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  border: solid grey 1px;
+  border-radius: 5px;
+}

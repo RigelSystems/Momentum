@@ -1,10 +1,13 @@
 <script lang="ts">
 import { watch, defineComponent, onMounted, ref } from 'vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
+import Habit from '@/components/Habit.vue'
 
 export default defineComponent({
   name: 'HabitsView',
-  components: {},
+  components: {
+    Habit,
+  },
   setup() {
     const habits = ref<Array<any>>([])
     const loading = ref(true)
@@ -27,7 +30,7 @@ export default defineComponent({
       } else {
         loading.value = false
         const responseBody = await response.json()
-        errorMessage.value = responseBody.error
+        errorMessage.value = responseBody
       }
     }
 
@@ -51,11 +54,7 @@ export default defineComponent({
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
     <div v-else-if="habits.length === 0">No habits found</div>
     <div v-else>
-      <ul>
-        <li v-for="habit in habits" :key="habit.id">
-          {{ habit.name }}
-        </li>
-      </ul>
+      <Habit v-for="habit in habits" :key="habit.id" :habit="habit" />
     </div>
   </div>
 </template>

@@ -22,7 +22,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="habit-container">
+  <div class="habit-wrapper">
     <h2>{{ habit.name }}</h2>
     <p>{{ habit.description }}</p>
     <HabitEntry v-for="entry in habit.habit_entries" :key="entry.id" :entry="entry" />

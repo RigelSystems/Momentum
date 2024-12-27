@@ -15,7 +15,7 @@ export default defineComponent({
 
     const fetchHabits = async () => {
       const accessTokenStore = useAccessTokenStore()
-      const apiUrl = `${import.meta.env.VITE_API_URL}/habits`
+      const apiUrl = `${import.meta.env.VITE_API_URL}habits`
       const response = await fetch(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
@@ -48,13 +48,15 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the habits page</h1>\
+  <div class="page-wrapper">
+    <h1>This is the habits page</h1>
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
     <div v-else-if="habits.length === 0">No habits found</div>
     <div v-else>
-      <Habit v-for="habit in habits" :key="habit.id" :habit="habit" />
+      <div class="habit-container">
+        <Habit v-for="habit in habits" :key="habit.id" :habit="habit" />
+      </div>
     </div>
   </div>
 </template>

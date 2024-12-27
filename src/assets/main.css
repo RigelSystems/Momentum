@@ -42,11 +42,22 @@ body {
   overflow: scroll;
 }
 
+.page-wrapper {
+  padding: 2rem;
+}
+
 .capitalize {
   text-transform: capitalize;
 }
 
 .habit-container {
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+}
+
+.habit-wrapper {
+  padding: 0.5rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;

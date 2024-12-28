@@ -1,24 +1,19 @@
-<template>
-  <div class="page-wrapper">
-    <h1>Dashboard</h1>
-    <button @click="installApp">Install App</button>
-  </div>
-</template>
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-<script>
-export default {
+export default defineComponent({
   data() {
     return {
-      deferredPrompt: null, // To save the beforeinstallprompt event
+      deferredPrompt: null as BeforeInstallPromptEvent | null, // Use the appropriate type for the event
     };
   },
   mounted() {
     // Listen for the beforeinstallprompt event
-    window.addEventListener('beforeinstallprompt', (event) => {
+    window.addEventListener('beforeinstallprompt', (event: Event) => {
       // Prevent the default mini-infobar from showing
       event.preventDefault();
       // Save the event for triggering the install prompt
-      this.deferredPrompt = event;
+      this.deferredPrompt = event as BeforeInstallPromptEvent;
     });
 
     // Optional: Listen for the appinstalled event
@@ -43,5 +38,18 @@ export default {
       }
     },
   },
-};
+});
+
+// Define BeforeInstallPromptEvent interface (not included in TypeScript by default)
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 </script>
+
+<template>
+  <div class="page-wrapper">
+    <h1>Dashboard</h1>
+    <button @click="installApp">Install App</button>
+  </div>
+</template>

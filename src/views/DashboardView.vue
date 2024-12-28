@@ -8,33 +8,62 @@ export default defineComponent({
     };
   },
   mounted() {
+    console.log('Mounted: Setting up beforeinstallprompt listener');
+
     // Listen for the beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (event: Event) => {
+      console.log('beforeinstallprompt event triggered:', event);
+
       // Prevent the default mini-infobar from showing
       event.preventDefault();
+
       // Save the event for triggering the install prompt
       this.deferredPrompt = event as BeforeInstallPromptEvent;
+      console.log('deferredPrompt saved:', this.deferredPrompt);
     });
 
-    // Optional: Listen for the appinstalled event
+    // Listen for the appinstalled event
     window.addEventListener('appinstalled', () => {
-      console.log('PWA installed');
+      console.log('appinstalled event triggered: PWA successfully installed');
     });
+
+    // Debugging service worker registration
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .getRegistration()
+        .then((registration) => {
+          if (registration) {
+            console.log('Service Worker registered:', registration);
+          } else {
+            console.error('No Service Worker registered.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error checking Service Worker registration:', error);
+        });
+    } else {
+      console.error('Service Workers are not supported in this browser.');
+    }
   },
   methods: {
     async installApp() {
+      console.log('Install button clicked.');
+
       if (this.deferredPrompt) {
+        console.log('deferredPrompt available, showing install prompt.');
+
         // Show the install prompt
         this.deferredPrompt.prompt();
 
         // Wait for the user to respond to the prompt
-        const { outcome } = await this.deferredPrompt.userChoice;
-        console.log(`User response to the install prompt: ${outcome}`);
+        const userChoice = await this.deferredPrompt.userChoice;
+        console.log('User choice from install prompt:', userChoice);
 
         // Clear the deferredPrompt
         this.deferredPrompt = null;
+        console.log('deferredPrompt cleared.');
       } else {
-        console.log('Install prompt not available.');
+        console.error('Install prompt not available. Check if beforeinstallprompt event was triggered.');
       }
     },
   },

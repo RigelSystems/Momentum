@@ -1,0 +1,1 @@
+{"name":"My Vue App","short_name":"VueApp","start_url":"/","display":"standalone","background_color":"#ffffff","lang":"en","scope":"/daily-discipline/","description":"My awesome Vue app as a PWA","theme_color":"#42b883","icons":[{"src":"icons/icons8-check-48.png","sizes":"48x48","type":"image/png"},{"src":"icons/icons8-check-96.png","sizes":"96x96","type":"image/png"}]}

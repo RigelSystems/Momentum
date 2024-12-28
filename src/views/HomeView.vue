@@ -10,7 +10,7 @@ export default defineComponent({
     // Reactively watch for `user` changes
     watchEffect(() => {
       if (isAuthenticated.value && user?.value?.email) {
-        window.location.href = '/daily-discipline/dashboard'
+        window.location.href = '/daily-discipline/#/dashboard'
       }
     })
 
@@ -23,6 +23,7 @@ export default defineComponent({
 </script>
 
 <template>
+  <h1>Home</h1>
   <main>
     <v-btn @click="loginWithRedirect" color="primary">Log In</v-btn>
   </main>

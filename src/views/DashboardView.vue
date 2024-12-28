@@ -1,7 +1,3 @@
-
-
 <template>
-  <div class="about">
-    <h1>This is the dashboard page</h1>
-  </div>
+  <h1>Dashboard</h1>
 </template>

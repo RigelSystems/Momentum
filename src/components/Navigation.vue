@@ -57,7 +57,7 @@ export default defineComponent({
 
           <v-divider v-if="isAuthenticated && user"></v-divider>
 
-          <v-list density="compact" nav v-if="isAuthenticated && user">
+          <v-list v-if="isAuthenticated && user">
             <v-list-item
               prepend-icon="mdi-view-dashboard"
               title="Dashboard"

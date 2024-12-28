@@ -30,7 +30,15 @@ export default defineComponent({
       } else {
         loading.value = false
         const responseBody = await response.json()
-        errorMessage.value = responseBody
+        errorMessage.value = responseBody.error
+
+        // Not ideal but it works for now
+        if (errorMessage.value === 'Access token has expired or is invalid.') {
+          accessTokenStore.$reset()
+          accessTokenStore.clearState()
+          localStorage.clear()
+          sessionStorage.clear()
+        }
       }
     }
 

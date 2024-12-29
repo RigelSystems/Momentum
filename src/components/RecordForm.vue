@@ -93,8 +93,8 @@ export default defineComponent({
 
         <v-card-actions>
           <slot name="actions">
-            <v-btn text color="secondary" @click="dialog = false">Cancel</v-btn>
-            <v-btn text color="primary" @click="saveRecord">Save</v-btn>
+            <v-btn color="secondary" @click="dialog = false">Cancel</v-btn>
+            <v-btn color="primary" @click="saveRecord">Save</v-btn>
           </slot>
         </v-card-actions>
       </v-card>

@@ -25,7 +25,7 @@ export default defineComponent({
     const updateExistingRecord = async () => {
       loading = true;
       const accessTokenStore = useAccessTokenStore()
-      const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries/${props.entry.id}`
+      const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries/${props.entry?.id}`
       const response = await fetch(apiUrl, {
         method: 'PATCH',
         headers: {

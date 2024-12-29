@@ -18,13 +18,6 @@ export default defineComponent({
     const { logout, user, isAuthenticated } = useAuth0()
     const navigationLinks = [
       {
-        icon: '',
-        title: 'Home',
-        value: 'Home',
-        to: '/',
-        requireAuth: false,
-      },
-      {
         icon: 'mdi-view-dashboard',
         title: 'Dashboard',
         value: 'Dashboard',
@@ -39,14 +32,14 @@ export default defineComponent({
         requireAuth: true,
       },
       {
-        icon: '',
+        icon: 'mdi-format-list-numbered',
         title: 'Check Lists',
         value: 'Check Lists',
         to: '/check-lists',
         requireAuth: true,
       },
       {
-        icon: 'mdi-logout',
+        icon: 'mdi-account',
         title: 'Account',
         value: 'Account',
         to: '/account',
@@ -83,7 +76,8 @@ export default defineComponent({
       logoutAndClearState,
       isAuthenticated,
       usingPwa,
-      usingMobile
+      usingMobile,
+      navigationLinks
     }
   },
 })
@@ -100,47 +94,16 @@ export default defineComponent({
               :subtitle="user.email"
               :title="user?.name"
             ></v-list-item>
-          </v-list>
 
-          <v-divider v-if="isAuthenticated && user"></v-divider>
 
-          <v-list v-if="isAuthenticated && user">
-            <v-list-item
-              prepend-icon="mdi-view-dashboard"
-              title="Dashboard"
-              value="Dashboard"
-              router
-              to="/dashboard"
-            ></v-list-item>
-          </v-list>
-
-          <v-divider v-if="isAuthenticated && user"></v-divider>
-
-          <v-list>
-            <v-list-item
-              prepend-icon="mdi-list-status"
-              title="Habits"
-              value="Habits"
-              router
-              to="/habits"
+          <v-list-item v-for="navLink in navigationLinks" :key="navLink.value"
+              :prepend-icon="navLink.icon"
+              :title="navLink.title"
+              :value="navLink.value"
+              :to="navLink.to"
             ></v-list-item>
 
-          </v-list>
-          <v-divider></v-divider>
-          <v-list>
 
-            <v-list-item
-              prepend-icon="mdi-invoice-text-plus"
-              title="Create List"
-              value="Create List"
-              router
-              to="/create-list"
-            ></v-list-item>
-          </v-list>
-
-          <v-divider></v-divider>
-
-          <v-list>
             <v-list-item
               prepend-icon="mdi-logout"
               title="Logout"
@@ -177,52 +140,22 @@ export default defineComponent({
 
       <v-divider></v-divider>
       <v-list>
-        <v-list-item
-          prepend-icon="mdi-view-dashboard"
-          router
-          to="/dashboard"
+        <v-list-item v-for="navLink in navigationLinks" :key="navLink.value"
+          :prepend-icon="navLink.icon"
+          :title="navLink.title"
+          :value="navLink.value"
+          :to="navLink.to"
           @click="drawer = false"
-        >
-          <v-list-item-title>Dashboard</v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          prepend-icon="mdi-card-account-details"
-          router
-          to="/companies"
-          @click="drawer = false"
-        >
-          <v-list-item-title>Companies</v-list-item-title>
-        </v-list-item>
-        <v-list-item prepend-icon="mdi-watermark" router to="/brands" @click="drawer = false">
-          <v-list-item-title>Brands</v-list-item-title>
-        </v-list-item>
-        <v-list-item prepend-icon="mdi-factory" router to="/distilleries" @click="drawer = false">
-          <v-list-item-title>Distilleries</v-list-item-title>
-        </v-list-item>
-        <v-list-item prepend-icon="mdi-liquor" router to="/spirits" @click="drawer = false">
-          <v-list-item-title>Spirits</v-list-item-title>
-        </v-list-item>
+        ></v-list-item>
       </v-list>
     </v-navigation-drawer>
 
     <!-- PWA Mobile App Bar -->
-    <v-bottom-navigation v-if="usingPwa">
-      <v-btn value="recent">
-        <v-icon>mdi-history</v-icon>
+    <v-bottom-navigation v-if="usingPwa && usingMobile">
+      <v-btn v-for="navLink in navigationLinks" value="recent" :key="navLink.value" :to="navLink.to">
+        <v-icon>{{ navLink.icon }}</v-icon>
 
-        <span>Recent</span>
-      </v-btn>
-
-      <v-btn value="favorites">
-        <v-icon>mdi-heart</v-icon>
-
-        <span>Favorites</span>
-      </v-btn>
-
-      <v-btn value="nearby">
-        <v-icon>mdi-map-marker</v-icon>
-
-        <span>Nearby</span>
+        <span>{{ navLink.title }}</span>
       </v-btn>
     </v-bottom-navigation>
   </v-app>

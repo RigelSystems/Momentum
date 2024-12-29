@@ -25,6 +25,6 @@ export default defineComponent({
   <div class="habit-wrapper">
     <h2>{{ habit.name }}</h2>
     <p>{{ habit.description }}</p>
-    <HabitEntry v-for="entry in habit.habit_entries" :key="entry.id" :entry="entry" />
+    <p>{{ habit.date }}</p>
   </div>
 </template>

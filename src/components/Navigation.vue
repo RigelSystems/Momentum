@@ -54,8 +54,8 @@ export default defineComponent({
       sessionStorage.clear()
       await logout()
     }
-    const usingPwa = window.matchMedia('(display-mode: standalone)').matches
-    // const usingPwa = true
+    // const usingPwa = window.matchMedia('(display-mode: standalone)').matches
+    const usingPwa = true
     const usingMobile = ref(window.innerWidth <= 960)
     const updateMobileStatus = () => {
       usingMobile.value = window.innerWidth <= 960

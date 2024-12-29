@@ -1,12 +1,14 @@
 <script lang="ts">
-import { watch, defineComponent, onMounted, ref } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import Habit from '@/components/Habit.vue'
+import HabitForm from '@/components/habits/HabitForm.vue'
 
 export default defineComponent({
   name: 'HabitsView',
   components: {
     Habit,
+    HabitForm,
   },
   setup() {
     const habits = ref<Array<any>>([])
@@ -67,4 +69,15 @@ export default defineComponent({
       </div>
     </div>
   </div>
+
+  <HabitForm>
+    <template #trigger="{ openDialog }">
+      <v-btn
+        density="comfortable"
+        variant="tonal"
+        text="New Habit"
+        @click="openDialog"
+      ></v-btn>
+    </template>
+  </HabitForm>
 </template>

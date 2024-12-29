@@ -57,15 +57,12 @@ export default defineComponent({
     const usingPwa = window.matchMedia('(display-mode: standalone)').matches
     // const usingPwa = true
     const usingMobile = ref(window.innerWidth <= 960)
-
     const updateMobileStatus = () => {
       usingMobile.value = window.innerWidth <= 960
     }
-
     onMounted(() => {
       window.addEventListener('resize', updateMobileStatus)
     })
-
     onUnmounted(() => {
       window.removeEventListener('resize', updateMobileStatus)
     })
@@ -85,7 +82,7 @@ export default defineComponent({
 
 <template>
   <v-app>
-    <v-card>
+    <v-card v-if="!usingMobile">
       <v-layout>
         <v-navigation-drawer expand-on-hover rail>
           <v-list v-if="isAuthenticated && user">
@@ -154,9 +151,12 @@ export default defineComponent({
     <v-bottom-navigation v-if="usingPwa && usingMobile">
       <v-btn v-for="navLink in navigationLinks" value="recent" :key="navLink.value" :to="navLink.to">
         <v-icon>{{ navLink.icon }}</v-icon>
-
         <span>{{ navLink.title }}</span>
       </v-btn>
     </v-bottom-navigation>
+
+    <v-main class="bg-light-grey page-container" v-if="usingPwa && usingMobile">
+      <router-view />
+    </v-main>
   </v-app>
 </template>

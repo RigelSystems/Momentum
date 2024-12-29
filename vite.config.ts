@@ -18,22 +18,23 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'], // Files to cache
       },
       manifest: {
+        start_url: '/daily-discipline/#/dashboard',
+        scope: '/daily-discipline/',
         name: 'My Vue App',
         short_name: 'VueApp',
         description: 'My awesome Vue app as a PWA',
         theme_color: '#42b883',
         background_color: '#ffffff',
         display: 'standalone',
-        start_url: '/',
         icons: [
           {
-            src: 'icons/icons8-check-48.png',
-            sizes: '48x48',
+            src: 'icons/icons8-check-192x192.png',
+            sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: 'icons/icons8-check-96.png',
-            sizes: '96x96',
+            src: 'icons/icons8-check-512x512.png',
+            sizes: '512x512',
             type: 'image/png',
           },
         ],

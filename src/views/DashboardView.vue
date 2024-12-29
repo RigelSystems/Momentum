@@ -4,7 +4,11 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   data() {
     return {
-      deferredPrompt: null as BeforeInstallPromptEvent | null, // Use the appropriate type for the event
+      deferredPrompt: null as BeforeInstallPromptEvent | null,
+      isBeforeInstallPromptFired: false, // Tracks if beforeinstallprompt event fired
+      isAppInstalled: false, // Tracks if the app was installed
+      serviceWorkerStatus: '', // Debug info for service worker
+      installStatus: '', // Debug info for install process
     };
   },
   mounted() {
@@ -19,12 +23,15 @@ export default defineComponent({
 
       // Save the event for triggering the install prompt
       this.deferredPrompt = event as BeforeInstallPromptEvent;
-      console.log('deferredPrompt saved:', this.deferredPrompt);
+      this.isBeforeInstallPromptFired = true;
+      this.installStatus = 'beforeinstallprompt event fired. Ready for install.';
     });
 
     // Listen for the appinstalled event
     window.addEventListener('appinstalled', () => {
       console.log('appinstalled event triggered: PWA successfully installed');
+      this.isAppInstalled = true;
+      this.installStatus = 'App successfully installed!';
     });
 
     // Debugging service worker registration
@@ -34,15 +41,19 @@ export default defineComponent({
         .then((registration) => {
           if (registration) {
             console.log('Service Worker registered:', registration);
+            this.serviceWorkerStatus = 'Service Worker registered and active.';
           } else {
             console.error('No Service Worker registered.');
+            this.serviceWorkerStatus = 'No Service Worker registered.';
           }
         })
         .catch((error) => {
           console.error('Error checking Service Worker registration:', error);
+          this.serviceWorkerStatus = `Error checking Service Worker registration: ${error.message}`;
         });
     } else {
       console.error('Service Workers are not supported in this browser.');
+      this.serviceWorkerStatus = 'Service Workers are not supported in this browser.';
     }
   },
   methods: {
@@ -51,6 +62,7 @@ export default defineComponent({
 
       if (this.deferredPrompt) {
         console.log('deferredPrompt available, showing install prompt.');
+        this.installStatus = 'Install prompt triggered.';
 
         // Show the install prompt
         this.deferredPrompt.prompt();
@@ -59,11 +71,18 @@ export default defineComponent({
         const userChoice = await this.deferredPrompt.userChoice;
         console.log('User choice from install prompt:', userChoice);
 
+        if (userChoice.outcome === 'accepted') {
+          this.installStatus = 'User accepted the install prompt.';
+        } else {
+          this.installStatus = 'User dismissed the install prompt.';
+        }
+
         // Clear the deferredPrompt
         this.deferredPrompt = null;
         console.log('deferredPrompt cleared.');
       } else {
         console.error('Install prompt not available. Check if beforeinstallprompt event was triggered.');
+        this.installStatus = 'Install prompt not available.';
       }
     },
   },
@@ -79,6 +98,24 @@ interface BeforeInstallPromptEvent extends Event {
 <template>
   <div class="page-wrapper">
     <h1>Dashboard</h1>
-    <button @click="installApp">Install App</button>
+    <button @click="installApp" :disabled="!isBeforeInstallPromptFired">Install App</button>
+    <div class="debug-info">
+      <p><strong>Install Status:</strong> {{ installStatus }}</p>
+      <p><strong>Service Worker Status:</strong> {{ serviceWorkerStatus }}</p>
+      <p><strong>App Installed:</strong> {{ isAppInstalled ? 'Yes' : 'No' }}</p>
+    </div>
   </div>
 </template>
+
+<style>
+.debug-info {
+  margin-top: 20px;
+  background: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.debug-info p {
+  margin: 5px 0;
+}
+</style>

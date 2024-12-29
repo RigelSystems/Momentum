@@ -98,7 +98,7 @@ interface BeforeInstallPromptEvent extends Event {
 <template>
   <div class="page-wrapper">
     <h1>Dashboard</h1>
-    <button @click="installApp" :disabled="!isBeforeInstallPromptFired">Install App</button>
+    <v-btn @click="installApp" :disabled="!isBeforeInstallPromptFired">Install App</v-btn>
     <div class="debug-info">
       <p><strong>Install Status:</strong> {{ installStatus }}</p>
       <p><strong>Service Worker Status:</strong> {{ serviceWorkerStatus }}</p>

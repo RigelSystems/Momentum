@@ -5,9 +5,6 @@ export default defineComponent({
   data() {
     return {
       deferredPrompt: null as BeforeInstallPromptEvent | null,
-      isBeforeInstallPromptFired: false, // Tracks if beforeinstallprompt event fired
-      isAppInstalled: false, // Tracks if the app was installed
-      serviceWorkerStatus: '', // Debug info for service worker
       installStatus: '', // Debug info for install process
     };
   },
@@ -18,56 +15,28 @@ export default defineComponent({
     window.addEventListener('beforeinstallprompt', (event: Event) => {
       console.log('beforeinstallprompt event triggered:', event);
 
-      // Prevent the default mini-infobar from showing
-      event.preventDefault();
-
       // Save the event for triggering the install prompt
       this.deferredPrompt = event as BeforeInstallPromptEvent;
-      this.isBeforeInstallPromptFired = true;
-      this.installStatus = 'beforeinstallprompt event fired. Ready for install.';
+      this.installStatus = 'Ready to install!';
     });
 
     // Listen for the appinstalled event
     window.addEventListener('appinstalled', () => {
-      console.log('appinstalled event triggered: PWA successfully installed');
-      this.isAppInstalled = true;
+      console.log('App successfully installed!');
       this.installStatus = 'App successfully installed!';
     });
-
-    // Debugging service worker registration
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .getRegistration()
-        .then((registration) => {
-          if (registration) {
-            console.log('Service Worker registered:', registration);
-            this.serviceWorkerStatus = 'Service Worker registered and active.';
-          } else {
-            console.error('No Service Worker registered.');
-            this.serviceWorkerStatus = 'No Service Worker registered.';
-          }
-        })
-        .catch((error) => {
-          console.error('Error checking Service Worker registration:', error);
-          this.serviceWorkerStatus = `Error checking Service Worker registration: ${error.message}`;
-        });
-    } else {
-      console.error('Service Workers are not supported in this browser.');
-      this.serviceWorkerStatus = 'Service Workers are not supported in this browser.';
-    }
   },
   methods: {
     async installApp() {
       console.log('Install button clicked.');
 
       if (this.deferredPrompt) {
-        console.log('deferredPrompt available, showing install prompt.');
-        this.installStatus = 'Install prompt triggered.';
+        console.log('Showing the install prompt.');
 
         // Show the install prompt
         this.deferredPrompt.prompt();
 
-        // Wait for the user to respond to the prompt
+        // Wait for the user's choice
         const userChoice = await this.deferredPrompt.userChoice;
         console.log('User choice from install prompt:', userChoice);
 
@@ -79,9 +48,8 @@ export default defineComponent({
 
         // Clear the deferredPrompt
         this.deferredPrompt = null;
-        console.log('deferredPrompt cleared.');
       } else {
-        console.error('Install prompt not available. Check if beforeinstallprompt event was triggered.');
+        console.error('Install prompt not available.');
         this.installStatus = 'Install prompt not available.';
       }
     },
@@ -98,11 +66,18 @@ interface BeforeInstallPromptEvent extends Event {
 <template>
   <div class="page-wrapper">
     <h1>Dashboard</h1>
-    <v-btn @click="installApp" :disabled="!isBeforeInstallPromptFired">Install App</v-btn>
+    <v-btn :disabled="!deferredPrompt" @click="installApp">Install App</v-btn>
     <div class="debug-info">
       <p><strong>Install Status:</strong> {{ installStatus }}</p>
-      <p><strong>Service Worker Status:</strong> {{ serviceWorkerStatus }}</p>
-      <p><strong>App Installed:</strong> {{ isAppInstalled ? 'Yes' : 'No' }}</p>
+    </div>
+    <div class="instructions">
+      <h2>iOS Users</h2>
+      <p>To install on iPhone or iPad:</p>
+      <ol>
+        <li>Open this page in Safari.</li>
+        <li>Tap the Share button (box with an arrow).</li>
+        <li>Select "Add to Home Screen".</li>
+      </ol>
     </div>
   </div>
 </template>
@@ -115,7 +90,14 @@ interface BeforeInstallPromptEvent extends Event {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-.debug-info p {
-  margin: 5px 0;
+.instructions {
+  margin-top: 20px;
+  background: #fff8dc;
+  padding: 10px;
+  border: 1px solid #f0c36d;
+  border-radius: 4px;
+}
+.instructions ol {
+  padding-left: 20px;
 }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import User from './User.vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
@@ -16,27 +16,74 @@ export default defineComponent({
   },
   setup() {
     const { logout, user, isAuthenticated } = useAuth0()
-
+    const navigationLinks = [
+      {
+        icon: '',
+        title: 'Home',
+        value: 'Home',
+        to: '/',
+        requireAuth: false,
+      },
+      {
+        icon: 'mdi-view-dashboard',
+        title: 'Dashboard',
+        value: 'Dashboard',
+        to: '/dashboard',
+        requireAuth: true,
+      },
+      {
+        icon: 'mdi-list-status',
+        title: 'Habits',
+        value: 'Habits',
+        to: '/habits',
+        requireAuth: true,
+      },
+      {
+        icon: '',
+        title: 'Check Lists',
+        value: 'Check Lists',
+        to: '/check-lists',
+        requireAuth: true,
+      },
+      {
+        icon: 'mdi-logout',
+        title: 'Account',
+        value: 'Account',
+        to: '/account',
+        requireAuth: true,
+      }
+    ]
     const accessTokenStore = useAccessTokenStore()
-
     const logoutAndClearState = async () => {
-      // Clear local Pinia state
       accessTokenStore.$reset()
       accessTokenStore.clearState()
-
-      // Clear browser's localStorage or cookies if used
       localStorage.clear()
       sessionStorage.clear()
-
-      // Perform Auth0 logout
       await logout()
     }
+    const usingPwa = window.matchMedia('(display-mode: standalone)').matches
+    // const usingPwa = true
+    const usingMobile = ref(window.innerWidth <= 960)
+
+    const updateMobileStatus = () => {
+      usingMobile.value = window.innerWidth <= 960
+    }
+
+    onMounted(() => {
+      window.addEventListener('resize', updateMobileStatus)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', updateMobileStatus)
+    })
 
     return {
       logout,
       user,
       logoutAndClearState,
       isAuthenticated,
+      usingPwa,
+      usingMobile
     }
   },
 })
@@ -108,19 +155,17 @@ export default defineComponent({
           <router-view />
         </v-main>
       </v-layout>
-
-
     </v-card>
 
     <!-- App Bar -->
-    <v-app-bar app class="d-flex d-lg-none">
-      <!-- Mobile Drawer Toggle (hidden on desktop) -->
+    <v-app-bar app v-if="usingMobile && !usingPwa">
       <v-btn icon @click="drawer = !drawer">
         <v-icon>mdi-menu</v-icon>
       </v-btn>
     </v-app-bar>
+
     <!-- Mobile Drawer -->
-    <v-navigation-drawer v-model="drawer" app class="d-flex d-lg-none">
+    <v-navigation-drawer v-if="!usingPwa" v-model="drawer" app class="d-flex d-lg-none">
       <template v-slot:prepend>
         <v-list-item
           lines="two"
@@ -159,5 +204,26 @@ export default defineComponent({
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+
+    <!-- PWA Mobile App Bar -->
+    <v-bottom-navigation v-if="usingPwa">
+      <v-btn value="recent">
+        <v-icon>mdi-history</v-icon>
+
+        <span>Recent</span>
+      </v-btn>
+
+      <v-btn value="favorites">
+        <v-icon>mdi-heart</v-icon>
+
+        <span>Favorites</span>
+      </v-btn>
+
+      <v-btn value="nearby">
+        <v-icon>mdi-map-marker</v-icon>
+
+        <span>Nearby</span>
+      </v-btn>
+    </v-bottom-navigation>
   </v-app>
 </template>

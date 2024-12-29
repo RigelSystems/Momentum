@@ -89,7 +89,9 @@ export default defineComponent({
 <template>
   <div v-if="loading">Loading...</div>
   <div v-else>
-    <p>{{ value }}</p>
-    <button @click="toggleEntry">Toggle</button>
+    <button @click="toggleEntry">
+      <span v-if="value === 1" class="mdi mdi-check"></span>
+      <span v-else class="mdi mdi-close"></span>
+    </button>
   </div>
 </template>

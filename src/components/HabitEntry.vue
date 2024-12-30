@@ -1,7 +1,5 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-// import emit
-import { emit } from 'vue';
 import { useAccessTokenStore } from '@/stores/accessTokenStore';
 
 export default defineComponent({

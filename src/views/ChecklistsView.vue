@@ -3,7 +3,7 @@ import { defineComponent } from 'vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 
 export default defineComponent({
-  name: 'DashboardView',
+  name: 'ChecklistsView',
   components: {
     PageHeader,
   },
@@ -12,6 +12,6 @@ export default defineComponent({
 
 <template>
   <div class="page-header">
-    <PageHeader title="Dashboard" />
+    <PageHeader title="Checklists" />
   </div>
 </template>

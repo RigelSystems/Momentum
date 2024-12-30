@@ -33,9 +33,9 @@ export default defineComponent({
       },
       {
         icon: 'mdi-format-list-numbered',
-        title: 'Check Lists',
-        value: 'Check Lists',
-        to: '/check-lists',
+        title: 'Checklists',
+        value: 'Checklists',
+        to: '/checklists',
         requireAuth: true,
       },
       {

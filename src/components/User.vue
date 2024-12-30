@@ -5,20 +5,6 @@ import { useAccessTokenStore } from '@/stores/accessTokenStore'
 
 export default defineComponent({
   name: 'Avatar',
-  props: {
-    initials: {
-      type: String,
-      required: true,
-    },
-    fullName: {
-      type: String,
-      required: false,
-    },
-    email: {
-      type: String,
-      required: false,
-    },
-  },
   setup() {
     const { logout, user } = useAuth0()
 
@@ -39,41 +25,55 @@ export default defineComponent({
 
     const clearState = () => {
       accessTokenStore.clearState()
-      console.log('cliecked')
     }
 
-    return { logout, user, logoutAndClearState, clearState }
+    return {
+      logout,
+      user,
+      logoutAndClearState,
+      clearState
+    }
   },
 })
 </script>
 
 <template>
-  <div class="me-5">
-    <v-row justify="center">
-      <v-menu min-width="200px" rounded>
-        <template v-slot:activator="{ props }">
-          <v-btn icon v-bind="props">
-            <v-avatar color="brown" size="large">
-              <span class="text-h5">{{ initials }}</span>
-            </v-avatar>
+  <v-menu
+    rounded
+  >
+    <template v-slot:activator="{ props }">
+      <v-btn
+        icon
+        v-bind="props"
+      >
+        <v-avatar
+          color="brown"
+          size="large"
+        >
+        <v-img
+              :src="user?.picture"
+              alt="User avatar"
+            />
+        </v-avatar>
+      </v-btn>
+    </template>
+    <v-card>
+      <v-card-text>
+        <div class="mx-auto text-center">
+          <h3>{{ user?.given_name }} {{ user?.family_name }}</h3>
+          <p class="text-caption mt-1">
+            {{ user?.email }}
+          </p>
+          <v-divider class="my-3"></v-divider>
+          <v-btn
+            variant="text"
+            rounded
+            @click="logoutAndClearState"
+          >
+            Logout
           </v-btn>
-        </template>
-        <v-card>
-          <v-card-text>
-            <div class="mx-auto text-center">
-              <v-avatar color="brown">
-                <span class="text-h5">{{ initials }}</span>
-              </v-avatar>
-              <h3>{{ fullName }}</h3>
-              <p class="text-caption mt-1">
-                {{ email }}
-              </p>
-              <v-divider class="my-3"></v-divider>
-              <v-btn variant="text" rounded @click="logoutAndClearState"> Logout </v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-menu>
-    </v-row>
-  </div>
+        </div>
+      </v-card-text>
+    </v-card>
+  </v-menu>
 </template>

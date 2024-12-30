@@ -6,6 +6,7 @@ import User from '@/components/User.vue'
 import Habit from '@/components/Habit.vue'
 import HabitForm from '@/components/habits/HabitForm.vue'
 import HabitEntry from '@/components/HabitEntry.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 
 export default defineComponent({
   name: 'HabitsView',
@@ -14,6 +15,7 @@ export default defineComponent({
     HabitForm,
     HabitEntry,
     User,
+    PageHeader,
   },
   setup() {
     const { user } = useAuth0()
@@ -109,10 +111,7 @@ export default defineComponent({
 
 <template>
   <div class="page-header">
-    <div class="page-header-title">
-      <h1>My Habits</h1>
-      <User initials="AF" />
-    </div>
+    <PageHeader title="My Habits" />
 
     <div class="page-header-card shadow">
       <h3 class="d-flex justify-space-between">

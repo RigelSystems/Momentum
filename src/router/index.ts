@@ -30,6 +30,18 @@ const router = createRouter({
       name: 'habits',
       component: () => import('../views/HabitsView.vue'),
       beforeEnter: authGuard,
+    },
+    {
+      path: '/checklists',
+      name: 'checklists',
+      component: () => import('../views/ChecklistsView.vue'),
+      beforeEnter: authGuard,
+    },
+    {
+      path: '/account',
+      name: 'account',
+      component: () => import('../views/AccountView.vue'),
+      beforeEnter: authGuard,
     }
   ],
 })

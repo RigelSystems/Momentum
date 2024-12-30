@@ -12,11 +12,11 @@ export default defineComponent({
     },
     fullName: {
       type: String,
-      required: true,
+      required: false,
     },
     email: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   setup() {

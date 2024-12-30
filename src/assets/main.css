@@ -47,6 +47,7 @@ body {
   margin: 1rem;
   padding: 1rem;
   background-color: #fff;
+  border-radius: 4px;
 }
 
 .capitalize {
@@ -69,12 +70,22 @@ body {
 }
 
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 1rem;
   background-color: #fff;
   padding: 2rem;
+}
+
+.page-header-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-header-card {
+  border: solid grey 1px;
+  padding: 1rem;
+  border-radius: 0.5rem;;
 }
 
 .horizontal-scroll {
@@ -84,7 +95,7 @@ body {
 }
 
 .table-date {
-  width: 39px;
+  width: 37px;
   display: block;
   text-align: center;
   margin: auto;

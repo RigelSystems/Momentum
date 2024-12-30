@@ -109,14 +109,33 @@ export default defineComponent({
 
 <template>
   <div class="page-header">
-    <h1>My Habits</h1>
-    <User initials="AF" />
+    <div class="page-header-title">
+      <h1>My Habits</h1>
+      <User initials="AF" />
+    </div>
+
+    <div class="page-header-card shadow">
+      <h3 class="d-flex justify-space-between">
+        <b>Today</b>
+        <b>20th Monday</b>
+      </h3>
+      <p class="mb-3">72% avg / day</p>
+      <v-progress-linear
+      color="light-blue"
+      height="25"
+      model-value="10"
+      striped
+    >
+    <template v-slot:default="{ value }">
+        <strong>{{ Math.ceil(value) }}%</strong>
+      </template></v-progress-linear>
+    </div>
   </div>
 
   <div class="text-center horizontal-scroll">
     <v-chip
       class="ma-2 shadow"
-      color="dark"
+      color="blue"
       label
     >
       <v-icon icon="mdi-twitter" start></v-icon>
@@ -125,6 +144,7 @@ export default defineComponent({
     <v-chip
       class="ma-2"
       color="dark"
+      disabled
       label
     >
       <v-icon icon="mdi-twitter" start></v-icon>
@@ -133,6 +153,7 @@ export default defineComponent({
     <v-chip
       class="ma-2"
       color="dark"
+      disabled
       label
     >
       <v-icon icon="mdi-twitter" start></v-icon>
@@ -141,6 +162,7 @@ export default defineComponent({
     <v-chip
       class="ma-2"
       color="dark"
+      disabled
       label
     >
       <v-icon icon="mdi-twitter" start></v-icon>
@@ -148,7 +170,7 @@ export default defineComponent({
     </v-chip>
   </div>
 
-  <div class="page-wrapper">
+  <div class="page-wrapper shadow">
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
     <div v-else-if="habits.length === 0">No habits found</div>
@@ -156,7 +178,7 @@ export default defineComponent({
       <table class="habit-table">
         <thead>
           <tr>
-            <th>Name</th>
+            <th></th>
             <th v-for="date in lastSevenDaysNice">
               <span class="table-date">{{ date }}</span>
             </th>

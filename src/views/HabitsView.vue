@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
+import { useAuth0 } from '@auth0/auth0-vue'
+import User from '@/components/User.vue'
 import Habit from '@/components/Habit.vue'
 import HabitForm from '@/components/habits/HabitForm.vue'
 import HabitEntry from '@/components/HabitEntry.vue'
@@ -11,8 +13,10 @@ export default defineComponent({
     Habit,
     HabitForm,
     HabitEntry,
+    User,
   },
   setup() {
+    const { user } = useAuth0()
     const habits = ref<Array<any>>([])
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
@@ -31,6 +35,27 @@ export default defineComponent({
       return dates;
     }
     const lastSevenDays = getLast7Days();
+
+    function getLast7DaysNiceFormat() {
+      const dates = [];
+      const today = new Date();
+      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+      for (let i = 0; i < 7; i++) {
+        const date = new Date();
+        date.setDate(today.getDate() - i);
+        const dayName = daysOfWeek[date.getDay()];
+        const dayOfMonth = date.getDate();
+        dates.push(`${dayName} ${dayOfMonth}`);
+      }
+
+      return dates;
+    }
+
+    const lastSevenDaysNice = getLast7DaysNiceFormat();
+
+
+
 
     const fetchHabits = async () => {
       const accessTokenStore = useAccessTokenStore()
@@ -70,33 +95,76 @@ export default defineComponent({
     })
 
     return {
+      user,
       habits,
       loading,
       errorMessage,
       lastSevenDays,
-      getHabitEntiryForDate
+      getHabitEntiryForDate,
+      lastSevenDaysNice
     }
   },
 })
 </script>
 
 <template>
+  <div class="page-header">
+    <h1>My Habits</h1>
+    <User initials="AF" />
+  </div>
+
+  <div class="text-center horizontal-scroll">
+    <v-chip
+      class="ma-2 shadow"
+      color="dark"
+      label
+    >
+      <v-icon icon="mdi-twitter" start></v-icon>
+      New Tweets
+    </v-chip>
+    <v-chip
+      class="ma-2"
+      color="dark"
+      label
+    >
+      <v-icon icon="mdi-twitter" start></v-icon>
+      New Tweets
+    </v-chip>
+    <v-chip
+      class="ma-2"
+      color="dark"
+      label
+    >
+      <v-icon icon="mdi-twitter" start></v-icon>
+      New Tweets
+    </v-chip>
+    <v-chip
+      class="ma-2"
+      color="dark"
+      label
+    >
+      <v-icon icon="mdi-twitter" start></v-icon>
+      New Tweets
+    </v-chip>
+  </div>
+
   <div class="page-wrapper">
-    <h1>This is the habits page</h1>
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
     <div v-else-if="habits.length === 0">No habits found</div>
     <div v-else>
-      <table>
+      <table class="habit-table">
         <thead>
           <tr>
             <th>Name</th>
-            <th v-for="date in lastSevenDays">{{ date }}</th>
+            <th v-for="date in lastSevenDaysNice">
+              <span class="table-date">{{ date }}</span>
+            </th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="habit in habits" :key="habit.id">
-            <td>
+        <tbody class="horizontal-scroll">
+          <tr class="table-habit-tr" v-for="habit in habits" :key="habit.id">
+            <td class="table-habit-name">
               <Habit :habit="habit" />
             </td>
             <td v-for="date in lastSevenDays">
@@ -110,16 +178,18 @@ export default defineComponent({
         </tbody>
       </table>
     </div>
-  </div>
 
-  <HabitForm>
-    <template #trigger="{ openDialog }">
-      <v-btn
-        density="comfortable"
-        variant="tonal"
-        text="New Habit"
-        @click="openDialog"
-      ></v-btn>
-    </template>
-  </HabitForm>
+    <div class="mt-5">
+      <HabitForm>
+        <template #trigger="{ openDialog }">
+          <v-btn
+            density="comfortable"
+            variant="tonal"
+            text="New Habit"
+            @click="openDialog"
+          ></v-btn>
+        </template>
+      </HabitForm>
+    </div>
+  </div>
 </template>

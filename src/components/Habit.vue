@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import HabitEntry from '@/components/HabitEntry.vue'
+import HabitFrom from '@/components/habits/HabitForm.vue'
 
 export default defineComponent({
   name: 'Habit',
@@ -11,7 +11,7 @@ export default defineComponent({
     },
   },
   components: {
-    HabitEntry,
+    HabitFrom,
   },
   setup(props) {
     return {
@@ -22,9 +22,8 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="habit-wrapper">
+  <div>
+    <HabitForm :habit="habit" />
     <h2>{{ habit.name }}</h2>
-    <p>{{ habit.description }}</p>
-    <p>{{ habit.date }}</p>
   </div>
 </template>

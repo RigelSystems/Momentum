@@ -1,5 +1,5 @@
 <template>
-  <div class="page-wrapper">
+  <div class="page-header">
     <h1>Dashboard</h1>
   </div>
 </template>

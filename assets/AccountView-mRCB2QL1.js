@@ -1,1 +1,0 @@
-import{d as o,az as a,_ as t,c as n,k as c,o as s,aw as r}from"./index-DznTCRaq.js";const d=o({name:"AccountView",components:{PageHeader:a}}),p={class:"page-header"};function _(i,m,f,l,u,g){const e=r("PageHeader");return s(),n("div",p,[c(e,{title:"Account"})])}const h=t(d,[["render",_]]);export{h as default};

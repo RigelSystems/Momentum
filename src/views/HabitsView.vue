@@ -176,7 +176,7 @@ export default defineComponent({
     <div v-else>
       <div class="habit-table">
         <div class="horizontal-scroll">
-          <div class="table-habit-tr">
+          <div class="table-habit-tr table-habit-dates">
             <div class="table-cell" v-for="date in lastSevenDaysNice">
               <span class="table-date">{{ date }}</span>
             </div>
@@ -197,7 +197,7 @@ export default defineComponent({
       </div>
     </div>
 
-    
+
 
     <div class="mt-5">
       <HabitForm>

@@ -1,0 +1,1 @@
+import{d as s,az as a,_ as o,c as t,k as n,o as c,aw as r}from"./index-CRmwJWbJ.js";const d=s({name:"ChecklistsView",components:{PageHeader:a}}),i={class:"page-header"};function p(_,l,m,f,h,k){const e=r("PageHeader");return c(),t("div",i,[n(e,{title:"Checklists"})])}const g=o(d,[["render",p]]);export{g as default};

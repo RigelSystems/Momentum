@@ -175,30 +175,27 @@ export default defineComponent({
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
     <div v-else-if="habits.length === 0">No habits found</div>
     <div v-else>
-      <table class="habit-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th v-for="date in lastSevenDaysNice">
+      <div class="habit-table">
+        <div class="horizontal-scroll">
+          <div class="table-habit-tr">
+            <div class="table-cell" v-for="date in lastSevenDaysNice">
               <span class="table-date">{{ date }}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="horizontal-scroll">
-          <tr class="table-habit-tr" v-for="habit in habits" :key="habit.id">
-            <td class="table-habit-name">
+            </div>
+          </div>
+          <div class="table-habit-tr" v-for="habit in habits" :key="habit.id">
+            <div class="table-habit-name">
               <Habit :habit="habit" />
-            </td>
-            <td v-for="date in lastSevenDays">
+            </div>
+            <div class="table-cell" v-for="date in lastSevenDays">
               <HabitEntry
                 :entry="getHabitEntiryForDate(habit, date)"
                 :habit="habit"
                 :date="date"
               />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="mt-5">

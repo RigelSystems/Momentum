@@ -65,8 +65,6 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  border: solid grey 1px;
-  border-radius: 5px;
 }
 
 .page-header {
@@ -95,11 +93,13 @@ body {
 }
 
 .table-date {
-  width: 37px;
   display: block;
   text-align: center;
   margin: auto;
   font-weight: 700;
+  white-space: break-spaces;
+  line-height: 15px;
+  padding-bottom: 0.5rem;
 }
 
 .habit-table th {
@@ -110,26 +110,40 @@ body {
   width: 50px;
 }
 
+.habit-name {
+  overflow-x: scroll;
+}
+
 .table-habit-name {
   text-transform: capitalize;
   padding: 0.5rem 1rem;
   text-align: left;
-  font-size: 0.75rem;
-}
-
-.habit-table, td, th {
-  border-collapse: collapse;
-  text-align: center;
-  font-weight: 700;
+  font-size: 0.5rem;
+  position: absolute;
+  background-color: white;
+  width: 150px;
+  left: 1rem;
+  height: 46px;
 }
 
 .table-habit-tr {
-  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: start;
+  gap: 1rem;
+  margin-left: 8rem;
+  padding-left: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.table-cell {
+  width: 100%;
+  min-width: 39px;
+  text-align: center;
 }
 
 .habit-entry {
   background-color: #dbdbdb;
-  border-style: none;
   height: 30px;
   width: 30px;
   border-radius: 50%;

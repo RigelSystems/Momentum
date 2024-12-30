@@ -24,6 +24,6 @@ export default defineComponent({
 <template>
   <div>
     <HabitForm :habit="habit" />
-    <h2>{{ habit.name }}</h2>
+    <h2 class="habit-name">{{ habit.name }}</h2>
   </div>
 </template>

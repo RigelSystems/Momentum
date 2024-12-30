@@ -1,29 +1,39 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import HabitFrom from '@/components/habits/HabitForm.vue'
+import HabitForm from '@/components/habits/HabitForm.vue'
+
+export interface Habit {
+  id?: number // Optional for new records
+  name: string
+}
 
 export default defineComponent({
   name: 'Habit',
   props: {
     habit: {
-      type: Object,
+      type: Object as () => Habit,
       required: true,
     },
   },
   components: {
-    HabitFrom,
-  },
-  setup(props) {
-    return {
-      habit: props.habit,
-    };
+    HabitForm,
   },
 });
 </script>
 
 <template>
-  <div>
-    <HabitForm :habit="habit" />
+  <div class="d-flex justify-space-start align-center">
+    <HabitForm :habit="habit">
+        <template #trigger="{ openDialog }">
+          <v-btn
+            density="default"
+            icon="mdi-pencil"
+            @click="openDialog"
+            size="x-small"
+            class="mr-2"
+          ></v-btn>
+        </template>
+      </HabitForm>
     <h2 class="habit-name">{{ habit.name }}</h2>
   </div>
 </template>

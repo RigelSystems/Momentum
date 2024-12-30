@@ -197,6 +197,8 @@ export default defineComponent({
       </div>
     </div>
 
+    
+
     <div class="mt-5">
       <HabitForm>
         <template #trigger="{ openDialog }">

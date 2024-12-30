@@ -3,23 +3,19 @@ import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 
-export interface Brand {
+export interface Habit {
   id?: number // Optional for new records
   name: string
-  description: string
-  image: string
-  rating: number
 }
 
 export default defineComponent({
   name: 'HabitForm',
   props: {
-    brand: {
-      type: Object as () => Brand,
+    habit: {
+      type: Object as () => Habit,
       required: false, // Optional for adding new records
       default: () => ({
         name: '',
-        image: '',
       }), // Default values for new records
     },
   },
@@ -31,19 +27,19 @@ export default defineComponent({
     const value = ref<string[]>([])
 
     // Determine if we're editing or adding a new record
-    const isEditMode = computed(() => !!props.brand.id)
+    const isEditMode = computed(() => !!props.habit.id)
 
     // Compute the endpoint and HTTP method
     const endpoint = computed(
       () =>
         isEditMode.value
-          ? `${import.meta.env.VITE_API_URL}/habits/${props.brand.id}` // Edit endpoint
+          ? `${import.meta.env.VITE_API_URL}/habits/${props.habit.id}` // Edit endpoint
           : `${import.meta.env.VITE_API_URL}/habits`, // Add endpoint
     )
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
 
     // Handle save event
-    const handleSave = async (savedRecord: Brand) => {
+    const handleSave = async (savedRecord: Habit) => {
       console.log(`${isEditMode.value ? 'Updated' : 'Created'} record:`, savedRecord)
 
       // Reload the page to reflect the changes
@@ -62,7 +58,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <RecordForm :record="brand" :endpoint="endpoint" :method="method" @save="handleSave">
+  <RecordForm :record="habit" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
         <v-btn color="primary">{{ isEditMode ? 'Edit Habit' : 'Add Habit' }}</v-btn>

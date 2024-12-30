@@ -22,6 +22,7 @@ export default defineComponent({
     const habits = ref<Array<any>>([])
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
+    const todaysCompletionPercentage = ref(0)
 
     function getLast7Days() {
       const dates = [];
@@ -56,10 +57,8 @@ export default defineComponent({
 
     const lastSevenDaysNice = getLast7DaysNiceFormat();
 
-
-
-
     const fetchHabits = async () => {
+      console.log('fetching habits')
       const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}habits`
       const response = await fetch(apiUrl, {
@@ -72,7 +71,9 @@ export default defineComponent({
       if (response.ok) {
         loading.value = false
         const responseBody = await response.json()
-        habits.value = responseBody
+        todaysCompletionPercentage.value = responseBody.todays_completion_percentage
+        habits.value = responseBody.habits
+
       } else {
         loading.value = false
         const responseBody = await response.json()
@@ -103,7 +104,9 @@ export default defineComponent({
       errorMessage,
       lastSevenDays,
       getHabitEntiryForDate,
-      lastSevenDaysNice
+      lastSevenDaysNice,
+      todaysCompletionPercentage,
+      fetchHabits,
     }
   },
 })
@@ -122,7 +125,7 @@ export default defineComponent({
       <v-progress-linear
       color="light-blue"
       height="25"
-      model-value="10"
+      :model-value="todaysCompletionPercentage"
       striped
     >
     <template v-slot:default="{ value }">
@@ -185,11 +188,12 @@ export default defineComponent({
             <div class="table-habit-name">
               <Habit :habit="habit" />
             </div>
-            <div class="table-cell" v-for="date in lastSevenDays">
+            <div class="table-cell" v-for="date in lastSevenDays" :key="date">
               <HabitEntry
                 :entry="getHabitEntiryForDate(habit, date)"
                 :habit="habit"
                 :date="date"
+                @requestHabits="fetchHabits"
               />
             </div>
           </div>

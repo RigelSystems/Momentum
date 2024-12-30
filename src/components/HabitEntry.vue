@@ -1,5 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+// import emit
+import { emit } from 'vue';
 import { useAccessTokenStore } from '@/stores/accessTokenStore';
 
 export default defineComponent({
@@ -18,11 +20,12 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  emits: ['requestHabits'],
+  setup(props, { emit }) {
     let loading = false;
     let value = ref(props.entry?.value || 0);
 
-    const updateExistingRecord = async () => {
+    const updateExistingRecord = async (new_value: Number) => {
       loading = true;
       const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries/${props.entry?.id}`
@@ -33,14 +36,14 @@ export default defineComponent({
           Authorization: `Bearer ${accessTokenStore.accessToken}`,
         },
         body: JSON.stringify({
-          value: value.value,
+          value: new_value,
         }),
       });
 
       return response;
     };
 
-    const createNewRecord = async () => {
+    const createNewRecord = async (new_value: Number) => {
       loading = true;
       const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries`
@@ -53,7 +56,7 @@ export default defineComponent({
         body: JSON.stringify({
           habit_id: props.habit.id,
           date: props.date,
-          value: value.value,
+          value: new_value,
         }),
       });
 
@@ -62,13 +65,14 @@ export default defineComponent({
 
     const toggleEntry = async () => {
       loading = true;
-      value.value = value.value === 0 ? 1 : 0;
-      const response = props.entry ? await updateExistingRecord() : await createNewRecord();
+      let new_value = value.value === 0 ? 1 : 0;
+      const response = props.entry ? await updateExistingRecord(new_value) : await createNewRecord(new_value);
 
       if (response.ok) {
         loading = false;
         const responseBody = await response.json()
         value.value = responseBody.value
+        emit('requestHabits')
       } else {
         loading = false;
         const responseBody = await response.json()

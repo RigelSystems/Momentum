@@ -193,7 +193,7 @@ export default defineComponent({
                 :entry="getHabitEntiryForDate(habit, date)"
                 :habit="habit"
                 :date="date"
-                @requestHabits="fetchHabits"
+                :fetchHabits="fetchHabits"
               />
             </div>
           </div>

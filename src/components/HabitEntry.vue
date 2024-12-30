@@ -19,9 +19,12 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    fetchHabits: {
+      type: Function,
+      required: true,
+    },
   },
-  emits: ['requestHabits'],
-  setup(props, { emit }) {
+  setup(props) {
     let loading = false;
     let value = ref(props.entry?.value || 0);
 
@@ -72,7 +75,7 @@ export default defineComponent({
         loading = false;
         const responseBody = await response.json()
         value.value = responseBody.value
-        emit('requestHabits')
+        props.fetchHabits()
       } else {
         loading = false;
         const responseBody = await response.json()

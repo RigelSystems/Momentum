@@ -1,1 +1,0 @@
-import{d as o,bG as t,_ as n,c as a,k as c,o as s,bA as r}from"./index-Ch_Wpp6c.js";const d=o({name:"AccountView",components:{PageHeader:t}}),p={class:"page-header"};function _(i,m,f,l,u,g){const e=r("PageHeader");return s(),a("div",p,[c(e,{title:"Account"})])}const $=n(d,[["render",_]]);export{$ as default};

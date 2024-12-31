@@ -7,6 +7,10 @@ export interface Habit {
   name: string,
   colour: string,
   icon: string,
+  habit_group: {
+    id: number,
+    name: string,
+  },
 }
 
 export default defineComponent({

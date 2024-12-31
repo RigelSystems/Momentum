@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from 'vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
-import { access } from 'fs';
 
 export default defineComponent({
   name: 'SelectFromRequest',
@@ -79,15 +78,13 @@ export default defineComponent({
       fetchItems()
     })
 
-    const handleChange = (event: Event) => {
-      const target = event.target as HTMLSelectElement
-      selected.value = selected.value
+    const handleChange = (value: string) => {
+      selected.value = value
       emit('update:modelValue', selected.value)
     }
 
-    // Update selected value when the value prop changes
     watch(
-      () => props.value,
+      () => props.modelValue,
       (newValue) => {
         selected.value = newValue
       },

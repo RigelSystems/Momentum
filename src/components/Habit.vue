@@ -37,6 +37,9 @@ export default defineComponent({
         </template>
       </HabitForm>
     <v-icon class="mr-1">mdi-{{ habit.icon }}</v-icon>
-    <h2 class="habit-name">{{ habit.name }}</h2>
+    <div>
+      <h2 class="habit-name">{{ habit.name }}</h2>
+      <p>{{ habit.habit_group.name }}</p>
+    </div>
   </div>
 </template>

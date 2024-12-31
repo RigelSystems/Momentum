@@ -33,16 +33,12 @@ export default defineComponent({
     const endpoint = computed(
       () =>
         isEditMode.value
-          ? `${import.meta.env.VITE_API_URL}/habits/${props.habit.id}` // Edit endpoint
-          : `${import.meta.env.VITE_API_URL}/habits`, // Add endpoint
+          ? `${import.meta.env.VITE_API_URL}/habit_groups/${props.habit.id}` // Edit endpoint
+          : `${import.meta.env.VITE_API_URL}/habit_groups`, // Add endpoint
     )
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
 
-    // Handle save event
     const handleSave = async (savedRecord: HabitGroup) => {
-      console.log(`${isEditMode.value ? 'Updated' : 'Created'} record:`, savedRecord)
-
-      // Reload the page to reflect the changes
       window.location.reload()
     }
 
@@ -61,11 +57,11 @@ export default defineComponent({
   <RecordForm :record="habit" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
-        <v-btn color="primary">{{ isEditMode ? 'Edit HabitGroup' : 'Add HabitGroup' }}</v-btn>
+        <v-btn color="primary">{{ isEditMode ? 'Edit Habit Group' : 'Add Habit Group' }}</v-btn>
       </slot>
     </template>
     <template #title>
-      <span>{{ isEditMode ? 'Edit HabitGroup' : 'Add New HabitGroup' }}</span>
+      <span>{{ isEditMode ? 'Edit Habit Group' : 'Add New Habit Group' }}</span>
     </template>
     <template #form="{ record }">
       <v-form>

@@ -2,6 +2,7 @@
 import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
+import SelectFromRequest from '../inputs/SelectFromRequest.vue'
 
 export interface Habit {
   id?: number // Optional for new records
@@ -21,7 +22,8 @@ export default defineComponent({
     },
   },
   components: {
-    RecordForm
+    RecordForm,
+    SelectFromRequest
   },
   setup(props) {
     const accessTokenStore = useAccessTokenStore()
@@ -83,6 +85,8 @@ export default defineComponent({
     <template #form="{ record }">
       <v-form>
         <v-text-field v-model="record.name" label="Name" required></v-text-field>
+
+        <SelectFromRequest path="habit_groups" key="name" name="habit_group_id" v-model="record.habit_group_id" />
 
         <v-color-picker v-model="record.colour" :modes="['hex']"></v-color-picker>
 

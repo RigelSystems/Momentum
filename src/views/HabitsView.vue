@@ -7,6 +7,7 @@ import Habit from '@/components/Habit.vue'
 import HabitForm from '@/components/habits/HabitForm.vue'
 import HabitEntry from '@/components/HabitEntry.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
+import HabitGroupForm from '@/components/habit_groups/HabitGroupForm.vue'
 
 export default defineComponent({
   name: 'HabitsView',
@@ -16,6 +17,7 @@ export default defineComponent({
     HabitEntry,
     User,
     PageHeader,
+    HabitGroupForm
   },
   setup() {
     const { user } = useAuth0()
@@ -204,17 +206,29 @@ export default defineComponent({
 
 
 
-    <div class="mt-5">
+    <div class="mt-5 d-flex justify-space-start">
       <HabitForm>
         <template #trigger="{ openDialog }">
           <v-btn
             density="comfortable"
             variant="tonal"
             text="New Habit"
+            class="mr-2"
             @click="openDialog"
           ></v-btn>
         </template>
       </HabitForm>
+
+      <HabitGroupForm>
+        <template #trigger="{ openDialog }">
+          <v-btn
+            density="comfortable"
+            variant="tonal"
+            text="New Habit Group"
+            @click="openDialog"
+          ></v-btn>
+        </template>
+      </HabitGroupForm>
     </div>
   </div>
 </template>

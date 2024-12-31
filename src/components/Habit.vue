@@ -43,7 +43,7 @@ export default defineComponent({
     <v-icon class="mr-1">mdi-{{ habit.icon }}</v-icon>
     <div>
       <h2 class="habit-name">{{ habit.name }}</h2>
-      <p>{{ habit.habit_group.name }}</p>
+      <p>{{ habit.habit_group?.name }}</p>
     </div>
   </div>
 </template>

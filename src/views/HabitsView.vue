@@ -193,6 +193,7 @@ export default defineComponent({
                 :entry="getHabitEntiryForDate(habit, date)"
                 :habit="habit"
                 :date="date"
+                :colour="habit.colour"
                 :fetchHabits="fetchHabits"
               />
             </div>

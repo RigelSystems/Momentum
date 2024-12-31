@@ -4,7 +4,8 @@ import HabitForm from '@/components/habits/HabitForm.vue'
 
 export interface Habit {
   id?: number // Optional for new records
-  name: string
+  name: string,
+  colour: string,
 }
 
 export default defineComponent({

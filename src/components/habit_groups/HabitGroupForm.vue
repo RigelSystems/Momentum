@@ -3,17 +3,16 @@ import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 
-export interface Habit {
+export interface HabitGroup {
   id?: number // Optional for new records
-  name: string,
-  colour: string,
+  name: string
 }
 
 export default defineComponent({
-  name: 'HabitForm',
+  name: 'HabitGroupForm',
   props: {
     habit: {
-      type: Object as () => Habit,
+      type: Object as () => HabitGroup,
       required: false, // Optional for adding new records
       default: () => ({
         name: '',
@@ -40,7 +39,7 @@ export default defineComponent({
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
 
     // Handle save event
-    const handleSave = async (savedRecord: Habit) => {
+    const handleSave = async (savedRecord: HabitGroup) => {
       console.log(`${isEditMode.value ? 'Updated' : 'Created'} record:`, savedRecord)
 
       // Reload the page to reflect the changes
@@ -62,17 +61,15 @@ export default defineComponent({
   <RecordForm :record="habit" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
-        <v-btn color="primary">{{ isEditMode ? 'Edit Habit' : 'Add Habit' }}</v-btn>
+        <v-btn color="primary">{{ isEditMode ? 'Edit HabitGroup' : 'Add HabitGroup' }}</v-btn>
       </slot>
     </template>
     <template #title>
-      <span>{{ isEditMode ? 'Edit Habit' : 'Add New Habit' }}</span>
+      <span>{{ isEditMode ? 'Edit HabitGroup' : 'Add New HabitGroup' }}</span>
     </template>
     <template #form="{ record }">
       <v-form>
         <v-text-field v-model="record.name" label="Name" required></v-text-field>
-
-        <v-color-picker v-model="record.colour" :modes="['hex']"></v-color-picker>
       </v-form>
     </template>
   </RecordForm>

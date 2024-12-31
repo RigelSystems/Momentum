@@ -17,6 +17,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    colour: {
+      type: String,
+      required: true,
+    },
     fetchHabits: {
       type: Function,
       required: true,
@@ -94,7 +98,7 @@ export default defineComponent({
 <template>
   <div v-if="loading">Loading...</div>
   <div v-else>
-    <button v-if="value === 1" @click="toggleEntry" class="habit-entry habit-entry--check">
+    <button v-if="value === 1" @click="toggleEntry" class="habit-entry habit-entry--check" :style="{ backgroundColor: colour }">
     </button>
     <button v-else @click="toggleEntry" class="habit-entry habit-entry--close">
     </button>

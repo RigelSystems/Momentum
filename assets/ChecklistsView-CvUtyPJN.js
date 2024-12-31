@@ -1,1 +1,0 @@
-import{d as s,b6 as o,_ as t,c as a,k as n,o as c,b2 as r}from"./index-B3VCeo7v.js";const d=s({name:"ChecklistsView",components:{PageHeader:o}}),i={class:"page-header"};function p(_,l,m,f,h,k){const e=r("PageHeader");return c(),a("div",i,[n(e,{title:"Checklists"})])}const g=t(d,[["render",p]]);export{g as default};

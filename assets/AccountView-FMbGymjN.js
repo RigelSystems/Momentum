@@ -1,1 +1,0 @@
-import{d as o,b6 as t,_ as n,c as a,k as c,o as s,b2 as r}from"./index-B3VCeo7v.js";const d=o({name:"AccountView",components:{PageHeader:t}}),p={class:"page-header"};function _(i,m,f,l,u,g){const e=r("PageHeader");return s(),a("div",p,[c(e,{title:"Account"})])}const h=n(d,[["render",_]]);export{h as default};

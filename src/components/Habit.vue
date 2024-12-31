@@ -6,6 +6,7 @@ export interface Habit {
   id?: number // Optional for new records
   name: string,
   colour: string,
+  icon: string,
 }
 
 export default defineComponent({
@@ -35,6 +36,7 @@ export default defineComponent({
           ></v-btn>
         </template>
       </HabitForm>
+    <v-icon class="mr-1">mdi-{{ habit.icon }}</v-icon>
     <h2 class="habit-name">{{ habit.name }}</h2>
   </div>
 </template>

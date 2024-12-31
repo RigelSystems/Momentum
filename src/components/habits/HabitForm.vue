@@ -26,6 +26,17 @@ export default defineComponent({
   setup(props) {
     const accessTokenStore = useAccessTokenStore()
     const value = ref<string[]>([])
+    const icons = ref<Object[]>([])
+
+    const fetchIcons = async () => {
+      const response = await fetch('https://cdn.jsdelivr.net/npm/@mdi/svg@latest/meta.json');
+      const jsonResponse = await response.json();
+
+      // const someResults = jsonResponse.slice(0, 10);
+      const someIconNames = jsonResponse.map((icon: any) => icon.name);
+      icons.value = someIconNames;
+    };
+    fetchIcons();
 
     // Determine if we're editing or adding a new record
     const isEditMode = computed(() => !!props.habit.id)
@@ -53,6 +64,7 @@ export default defineComponent({
       method,
       handleSave,
       value,
+      icons
     }
   },
 })
@@ -73,6 +85,32 @@ export default defineComponent({
         <v-text-field v-model="record.name" label="Name" required></v-text-field>
 
         <v-color-picker v-model="record.colour" :modes="['hex']"></v-color-picker>
+
+        <v-col cols="12">
+          <v-autocomplete
+            v-model="record.icon"
+            :items="icons"
+            color="blue-grey-lighten-2"
+            label="Select"
+            chips
+          >
+            <!-- Chip Slot for Selected Items -->
+            <template v-slot:chip="{ props, item }">
+              <v-chip v-bind="props">
+                <v-icon class="mr-2">{{ `mdi-${item.raw}` }}</v-icon>
+              </v-chip>
+            </template>
+
+            <!-- Item Slot for Dropdown Items -->
+            <template v-slot:item="{ props, item }">
+              <v-list-item v-bind="props">
+                <v-list-item-avatar>
+                  <v-icon>{{ `mdi-${item.raw}` }}</v-icon>
+                </v-list-item-avatar>
+              </v-list-item>
+            </template>
+          </v-autocomplete>
+        </v-col>
       </v-form>
     </template>
   </RecordForm>

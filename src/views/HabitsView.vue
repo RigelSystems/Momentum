@@ -22,6 +22,7 @@ export default defineComponent({
   setup() {
     const { user } = useAuth0()
     const habits = ref<Array<any>>([])
+    const habitGroups = ref<Array<any>>([])
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
     const todaysCompletionPercentage = ref(0)
@@ -60,7 +61,6 @@ export default defineComponent({
     const lastSevenDaysNice = getLast7DaysNiceFormat();
 
     const fetchHabits = async () => {
-      console.log('fetching habits')
       const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}habits`
       const response = await fetch(apiUrl, {
@@ -91,17 +91,40 @@ export default defineComponent({
       }
     }
 
+    const fetchHabitGroups = async () => {
+      const accessTokenStore = useAccessTokenStore()
+      const apiUrl = `${import.meta.env.VITE_API_URL}habit_groups`
+      const response = await fetch(apiUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessTokenStore.accessToken}`,
+        },
+      })
+
+      if (response.ok) {
+        loading.value = false
+        const responseBody = await response.json()
+        habitGroups.value = responseBody
+      } else {
+        loading.value = false
+        const responseBody = await response.json()
+        errorMessage.value = responseBody.error
+      }
+    }
+
     const getHabitEntiryForDate = (habit: any, date: string) => {
       return habit.habit_entries.find((entry: any) => entry.date === date);
     }
 
     onMounted(() => {
       fetchHabits()
+      fetchHabitGroups()
     })
 
     return {
       user,
       habits,
+      habitGroups,
       loading,
       errorMessage,
       lastSevenDays,
@@ -138,39 +161,14 @@ export default defineComponent({
 
   <div class="text-center horizontal-scroll">
     <v-chip
+      v-for="habitGroup in habitGroups"
+      :key="habitGroup.id"
       class="ma-2 shadow"
       color="blue"
       label
     >
       <v-icon icon="mdi-twitter" start></v-icon>
-      New Tweets
-    </v-chip>
-    <v-chip
-      class="ma-2"
-      color="dark"
-      disabled
-      label
-    >
-      <v-icon icon="mdi-twitter" start></v-icon>
-      New Tweets
-    </v-chip>
-    <v-chip
-      class="ma-2"
-      color="dark"
-      disabled
-      label
-    >
-      <v-icon icon="mdi-twitter" start></v-icon>
-      New Tweets
-    </v-chip>
-    <v-chip
-      class="ma-2"
-      color="dark"
-      disabled
-      label
-    >
-      <v-icon icon="mdi-twitter" start></v-icon>
-      New Tweets
+      {{ habitGroup.name }}
     </v-chip>
   </div>
 

@@ -3,21 +3,37 @@ import { defineComponent, onMounted, ref } from 'vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import ChecklistForm from '@/components/checklists/ChecklistForm.vue';
+import { useRoute } from 'vue-router'
+
+export interface Checklist {
+  id?: number
+  name: string
+}
 
 export default defineComponent({
-  name: 'ChecklistsView',
+  name: 'ChecklistView',
   components: {
     PageHeader,
     ChecklistForm,
   },
   setup() {
-    const checklists = ref<Array<any>>([])
+    const checklist = ref<Checklist>({
+      name: '',
+    })
     const errorMessage = ref<string | null>(null)
     const loading = ref(true)
+    const breadcrumbs = ref([
+      {
+        title: 'Checklists',
+        disabled: false,
+        href: '/daily-discipline/#/checklists',
+      }
+    ])
 
     const fetchChecklists = async () => {
       const accessTokenStore = useAccessTokenStore()
-      const apiUrl = `${import.meta.env.VITE_API_URL}checklists`
+      const checklistId = useRoute().params.id
+      const apiUrl = `${import.meta.env.VITE_API_URL}checklists/${checklistId}`
       const response = await fetch(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
@@ -28,8 +44,12 @@ export default defineComponent({
       if (response.ok) {
         loading.value = false
         const responseBody = await response.json()
-        checklists.value = responseBody
-        console.log(checklists.value)
+        checklist.value = responseBody
+        breadcrumbs.value.push({
+          title: responseBody.name,
+          disabled: true,
+          href: `/checklists/${checklistId}`,
+        })
       } else {
         loading.value = false
         const responseBody = await response.json()
@@ -50,7 +70,8 @@ export default defineComponent({
     })
 
     return {
-      checklists,
+      checklist,
+      breadcrumbs
     }
   },
 })
@@ -58,28 +79,12 @@ export default defineComponent({
 
 <template>
   <div class="page-header">
-    <PageHeader title="Checklists" />
+    <PageHeader :title="checklist.name" />
+    <v-breadcrumbs :items="breadcrumbs">
+      <template v-slot:prepend>
+        <v-icon icon="$vuetify" size="small"></v-icon>
+      </template>
+    </v-breadcrumbs>
   </div>
-
-  <v-list>
-    <v-list-item
-      v-for="checklist in checklists"
-      :key="checklist.id"
-      :to="`/checklists/${checklist.id}`"
-    >
-      <v-list-item-title>{{ checklist.name }}</v-list-item-title>
-    </v-list-item>
-  </v-list>
-
-  <ChecklistForm>
-    <template #trigger="{ openDialog }">
-      <v-btn
-        density="comfortable"
-        variant="tonal"
-        text="New Checklist"
-        class="mr-2"
-        @click="openDialog"
-      ></v-btn>
-    </template>
-  </ChecklistForm>
 </template>
+

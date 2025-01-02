@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import ChecklistView from '@/views/ChecklistView.vue'
+import AccountView from '@/views/AccountView.vue'
 import { authGuard } from '@auth0/auth0-vue'
 
 const router = createRouter({
@@ -38,9 +40,15 @@ const router = createRouter({
       beforeEnter: authGuard,
     },
     {
+      path: '/checklists/:id',
+      name: 'checklist',
+      component: ChecklistView,
+      beforeEnter: authGuard,
+    },
+    {
       path: '/account',
       name: 'account',
-      component: () => import('../views/AccountView.vue'),
+      component: AccountView,
       beforeEnter: authGuard,
     }
   ],

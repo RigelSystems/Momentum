@@ -30,7 +30,7 @@ export default defineComponent({
     let loading = false;
     let value = ref(props.entry?.value || 0);
 
-    const updateExistingRecord = async (new_value: Number) => {
+    const updateExistingRecord = async (new_value: String) => {
       loading = true;
       const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries/${props.entry?.id}`
@@ -48,7 +48,7 @@ export default defineComponent({
       return response;
     };
 
-    const createNewRecord = async (new_value: Number) => {
+    const createNewRecord = async (new_value: String) => {
       loading = true;
       const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries`
@@ -68,9 +68,8 @@ export default defineComponent({
       return response;
     };
 
-    const toggleEntry = async () => {
+    const updateEntry = async (new_value: String) => {
       loading = true;
-      let new_value = value.value === 0 ? 1 : 0;
       const response = props.entry ? await updateExistingRecord(new_value) : await createNewRecord(new_value);
 
       if (response.ok) {
@@ -87,7 +86,7 @@ export default defineComponent({
 
     return {
       entry: props.entry,
-      toggleEntry,
+      updateEntry,
       loading,
       value
     };
@@ -98,9 +97,9 @@ export default defineComponent({
 <template>
   <div v-if="loading">Loading...</div>
   <div v-if="habit.habit_type === 'boolean'">
-    <button v-if="value === 1" @click="toggleEntry" class="habit-entry habit-entry--check" :style="{ backgroundColor: colour }">
+    <button v-if="value === 1" @click="updateEntry(`0`)" class="habit-entry habit-entry--check" :style="{ backgroundColor: colour }">
     </button>
-    <button v-else @click="toggleEntry" class="habit-entry habit-entry--close">
+    <button v-else @click="updateEntry(`1`)" class="habit-entry habit-entry--close">
     </button>
   </div>
   <div v-if="habit.habit_type === 'numerical'">
@@ -109,24 +108,28 @@ export default defineComponent({
         <v-btn
           v-bind="activatorProps"
           color="surface-variant"
-          :text="habit.value || 0"
+          :text="value || 0"
           variant="flat"
           class="habit-entry habit-entry--number"
         ></v-btn>
       </template>
 
       <template v-slot:default="{ isActive }">
-        <v-card title="Dialog">
+        <v-card :title="`${habit.name}: ${date}`">
           <v-card-text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            <v-text-field
+              v-model="value"
+              label="Value"
+              type="number"
+            ></v-text-field>
           </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
             <v-btn
-              text="Close Dialog"
-              @click="isActive.value = false"
+              text="Update Entry"
+              @click="isActive.value = false; updateEntry(value)"
             ></v-btn>
           </v-card-actions>
         </v-card>

@@ -111,7 +111,7 @@ body {
 }
 
 .habit-name {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .table-habit-name {

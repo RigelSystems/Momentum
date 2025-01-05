@@ -96,6 +96,14 @@ export default defineComponent({
           label="Habit Group"
         />
 
+        <SelectFromRequest
+          path="habits/types"
+          key="name"
+          name="name"
+          v-model="record.habit_type"
+          label="Habit Type"
+        />
+
         <v-menu :close-on-content-click="false" location="end">
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props" variant="tonal">

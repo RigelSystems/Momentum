@@ -65,7 +65,16 @@ export default defineComponent({
         }
 
         const data = await response.json()
-        const mappedData = data.map((item: any) => ({ id: item['id'], name: item['name'] }))
+        let mappedData = [];
+        if (props.key) {
+          mappedData = data.forEach((item: any) => {
+            item['id'] = item[props.key]
+          })
+        } else {
+          mappedData = data
+        }
+
+
         items.value = mappedData
       } catch (error: any) {
         errorMessage.value = error instanceof Error ? error.message : String(error)

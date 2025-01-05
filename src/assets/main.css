@@ -142,8 +142,10 @@ body {
 
 .habit-entry {
   background-color: #dbdbdb;
-  height: 25px;
-  width: 25px;
+  height: 25px !important;
+  width: 25px !important;
+  min-width: 25px !important;
+  padding: 0 !important;
   border-radius: 4px;
   color: #000000;
 }
@@ -154,6 +156,11 @@ body {
 
 .habit-entry--close {
   background-color: #e2e2e2;
+}
+
+.habit-entry.habit-entry--number {
+  background-color: #f0f0f0 !important;
+  color: #000 !important;
 }
 
 .shadow {

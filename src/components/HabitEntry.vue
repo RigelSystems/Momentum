@@ -97,10 +97,40 @@ export default defineComponent({
 
 <template>
   <div v-if="loading">Loading...</div>
-  <div v-else>
+  <div v-if="habit.habit_type === 'boolean'">
     <button v-if="value === 1" @click="toggleEntry" class="habit-entry habit-entry--check" :style="{ backgroundColor: colour }">
     </button>
     <button v-else @click="toggleEntry" class="habit-entry habit-entry--close">
     </button>
+  </div>
+  <div v-if="habit.habit_type === 'numerical'">
+    <v-dialog max-width="500">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          v-bind="activatorProps"
+          color="surface-variant"
+          :text="habit.value || 0"
+          variant="flat"
+          class="habit-entry habit-entry--number"
+        ></v-btn>
+      </template>
+
+      <template v-slot:default="{ isActive }">
+        <v-card title="Dialog">
+          <v-card-text>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+              text="Close Dialog"
+              @click="isActive.value = false"
+            ></v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </div>
 </template>

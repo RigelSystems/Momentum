@@ -116,7 +116,7 @@ export default defineComponent({
           </v-card>
         </v-menu>
 
-        <SelectIcon v-model="record.icon" label="Icon" />
+        <SelectIcon v-model="record.icon"/>
       </v-form>
     </template>
   </RecordForm>

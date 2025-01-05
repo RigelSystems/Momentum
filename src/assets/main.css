@@ -170,3 +170,11 @@ body {
 .table-habit-dates {
   margin-left: 160px;
 }
+
+.table-habit-group {
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.table-habit-group:last-child {
+  border-bottom: none;
+}

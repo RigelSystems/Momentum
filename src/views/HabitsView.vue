@@ -21,7 +21,7 @@ export default defineComponent({
   },
   setup() {
     const { user } = useAuth0()
-    const habits = ref<Array<any>>([])
+    const groupedHabits = ref<Array<any>>([])
     const habitGroups = ref<Array<any>>([])
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
@@ -74,7 +74,7 @@ export default defineComponent({
         loading.value = false
         const responseBody = await response.json()
         todaysCompletionPercentage.value = responseBody.todays_completion_percentage
-        habits.value = responseBody.habits
+        groupedHabits.value = responseBody.habits
 
       } else {
         loading.value = false
@@ -124,7 +124,7 @@ export default defineComponent({
 
     return {
       user,
-      habits,
+      groupedHabits,
       habitGroups,
       loading,
       errorMessage,
@@ -176,7 +176,7 @@ export default defineComponent({
   <div class="page-wrapper shadow">
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
-    <div v-else-if="habits.length === 0">No habits found</div>
+    <div v-else-if="groupedHabits.length === 0">No habits found</div>
     <div v-else>
       <div class="habit-table">
         <div class="horizontal-scroll">
@@ -185,18 +185,30 @@ export default defineComponent({
               <span class="table-date">{{ date }}</span>
             </div>
           </div>
-          <div class="table-habit-tr" v-for="habit in habits" :key="habit.id">
-            <div class="table-habit-name">
-              <Habit :habit="habit" />
+          <div v-for="(habits, groupName) in groupedHabits" :key="groupName" class="table-habit-group">
+            <!-- Habit Group Name -->
+            <div class="table-group-name">
+              <h3>{{ groupName }}</h3>
             </div>
-            <div class="table-cell" v-for="date in lastSevenDays" :key="date">
-              <HabitEntry
-                :entry="getHabitEntiryForDate(habit, date)"
-                :habit="habit"
-                :date="date"
-                :colour="habit.colour"
-                :fetchHabits="fetchHabits"
-              />
+
+            <!-- Habits under the group -->
+            <div
+              class="table-habit-tr"
+              v-for="habit in habits"
+              :key="habit.id"
+            >
+              <div class="table-habit-name">
+                <Habit :habit="habit" />
+              </div>
+              <div class="table-cell" v-for="date in lastSevenDays" :key="date">
+                <HabitEntry
+                  :entry="getHabitEntiryForDate(habit, date)"
+                  :habit="habit"
+                  :date="date"
+                  :colour="habit.colour"
+                  :fetchHabits="fetchHabits"
+                />
+              </div>
             </div>
           </div>
         </div>

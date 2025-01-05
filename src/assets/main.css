@@ -173,8 +173,14 @@ body {
 
 .table-habit-group {
   border-bottom: 1px solid #e2e2e2;
+  margin-bottom: 0.5rem;
 }
 
 .table-habit-group:last-child {
   border-bottom: none;
+}
+
+.kabab-menu {
+  box-shadow: none !important;
+  width: 9px !important;
 }

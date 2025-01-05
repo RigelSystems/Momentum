@@ -35,18 +35,16 @@ export default defineComponent({
         <template #trigger="{ openDialog }">
           <v-btn
             density="default"
-            icon="mdi-pencil"
+            icon="mdi-dots-vertical"
             @click="openDialog"
             size="x-small"
-            class="mr-2"
+            class="mr-2 kabab-menu"
           ></v-btn>
         </template>
       </HabitForm>
     <v-icon class="mr-1">mdi-{{ habit.icon }}</v-icon>
     <div>
       <h2 class="habit-name">{{ habit.name }}</h2>
-      <p>{{ habit.habit_group?.name }}</p>
-      <p>{{ habit.habit_type }}</p>
     </div>
   </div>
 </template>

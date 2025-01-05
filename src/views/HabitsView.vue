@@ -87,6 +87,7 @@ export default defineComponent({
           accessTokenStore.clearState()
           localStorage.clear()
           sessionStorage.clear()
+          window.location.reload()
         }
       }
     }

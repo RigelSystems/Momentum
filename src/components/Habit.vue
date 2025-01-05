@@ -7,6 +7,8 @@ export interface Habit {
   name: string,
   colour: string,
   icon: string,
+  habit_type: string,
+  habit_group_id: number,
   habit_group: {
     id: number,
     name: string,
@@ -44,6 +46,7 @@ export default defineComponent({
     <div>
       <h2 class="habit-name">{{ habit.name }}</h2>
       <p>{{ habit.habit_group?.name }}</p>
+      <p>{{ habit.habit_type }}</p>
     </div>
   </div>
 </template>

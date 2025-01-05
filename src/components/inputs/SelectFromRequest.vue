@@ -102,10 +102,9 @@ export default defineComponent({
 </script>
 
 <template>
-  <label class="block text capitalize">{{ $props.label }}</label>
-
   <v-autocomplete
     v-model="selected"
+    :label="$props.label"
     :items="items"
     item-title="name"
     item-value="id"

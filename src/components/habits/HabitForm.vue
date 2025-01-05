@@ -8,6 +8,8 @@ export interface Habit {
   id?: number // Optional for new records
   name: string,
   colour: string,
+  icon: string,
+  habit_group_id: number,
 }
 
 export default defineComponent({
@@ -86,16 +88,43 @@ export default defineComponent({
       <v-form>
         <v-text-field v-model="record.name" label="Name" required></v-text-field>
 
-        <SelectFromRequest path="habit_groups" key="name" name="habit_group_id" v-model="record.habit_group_id" />
+        <SelectFromRequest
+          path="habit_groups"
+          key="name"
+          name="habit_group_id"
+          v-model="record.habit_group_id"
+          label="Habit Group"
+        />
 
-        <v-color-picker v-model="record.colour" :modes="['hex']"></v-color-picker>
+        <v-menu :close-on-content-click="false" location="end">
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" variant="tonal">
+              Habit colour
+              <div
+                :style="{
+                  width: '24px',
+                  height: '24px',
+                  backgroundColor: record.colour || '#fff',
+                  borderRadius: '5px',
+                  display: 'inline-block',
+                  marginLeft: '10px',
+                }"
+              ></div>
+            </v-btn>
+          </template>
 
-        <v-col cols="12">
+          <v-card min-width="300">
+            <v-color-picker v-model="record.colour" :modes="['hex']"></v-color-picker>
+          </v-card>
+        </v-menu>
+
+
           <v-autocomplete
+            class="mt-5"
             v-model="record.icon"
             :items="icons"
             color="blue-grey-lighten-2"
-            label="Select"
+            label="Icon"
             chips
           >
             <!-- Chip Slot for Selected Items -->
@@ -114,7 +143,6 @@ export default defineComponent({
               </v-list-item>
             </template>
           </v-autocomplete>
-        </v-col>
       </v-form>
     </template>
   </RecordForm>

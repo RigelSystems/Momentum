@@ -7,6 +7,7 @@ import Habit from '@/components/Habit.vue'
 import HabitForm from '@/components/habits/HabitForm.vue'
 import HabitEntry from '@/components/HabitEntry.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
+import HabitGroup from '@/components/habit_groups/HabitGroup.vue'
 import HabitGroupForm from '@/components/habit_groups/HabitGroupForm.vue'
 
 export default defineComponent({
@@ -15,6 +16,7 @@ export default defineComponent({
     Habit,
     HabitForm,
     HabitEntry,
+    HabitGroup,
     User,
     PageHeader,
     HabitGroupForm
@@ -186,12 +188,9 @@ export default defineComponent({
             </div>
           </div>
           <div v-for="(habits, groupName) in groupedHabits" :key="groupName" class="table-habit-group">
-            <!-- Habit Group Name -->
-            <div class="table-group-name">
-              <h3>{{ groupName }}</h3>
-            </div>
 
-            <!-- Habits under the group -->
+            <HabitGroup :habitGroup="habits[0].habit_group" />
+
             <div
               class="table-habit-tr"
               v-for="habit in habits"

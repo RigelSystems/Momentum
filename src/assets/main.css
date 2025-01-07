@@ -183,3 +183,12 @@ body {
   box-shadow: none !important;
   width: 9px !important;
 }
+
+.table-group-name {
+  display: flex;
+  align-items: center;
+}
+
+.table-group-name h3 {
+  font-weight: 700 !important;
+}

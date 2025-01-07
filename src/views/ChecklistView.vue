@@ -2,23 +2,26 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import PageHeader from '@/components/shared/PageHeader.vue'
-import ChecklistForm from '@/components/checklists/ChecklistForm.vue';
+import ChecklistItemForm from '@/components/checklists/ChecklistForm.vue';
+import ChecklistItem from '@/components/checklist_items/ChecklistItem.vue';
 import { useRoute } from 'vue-router'
 
-export interface Checklist {
-  id?: number
-  name: string
+export interface ChecklistItem {
+  id?: number,
+  name: string,
+  status: string
 }
 
 export default defineComponent({
   name: 'ChecklistView',
   components: {
     PageHeader,
-    ChecklistForm,
+    ChecklistItemForm,
   },
   setup() {
-    const checklist = ref<Checklist>({
+    const checklist = ref<ChecklistItem>({
       name: '',
+      status: ''
     })
     const errorMessage = ref<string | null>(null)
     const loading = ref(true)
@@ -86,5 +89,16 @@ export default defineComponent({
       </template>
     </v-breadcrumbs>
   </div>
+
+  <ChecklistItemForm>
+    <template #trigger="{ openDialog }">
+      <v-btn
+        density="comfortable"
+        variant="tonal"
+        text="New Checklist Item"
+        @click="openDialog"
+      ></v-btn>
+    </template>
+  </ChecklistItemForm>
 </template>
 

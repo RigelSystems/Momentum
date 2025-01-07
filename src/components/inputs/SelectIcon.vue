@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 
 export default defineComponent({
   name: 'SelectIcon',
@@ -24,15 +24,12 @@ export default defineComponent({
     };
     fetchIcons();
 
-    const handleChange = (event: Event) => {
-      const target = event.target as HTMLSelectElement;
-      selectedIcon.value = target.value;
-      emit('update:modelValue', selectedIcon.value);
-    };
+    watch(selectedIcon, (newValue) => {
+      emit('update', newValue); // Emit the updated value
+    });
 
     return {
       selectedIcon,
-      handleChange,
       icons,
     };
   },

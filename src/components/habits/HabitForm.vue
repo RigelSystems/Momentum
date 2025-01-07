@@ -6,7 +6,7 @@ import SelectFromRequest from '../inputs/SelectFromRequest.vue'
 import SelectIcon from '../inputs/SelectIcon.vue'
 
 export interface Habit {
-  id?: number // Optional for new records
+  id?: number,
   name: string,
   colour: string,
   icon: string,
@@ -18,10 +18,10 @@ export default defineComponent({
   props: {
     habit: {
       type: Object as () => Habit,
-      required: false, // Optional for adding new records
+      required: false,
       default: () => ({
         name: '',
-      }), // Default values for new records
+      }),
     },
   },
   components: {
@@ -33,10 +33,8 @@ export default defineComponent({
     const accessTokenStore = useAccessTokenStore()
     const value = ref<string[]>([])
 
-    // Determine if we're editing or adding a new record
     const isEditMode = computed(() => !!props.habit.id)
 
-    // Compute the endpoint and HTTP method
     const endpoint = computed(
       () =>
         isEditMode.value
@@ -45,11 +43,13 @@ export default defineComponent({
     )
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
 
-    // Handle save event
+    const updateRecordIcon = (icon: string) => {
+      props.habit.icon = icon
+    }
+
     const handleSave = async (savedRecord: Habit) => {
       console.log(`${isEditMode.value ? 'Updated' : 'Created'} record:`, savedRecord)
 
-      // Reload the page to reflect the changes
       window.location.reload()
     }
 
@@ -58,7 +58,8 @@ export default defineComponent({
       endpoint,
       method,
       handleSave,
-      value
+      value,
+      updateRecordIcon
     }
   },
 })
@@ -116,7 +117,7 @@ export default defineComponent({
           </v-card>
         </v-menu>
 
-        <SelectIcon v-model="record.icon"/>
+        <SelectIcon v-model="record.icon" @update="updateRecordIcon"/>
       </v-form>
     </template>
   </RecordForm>

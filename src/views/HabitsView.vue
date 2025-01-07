@@ -54,7 +54,7 @@ export default defineComponent({
         date.setDate(today.getDate() - i);
         const dayName = daysOfWeek[date.getDay()];
         const dayOfMonth = date.getDate();
-        dates.push(`${dayName} ${dayOfMonth}`);
+        dates.push(`${dayName}<br>${dayOfMonth}`);
       }
 
       return dates;
@@ -184,7 +184,7 @@ export default defineComponent({
         <div class="horizontal-scroll">
           <div class="table-habit-tr table-habit-dates">
             <div class="table-cell" v-for="date in lastSevenDaysNice">
-              <span class="table-date">{{ date }}</span>
+              <span class="table-date" v-html="date"></span>
             </div>
           </div>
           <div v-for="(habits, groupName) in groupedHabits" :key="groupName" class="table-habit-group">

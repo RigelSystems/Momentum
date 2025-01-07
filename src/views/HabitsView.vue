@@ -28,28 +28,30 @@ export default defineComponent({
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
     const todaysCompletionPercentage = ref(0)
+    const selectedTimeFrame = ref(null)
+    const availableTimeFrames = ["Today", "This Week", "This Month", "This Year"]
 
-    function getLast7Days() {
+    function getLastXDays(days = 7) {
       const dates = [];
       const today = new Date();
 
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0; i < days; i++) {
         const date = new Date();
         date.setDate(today.getDate() - i);
-        const formattedDate = date.toISOString().split('T')[0];
+        const formattedDate = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
         dates.push(formattedDate);
       }
 
       return dates;
     }
-    const lastSevenDays = getLast7Days();
+    const lastSevenDays = getLastXDays(30);
 
-    function getLast7DaysNiceFormat() {
+    function getLastXDaysNiceFormat(days = 7) {
       const dates = [];
       const today = new Date();
       const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0; i < days; i++) {
         const date = new Date();
         date.setDate(today.getDate() - i);
         const dayName = daysOfWeek[date.getDay()];
@@ -59,17 +61,20 @@ export default defineComponent({
 
       return dates;
     }
-
-    const lastSevenDaysNice = getLast7DaysNiceFormat();
+    const lastSevenDaysNice = getLastXDaysNiceFormat(30);
 
     const fetchHabits = async () => {
       const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}habits`
       const response = await fetch(apiUrl, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessTokenStore.accessToken}`,
         },
+        body: JSON.stringify({
+          time_frame: selectedTimeFrame.value
+        }),
       })
 
       if (response.ok) {
@@ -135,6 +140,8 @@ export default defineComponent({
       lastSevenDaysNice,
       todaysCompletionPercentage,
       fetchHabits,
+      selectedTimeFrame,
+      availableTimeFrames,
     }
   },
 })
@@ -176,6 +183,14 @@ export default defineComponent({
   </div>
 
   <div class="page-wrapper shadow">
+    <v-autocomplete
+      v-model="selectedTimeFrame"
+      :items="availableTimeFrames"
+      label="Select Time Frame"
+      outlined
+      dense
+    ></v-autocomplete>
+
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
     <div v-else-if="groupedHabits.length === 0">No habits found</div>

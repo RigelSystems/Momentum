@@ -21,6 +21,8 @@ export default defineComponent({
       required: false,
       default: () => ({
         name: '',
+        colour: '#fff',
+        icon: '',
       }),
     },
   },
@@ -48,8 +50,6 @@ export default defineComponent({
     }
 
     const handleSave = async (savedRecord: Habit) => {
-      console.log(`${isEditMode.value ? 'Updated' : 'Created'} record:`, savedRecord)
-
       window.location.reload()
     }
 

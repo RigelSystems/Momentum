@@ -6,12 +6,14 @@ export interface ChecklistItem {
   id?: number,
   name: string,
   icon: string,
+  status: string,
+  checklist_id: number,
 }
 
 export default defineComponent({
   name: 'ChecklistItem',
   props: {
-    habitGroup: {
+    checklistItem: {
       type: Object as () => ChecklistItem,
       required: true,
     },
@@ -24,7 +26,7 @@ export default defineComponent({
 
 <template>
   <div class="table-group-name">
-    <ChecklistItemForm :habitGroup="habitGroup">
+    <ChecklistItemForm :checklistItem="checklistItem">
       <template #trigger="{ openDialog }">
         <v-btn
           density="default"
@@ -35,7 +37,7 @@ export default defineComponent({
         ></v-btn>
       </template>
     </ChecklistItemForm>
-    <v-icon class="mr-2" size="small">mdi-{{ habitGroup.icon }}</v-icon>
-    <h3>{{ habitGroup.name }}</h3>
+    <v-icon class="mr-2" size="small">mdi-{{ checklistItem.icon }}</v-icon>
+    <h3>{{ checklistItem.name }}</h3>
   </div>
 </template>

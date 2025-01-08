@@ -11,7 +11,7 @@ export interface Checklist {
 export default defineComponent({
   name: 'ChecklistForm',
   props: {
-    habit: {
+    checklist: {
       type: Object as () => Checklist,
       required: false,
       default: () => ({
@@ -27,13 +27,13 @@ export default defineComponent({
     const value = ref<string[]>([])
 
     // Determine if we're editing or adding a new record
-    const isEditMode = computed(() => !!props.habit.id)
+    const isEditMode = computed(() => !!props.checklist.id)
 
     // Compute the endpoint and HTTP method
     const endpoint = computed(
       () =>
         isEditMode.value
-          ? `${import.meta.env.VITE_API_URL}/checklists/${props.habit.id}` // Edit endpoint
+          ? `${import.meta.env.VITE_API_URL}/checklists/${props.checklist.id}` // Edit endpoint
           : `${import.meta.env.VITE_API_URL}/checklists`, // Add endpoint
     )
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
@@ -54,7 +54,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <RecordForm :record="habit" :endpoint="endpoint" :method="method" @save="handleSave">
+  <RecordForm :record="checklist" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
         <v-btn color="primary">{{ isEditMode ? 'Edit Checklist' : 'Add Checklist' }}</v-btn>

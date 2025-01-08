@@ -2,14 +2,19 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import PageHeader from '@/components/shared/PageHeader.vue'
-import ChecklistItemForm from '@/components/checklists/ChecklistForm.vue';
+import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue';
 import ChecklistItem from '@/components/checklist_items/ChecklistItem.vue';
 import { useRoute } from 'vue-router'
 
 export interface ChecklistItem {
   id?: number,
   name: string,
-  status: string
+  status: string,
+  checklist_items: Array<{
+    id: number,
+    name: string,
+    icon: string,
+  }>
 }
 
 export default defineComponent({
@@ -17,11 +22,13 @@ export default defineComponent({
   components: {
     PageHeader,
     ChecklistItemForm,
+    ChecklistItem
   },
   setup() {
     const checklist = ref<ChecklistItem>({
       name: '',
-      status: ''
+      status: '',
+      checklist_items: []
     })
     const errorMessage = ref<string | null>(null)
     const loading = ref(true)
@@ -100,5 +107,11 @@ export default defineComponent({
       ></v-btn>
     </template>
   </ChecklistItemForm>
+
+  <ChecklistItem
+    v-for="item in checklist.checklist_items"
+    :key="item.id"
+    :checklistItem="item"
+  />
 </template>
 

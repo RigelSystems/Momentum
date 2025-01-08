@@ -3,11 +3,13 @@ import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import SelectIcon from '../inputs/SelectIcon.vue'
+import { useRoute } from 'vue-router'
 
 export interface ChecklistItem {
   id?: number // Optional for new records
   name: string,
   icon: string,
+  checklist_id: number
 }
 
 export default defineComponent({
@@ -18,6 +20,7 @@ export default defineComponent({
       required: false, // Optional for adding new records
       default: () => ({
         name: '',
+        icon: '',
       }), // Default values for new records
     },
   },
@@ -28,6 +31,10 @@ export default defineComponent({
   setup(props) {
     const accessTokenStore = useAccessTokenStore()
     const value = ref<string[]>([])
+    const route = useRoute()
+    const statusOptions = ref<string[]>(['not started', 'blocked', 'done'])
+    const checklistId = computed<number>(() => parseInt(route.params.id as string));
+    props.checklistItem.checklist_id = checklistId.value
 
     // Determine if we're editing or adding a new record
     const isEditMode = computed(() => !!props.checklistItem.id)
@@ -51,6 +58,8 @@ export default defineComponent({
       method,
       handleSave,
       value,
+      checklistId,
+      statusOptions
     }
   },
 })
@@ -68,9 +77,11 @@ export default defineComponent({
     </template>
     <template #form="{ record }">
       <v-form>
-        <input type="hidden" v-model="record.checklist_id" />
+        <input type="hidden" name="chcklist_id" v-model="record.checklist_id" />
 
         <v-text-field v-model="record.name" label="Name" required></v-text-field>
+
+        <v-select v-model="record.status" :items="statusOptions" label="status" required></v-select>
       </v-form>
     </template>
   </RecordForm>

@@ -65,7 +65,7 @@ export default defineComponent({
 
     const fetchHabits = async () => {
       const accessTokenStore = useAccessTokenStore()
-      const apiUrl = `${import.meta.env.VITE_API_URL}habits`
+      const apiUrl = `${import.meta.env.VITE_API_URL}habits/get_habits`
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {

@@ -6,15 +6,19 @@ import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vu
 import ChecklistItem from '@/components/checklist_items/ChecklistItem.vue';
 import { useRoute } from 'vue-router'
 
-export interface ChecklistItem {
+export interface Checklist {
   id?: number,
   name: string,
   status: string,
-  checklist_items: Array<{
-    id: number,
-    name: string,
-    icon: string,
-  }>
+  checklist_items: Array<ChecklistItem>
+}
+
+export interface ChecklistItem {
+  id: number,
+  name: string,
+  icon: string,
+  status: string,
+  checklist_id: number,
 }
 
 export default defineComponent({
@@ -25,7 +29,7 @@ export default defineComponent({
     ChecklistItem
   },
   setup() {
-    const checklist = ref<ChecklistItem>({
+    const checklist = ref<Checklist>({
       name: '',
       status: '',
       checklist_items: []

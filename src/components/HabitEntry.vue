@@ -84,11 +84,25 @@ export default defineComponent({
       }
     };
 
+    let holdTimer;
+    const modalIsActive = ref(false);
+    const startHold = () => {
+      holdTimer = setTimeout(() => {
+        modalIsActive.value = true;
+      }, 1000);
+    }
+    const endHold = () => {
+      clearTimeout(holdTimer);
+    }
+
     return {
       entry: props.entry,
       updateEntry,
       loading,
-      value
+      value,
+      startHold,
+      endHold,
+      modalIsActive
     };
   },
 });
@@ -103,10 +117,12 @@ export default defineComponent({
     </button>
   </div>
   <div v-if="habit.habit_type === 'Numerical'">
-    <v-dialog max-width="500">
+    <v-dialog max-width="500" v-model="modalIsActive" persistent>
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
-          v-bind="activatorProps"
+          @click="updateEntry(value + 1)"
+          @mousedown="startHold"
+          @mouseup="endHold"
           color="surface-variant"
           :text="value || 0"
           variant="flat"

@@ -84,7 +84,7 @@ export default defineComponent({
       }
     };
 
-    let holdTimer;
+    let holdTimer: ReturnType<typeof setTimeout>;
     const modalIsActive = ref(false);
     const startHold = () => {
       holdTimer = setTimeout(() => {

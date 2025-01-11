@@ -123,7 +123,7 @@ export default defineComponent({
   <div v-if="loading">Loading...</div>
 
   <div v-if="habit.habit_type === 'Yes or No'">
-    <button v-if="value === 1" @click="updateEntry(`0`)" class="habit-entry habit-entry--check" :style="{ backgroundColor: colour }">
+    <button v-if="value === '1'" @click="updateEntry(`0`)" class="habit-entry habit-entry--check" :style="{ backgroundColor: colour }">
     </button>
     <button v-else @click="updateEntry(`1`)" class="habit-entry habit-entry--close">
     </button>

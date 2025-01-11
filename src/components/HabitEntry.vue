@@ -133,7 +133,7 @@ export default defineComponent({
     <v-dialog max-width="500" v-model="modalIsActive" persistent>
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
-          @click="updateEntry(parseInt(value) + 1)"
+          @click="updateEntry((parseInt(value) + 1).toString())"
           @mousedown="startHold"
           @mouseup="endHold"
           @touchstart="startHold"

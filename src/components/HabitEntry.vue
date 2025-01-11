@@ -89,7 +89,7 @@ export default defineComponent({
     const startHold = () => {
       holdTimer = setTimeout(() => {
         modalIsActive.value = true;
-      }, 1000);
+      }, 500);
     }
     const endHold = () => {
       clearTimeout(holdTimer);

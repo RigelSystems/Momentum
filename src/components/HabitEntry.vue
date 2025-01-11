@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useAccessTokenStore } from '@/stores/accessTokenStore';
+import SelectIcon from './inputs/SelectIcon.vue'
 
 export default defineComponent({
   name: 'HabitEntry',
@@ -25,6 +26,9 @@ export default defineComponent({
       type: Function,
       required: true,
     },
+  },
+  components: {
+    SelectIcon,
   },
   setup(props) {
     let loading = false;
@@ -95,6 +99,12 @@ export default defineComponent({
       clearTimeout(holdTimer);
     }
 
+    const updateRecordIcon = (icon: string) => {
+      if (icon) {
+        updateEntry(icon)
+      }
+    }
+
     return {
       entry: props.entry,
       updateEntry,
@@ -102,7 +112,8 @@ export default defineComponent({
       value,
       startHold,
       endHold,
-      modalIsActive
+      modalIsActive,
+      updateRecordIcon
     };
   },
 });
@@ -110,17 +121,19 @@ export default defineComponent({
 
 <template>
   <div v-if="loading">Loading...</div>
+
   <div v-if="habit.habit_type === 'Yes or No'">
     <button v-if="value === 1" @click="updateEntry(`0`)" class="habit-entry habit-entry--check" :style="{ backgroundColor: colour }">
     </button>
     <button v-else @click="updateEntry(`1`)" class="habit-entry habit-entry--close">
     </button>
   </div>
+
   <div v-if="habit.habit_type === 'Numerical'">
     <v-dialog max-width="500" v-model="modalIsActive" persistent>
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
-          @click="updateEntry(value + 1)"
+          @click="updateEntry(parseInt(value) + 1)"
           @mousedown="startHold"
           @mouseup="endHold"
           @touchstart="startHold"
@@ -148,6 +161,38 @@ export default defineComponent({
             <v-btn
               text="Update Entry"
               @click="isActive.value = false; updateEntry(value)"
+            ></v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
+  </div>
+
+  <div v-if="habit.habit_type === 'Icon'">
+    <v-dialog max-width="500" v-model="modalIsActive" persistent>
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          v-bind="activatorProps"
+          @touchstart="startHold"
+          @touchend="endHold"
+          color="surface-variant"
+          variant="flat"
+          :class="`habit-entry habit-entry--number mdi mdi-${value}`"
+        ></v-btn>
+      </template>
+
+      <template v-slot:default="{ isActive }">
+        <v-card :title="`${habit.name}: ${date}`">
+          <v-card-text>
+            <SelectIcon v-model="value.value" @update="updateRecordIcon"/>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+              text="Update Entry"
+              @click="isActive.value = false"
             ></v-btn>
           </v-card-actions>
         </v-card>

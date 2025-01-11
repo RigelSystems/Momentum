@@ -123,6 +123,8 @@ export default defineComponent({
           @click="updateEntry(value + 1)"
           @mousedown="startHold"
           @mouseup="endHold"
+          @touchstart="startHold"
+          @touchend="endHold"
           color="surface-variant"
           :text="value || 0"
           variant="flat"

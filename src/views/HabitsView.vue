@@ -157,8 +157,6 @@ export default defineComponent({
 </script>
 
 <template>
-  {{ completionPercentages }}
-
   <div class="page-header">
     <PageHeader title="My Habits" />
 

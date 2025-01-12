@@ -142,6 +142,7 @@ export default defineComponent({
           :text="value || 0"
           variant="flat"
           class="habit-entry habit-entry--number"
+          :style="{ backgroundColor: `${colour} !important` }"
         ></v-btn>
       </template>
 
@@ -178,6 +179,7 @@ export default defineComponent({
           color="surface-variant"
           variant="flat"
           :class="`habit-entry habit-entry--number mdi mdi-${value}`"
+          :style="{ backgroundColor: `${colour} !important` }"
         ></v-btn>
       </template>
 

@@ -10,6 +10,12 @@ import PageHeader from '@/components/shared/PageHeader.vue'
 import HabitGroup from '@/components/habit_groups/HabitGroup.vue'
 import HabitGroupForm from '@/components/habit_groups/HabitGroupForm.vue'
 
+interface CompletionPercentages {
+  [key: string]: {
+    [key: string]: number
+  }
+}
+
 export default defineComponent({
   name: 'HabitsView',
   components: {
@@ -28,6 +34,7 @@ export default defineComponent({
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
     const todaysCompletionPercentage = ref(0)
+    const completionPercentages = ref<CompletionPercentages>({})
     const selectedTimeFrame = ref(null)
     const availableTimeFrames = ["Today", "This Week", "This Month", "This Year"]
 
@@ -81,6 +88,7 @@ export default defineComponent({
         loading.value = false
         const responseBody = await response.json()
         todaysCompletionPercentage.value = responseBody.todays_completion_percentage
+        completionPercentages.value = responseBody.completion_percentages
         groupedHabits.value = responseBody.habits
 
       } else {
@@ -136,6 +144,7 @@ export default defineComponent({
       loading,
       errorMessage,
       lastSevenDays,
+      completionPercentages,
       getHabitEntiryForDate,
       lastSevenDaysNice,
       todaysCompletionPercentage,
@@ -148,6 +157,8 @@ export default defineComponent({
 </script>
 
 <template>
+  {{ completionPercentages }}
+
   <div class="page-header">
     <PageHeader title="My Habits" />
 
@@ -202,9 +213,14 @@ export default defineComponent({
               <span class="table-date" v-html="date"></span>
             </div>
           </div>
-          <div v-for="(habits, groupName) in groupedHabits" :key="groupName" class="table-habit-group">
 
+          <div v-for="(habits, groupName) in groupedHabits" :key="groupName" class="table-habit-group">
             <HabitGroup :habitGroup="habits[0].habit_group" />
+            <div class="completion-percentages-container">
+              <small class="table-cell" v-for="date in lastSevenDays" :key="date">
+                %{{ completionPercentages[habits[0].habit_group.name][date] }}
+              </small>
+            </div>
 
             <div
               class="table-habit-tr"
@@ -228,8 +244,6 @@ export default defineComponent({
         </div>
       </div>
     </div>
-
-
 
     <div class="mt-5 d-flex justify-space-start">
       <HabitForm>

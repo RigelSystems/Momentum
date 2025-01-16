@@ -132,6 +132,10 @@ export default defineComponent({
       return habit.habit_entries.find((entry: any) => entry.date === date);
     }
 
+    const habitComplete = (percentage: number) => {
+      return percentage === 100 ? true : false
+    }
+
     onMounted(() => {
       fetchHabits()
       fetchHabitGroups()
@@ -151,6 +155,7 @@ export default defineComponent({
       fetchHabits,
       selectedTimeFrame,
       availableTimeFrames,
+      habitComplete
     }
   },
 })
@@ -216,6 +221,7 @@ export default defineComponent({
             <HabitGroup :habitGroup="habits[0].habit_group" />
             <div class="completion-percentages-container">
               <small class="table-cell" v-for="date in lastSevenDays" :key="date">
+                <div class="habit-complete" :style="`height: ${habits.length * 40}px`" v-if="habitComplete(completionPercentages[habits[0].habit_group.name][date])"></div>
                 %{{ completionPercentages[habits[0].habit_group.name][date] }}
               </small>
             </div>

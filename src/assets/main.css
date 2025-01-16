@@ -136,6 +136,7 @@ body {
   width: 100%;
   min-width: 20px;
   text-align: center;
+  position: relative;
 }
 
 .habit-entry {
@@ -199,8 +200,21 @@ body {
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
     margin-left: 160px;
+    position: relative;
 }
 
 .completion-percentages-container .table-cell {
   font-size: 0.5rem;
+}
+
+.habit-complete {
+  content: '✓';
+  color: #64c23a;
+  position: absolute;
+  display: grid;
+  right: 6.5px;
+  top: 17px;
+  border: solid #000000a1 5px;
+  border-radius: 6px;
+  z-index: 5;
 }

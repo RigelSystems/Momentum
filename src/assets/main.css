@@ -211,18 +211,26 @@ body {
   content: '✓';
   position: absolute;
   display: grid;
-  width: 21px;
+  width: 3px;
   top: 17px;
+  left: 8px;
   border: solid #000000a1 3px;
   border-radius: 6px;
   z-index: 5;
-  background-color: #ffffff99;
 }
 
 .habit-complete span {
   transform: rotate(-90deg);
-  height: 36px;
-  width: 100%;
-  margin: auto;
-  font-weight: 900;
+    height: 11px;
+    width: 100%;
+    margin: auto;
+    font-weight: 900;
+    background-color: #ffffff;
+    padding: 5px;
+    z-index: 55;
+    position: relative;
+    left: -26px;
+    line-height: 0px;
+    border: solid 1px black;
+    border-radius: 2px;
 }

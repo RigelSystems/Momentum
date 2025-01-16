@@ -115,9 +115,12 @@ export default defineComponent({
           <v-card min-width="300">
             <v-color-picker v-model="record.colour" :modes="['hex']"></v-color-picker>
           </v-card>
+
         </v-menu>
 
         <SelectIcon v-model="record.icon" @update="updateRecordIcon"/>
+
+        <v-text-field v-model="record.goal_value" label="Goal Value" required></v-text-field>
       </v-form>
     </template>
   </RecordForm>

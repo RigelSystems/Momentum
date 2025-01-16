@@ -221,7 +221,9 @@ export default defineComponent({
             <HabitGroup :habitGroup="habits[0].habit_group" />
             <div class="completion-percentages-container">
               <small class="table-cell" v-for="date in lastSevenDays" :key="date">
-                <div class="habit-complete" :style="`height: ${habits.length * 40}px`" v-if="habitComplete(completionPercentages[habits[0].habit_group.name][date])"></div>
+                <div class="habit-complete" :style="`height: ${habits.length * 40}px`" v-if="habitComplete(completionPercentages[habits[0].habit_group.name][date])">
+                  <span>Complete</span>
+                </div>
                 %{{ completionPercentages[habits[0].habit_group.name][date] }}
               </small>
             </div>

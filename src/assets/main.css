@@ -209,12 +209,20 @@ body {
 
 .habit-complete {
   content: '✓';
-  color: #64c23a;
   position: absolute;
   display: grid;
-  right: 6.5px;
+  width: 21px;
   top: 17px;
-  border: solid #000000a1 5px;
+  border: solid #000000a1 3px;
   border-radius: 6px;
   z-index: 5;
+  background-color: #ffffff99;
+}
+
+.habit-complete span {
+  transform: rotate(-90deg);
+  height: 36px;
+  width: 100%;
+  margin: auto;
+  font-weight: 900;
 }

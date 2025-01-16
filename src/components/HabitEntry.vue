@@ -139,7 +139,7 @@ export default defineComponent({
           @touchstart="startHold"
           @touchend="endHold"
           color="surface-variant"
-          :text="value || 0"
+          :text="value || '-'"
           variant="flat"
           class="habit-entry habit-entry--number"
           :style="(value == '0' || value === null) ? null : { backgroundColor: `${colour} !important` }"

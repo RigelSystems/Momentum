@@ -33,10 +33,15 @@ export default defineComponent({
     const habitGroups = ref<Array<any>>([])
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
-    const todaysCompletionPercentage = ref(0)
     const completionPercentages = ref<CompletionPercentages>({})
     const selectedTimeFrame = ref(null)
     const availableTimeFrames = ["Today", "This Week", "This Month", "This Year"]
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todaysDateFormatted = `${year}-${month}-${day}`;
 
     function getLastXDays(days = 7) {
       const dates = [];
@@ -87,9 +92,10 @@ export default defineComponent({
       if (response.ok) {
         loading.value = false
         const responseBody = await response.json()
-        todaysCompletionPercentage.value = responseBody.todays_completion_percentage
         completionPercentages.value = responseBody.completion_percentages
         groupedHabits.value = responseBody.habits
+
+        console.log(completionPercentages.value)
 
       } else {
         loading.value = false
@@ -149,9 +155,9 @@ export default defineComponent({
       errorMessage,
       lastSevenDays,
       completionPercentages,
+      todaysDateFormatted,
       getHabitEntiryForDate,
       lastSevenDaysNice,
-      todaysCompletionPercentage,
       fetchHabits,
       selectedTimeFrame,
       availableTimeFrames,
@@ -171,15 +177,18 @@ export default defineComponent({
         <b>20th Monday</b>
       </h3>
       <p class="mb-3">72% avg / day</p>
+
       <v-progress-linear
-      color="light-blue"
-      height="25"
-      :model-value="todaysCompletionPercentage"
-      striped
-    >
-    <template v-slot:default="{ value }">
-        <strong>{{ Math.ceil(value) }}%</strong>
-      </template></v-progress-linear>
+      v-for="(data, habitGroup) in completionPercentages"
+        color="light-blue"
+        height="25"
+        :model-value="data[todaysDateFormatted]"
+        striped
+      >
+        <template v-slot:default="{ value }">
+          <strong>{{ habitGroup }} {{ Math.ceil(value) }}%</strong>
+        </template>
+      </v-progress-linear>
     </div>
   </div>
 

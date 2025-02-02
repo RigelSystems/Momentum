@@ -2,6 +2,7 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import PageHeader from '@/components/shared/PageHeader.vue'
+import ChecklistForm from '@/components/checklists/ChecklistForm.vue'
 import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue';
 import ChecklistItem from '@/components/checklist_items/ChecklistItem.vue';
 import { useRoute } from 'vue-router'
@@ -26,7 +27,8 @@ export default defineComponent({
   components: {
     PageHeader,
     ChecklistItemForm,
-    ChecklistItem
+    ChecklistItem,
+    ChecklistForm,
   },
   setup() {
     const checklist = ref<Checklist>({
@@ -94,12 +96,29 @@ export default defineComponent({
 <template>
   <div class="page-header">
     <PageHeader :title="checklist.name" />
+    <ChecklistForm :checklist="checklist">
+      <template #trigger="{ openDialog }">
+        <v-btn
+          density="default"
+          @click="openDialog"
+        >Edit checklist</v-btn>
+      </template>
+    </ChecklistForm>
+
     <v-breadcrumbs :items="breadcrumbs">
       <template v-slot:prepend>
         <v-icon icon="$vuetify" size="small"></v-icon>
       </template>
     </v-breadcrumbs>
   </div>
+
+  <ChecklistItem
+    v-for="item in checklist.checklist_items"
+    :key="item.id"
+    :checklistItem="item"
+  />
+
+  <div class="py-5"></div>
 
   <ChecklistItemForm>
     <template #trigger="{ openDialog }">
@@ -111,11 +130,5 @@ export default defineComponent({
       ></v-btn>
     </template>
   </ChecklistItemForm>
-
-  <ChecklistItem
-    v-for="item in checklist.checklist_items"
-    :key="item.id"
-    :checklistItem="item"
-  />
 </template>
 

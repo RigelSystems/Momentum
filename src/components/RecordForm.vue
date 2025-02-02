@@ -58,11 +58,30 @@ export default defineComponent({
       }
     }
 
+    const deleteRecord = async () => {
+      errorMessage.value = null
+      const response = await fetch(props.endpoint, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessTokenStore.accessToken}`, // Include the access token
+        },
+        body: JSON.stringify(localRecord.value),
+      })
+
+      if (!response.ok) {
+        errorMessage.value = await response.json()
+      } else {
+        window.location.reload()
+      }
+    }
+
     return {
       dialog,
       localRecord,
       openDialog,
       saveRecord,
+      deleteRecord,
       errorMessage,
     }
   },
@@ -93,6 +112,7 @@ export default defineComponent({
 
         <v-card-actions>
           <slot name="actions">
+            <v-btn color="red" class="mr-auto" @click="deleteRecord">Delete</v-btn>
             <v-btn color="secondary" @click="dialog = false">Cancel</v-btn>
             <v-btn color="primary" @click="saveRecord">Save</v-btn>
           </slot>

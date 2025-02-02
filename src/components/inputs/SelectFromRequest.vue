@@ -112,6 +112,8 @@ export default defineComponent({
 
 <template>
   <v-autocomplete
+    autocomplete="off"
+    variant="outlined"
     v-model="selected"
     :label="$props.label"
     :items="items"

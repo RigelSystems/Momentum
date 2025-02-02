@@ -38,6 +38,6 @@ export default defineComponent({
       </template>
     </ChecklistItemForm>
     <v-icon class="mr-2" size="small">mdi-{{ checklistItem.icon }}</v-icon>
-    <h3>{{ checklistItem.name }}</h3>
+    <h3>{{ checklistItem.name }} - {{ checklistItem.status }}</h3>
   </div>
 </template>

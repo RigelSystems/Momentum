@@ -4,6 +4,7 @@ import RecordForm from '../RecordForm.vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import SelectIcon from '../inputs/SelectIcon.vue'
 import { useRoute } from 'vue-router'
+import SelectFromRequest from '../inputs/SelectFromRequest.vue'
 
 export interface ChecklistItem {
   id?: number // Optional for new records
@@ -27,6 +28,7 @@ export default defineComponent({
   components: {
     RecordForm,
     SelectIcon,
+    SelectFromRequest,
   },
   setup(props) {
     const accessTokenStore = useAccessTokenStore()
@@ -79,9 +81,15 @@ export default defineComponent({
       <v-form>
         <input type="hidden" name="chcklist_id" v-model="record.checklist_id" />
 
-        <v-text-field v-model="record.name" label="Name" required></v-text-field>
+        <v-text-field variant="outlined" v-model="record.name" label="Name" required></v-text-field>
 
-        <v-select v-model="record.status" :items="statusOptions" label="status" required></v-select>
+        <SelectFromRequest
+          path="checklist_items/status"
+          key="name"
+          name="name"
+          v-model="record.status"
+          label="Habit Type"
+        />
       </v-form>
     </template>
   </RecordForm>

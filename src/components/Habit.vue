@@ -13,6 +13,11 @@ export interface Habit {
     id: number,
     name: string,
   },
+  users: Array<{
+    id: number,
+    name: string,
+    image: string,
+  }>,
 }
 
 export default defineComponent({

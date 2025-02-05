@@ -18,8 +18,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'], // Files to cache
       },
       manifest: {
-        start_url: '/daily-discipline/#/dashboard',
-        scope: '/daily-discipline/',
+        start_url: '/check-mate/#/dashboard',
+        scope: '/check-mate/',
         name: 'My Vue App',
         short_name: 'VueApp',
         description: 'My awesome Vue app as a PWA',
@@ -41,7 +41,7 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/daily-discipline/',
+  base: '/check-mate/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

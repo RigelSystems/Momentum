@@ -42,7 +42,7 @@ export default defineComponent({
       {
         title: 'Checklists',
         disabled: false,
-        href: '/daily-discipline/#/checklists',
+        href: '/check-mate/#/checklists',
       }
     ])
 

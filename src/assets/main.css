@@ -234,3 +234,13 @@ body {
     border: solid 1px black;
     border-radius: 2px;
 }
+
+.sm-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+}
+
+.circle {
+  border-radius: 50%;
+}

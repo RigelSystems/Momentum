@@ -80,6 +80,15 @@ export default defineComponent({
         <v-text-field v-model="record.name" label="Name" required></v-text-field>
 
         <SelectFromRequest
+          path="users"
+          key="email"
+          name="email"
+          v-model="record.users_id"
+          :multiple="true"
+          label="Users"
+        />
+
+        <SelectFromRequest
           path="habit_groups"
           key="name"
           name="habit_group_id"

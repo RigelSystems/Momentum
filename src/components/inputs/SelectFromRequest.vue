@@ -76,6 +76,7 @@ export default defineComponent({
 
 
         items.value = mappedData
+        console.log(items.value)
       } catch (error: any) {
         errorMessage.value = error instanceof Error ? error.message : String(error)
       } finally {

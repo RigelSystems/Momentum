@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from 'vue'
-import { useAccessTokenStore } from '@/stores/accessTokenStore'
+import { useAuth0 } from '@auth0/auth0-vue'
 
 export default defineComponent({
   name: 'SelectFromRequest',
@@ -31,6 +31,8 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
+    const { getAccessTokenSilently } = useAuth0()
+    const accessToken = ref<string | null>(null)
     const items = ref<string[]>([])
     const selected = ref(props.modelValue)
     const loading = ref<boolean>(true)
@@ -44,12 +46,11 @@ export default defineComponent({
       errorMessage.value = null
 
       try {
-        const accessTokenStore = useAccessTokenStore()
         const apiUrl = `${import.meta.env.VITE_API_URL}${props.path}`
         const response = await fetch(apiUrl, {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessTokenStore.accessToken}`,
+            Authorization: `Bearer ${accessToken.value}`,
           },
         })
 
@@ -84,7 +85,12 @@ export default defineComponent({
       }
     }
 
-    onMounted(() => {
+    const getAccessToken = async () => {
+      accessToken.value = await getAccessTokenSilently();
+    };
+
+    onMounted(async () => {
+      await getAccessToken()
       fetchItems()
     })
 

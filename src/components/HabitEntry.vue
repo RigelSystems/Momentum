@@ -1,11 +1,14 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { useAccessTokenStore } from '@/stores/accessTokenStore';
 import SelectIcon from './inputs/SelectIcon.vue'
 
 export default defineComponent({
   name: 'HabitEntry',
   props: {
+    accessToken: {
+      type: String,
+      required: false,
+    },
     entry: {
       type: Object,
       required: false,
@@ -36,13 +39,12 @@ export default defineComponent({
 
     const updateExistingRecord = async (new_value: String) => {
       loading = true;
-      const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries/${props.entry?.id}`
       const response = await fetch(apiUrl, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessTokenStore.accessToken}`,
+          Authorization: `Bearer ${props.accessToken}`,
         },
         body: JSON.stringify({
           value: new_value,
@@ -54,13 +56,12 @@ export default defineComponent({
 
     const createNewRecord = async (new_value: String) => {
       loading = true;
-      const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries`
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessTokenStore.accessToken}`,
+          Authorization: `Bearer ${props.accessToken}`,
         },
         body: JSON.stringify({
           habit_id: props.habit.id,

@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
-import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import { useAuth0 } from '@auth0/auth0-vue'
 import User from '@/components/User.vue'
 import Habit from '@/components/Habit.vue'
@@ -28,7 +27,9 @@ export default defineComponent({
     HabitGroupForm
   },
   setup() {
-    const { user } = useAuth0()
+    const { getAccessTokenSilently, user } = useAuth0()
+    const accessToken = ref<string | null>(null)
+
     const groupedHabits = ref<Array<any>>([])
     const habitGroups = ref<Array<any>>([])
     const loading = ref(true)
@@ -76,13 +77,13 @@ export default defineComponent({
     const lastSevenDaysNice = getLastXDaysNiceFormat(30);
 
     const fetchHabits = async () => {
-      const accessTokenStore = useAccessTokenStore()
+      console.log('accessToken', accessToken.value)
       const apiUrl = `${import.meta.env.VITE_API_URL}habits/get_habits`
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessTokenStore.accessToken}`,
+          Authorization: `Bearer ${accessToken.value}`,
         },
         body: JSON.stringify({
           time_frame: selectedTimeFrame.value
@@ -103,23 +104,21 @@ export default defineComponent({
         errorMessage.value = responseBody.error
 
         // Not ideal but it works for now
-        if (errorMessage.value === 'Access token has expired or is invalid.') {
-          accessTokenStore.$reset()
-          accessTokenStore.clearState()
-          localStorage.clear()
-          sessionStorage.clear()
-          window.location.reload()
-        }
+        // if (errorMessage.value === 'Access token has expired or is invalid.') {
+        //   localStorage.clear()
+        //   sessionStorage.clear()
+        //   window.location.reload()
+        // }
       }
     }
 
     const fetchHabitGroups = async () => {
-      const accessTokenStore = useAccessTokenStore()
+      console.log('accessToken', accessToken.value)
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_groups`
       const response = await fetch(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessTokenStore.accessToken}`,
+          Authorization: `Bearer ${accessToken.value}`,
         },
       })
 
@@ -142,12 +141,18 @@ export default defineComponent({
       return percentage === 100 ? true : false
     }
 
-    onMounted(() => {
+    const getAccessToken = async () => {
+      accessToken.value = await getAccessTokenSilently();
+    };
+
+    onMounted(async () => {
+      await getAccessToken()
       fetchHabits()
       fetchHabitGroups()
     })
 
     return {
+      accessToken,
       user,
       groupedHabits,
       habitGroups,
@@ -247,11 +252,13 @@ export default defineComponent({
               </div>
               <div class="table-cell" v-for="date in lastSevenDays" :key="date">
                 <HabitEntry
+                  v-if="accessToken"
                   :entry="getHabitEntiryForDate(habit, date)"
                   :habit="habit"
                   :date="date"
                   :colour="habit.colour"
                   :fetchHabits="fetchHabits"
+                  :accessToken="accessToken"
                 />
               </div>
             </div>

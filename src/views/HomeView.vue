@@ -10,7 +10,7 @@ export default defineComponent({
     // Reactively watch for `user` changes
     watchEffect(() => {
       if (isAuthenticated.value && user?.value?.email) {
-        window.location.href = '/check-mate/#/dashboard'
+        // window.location.href = '/check-mate/#/dashboard'
       }
     })
 

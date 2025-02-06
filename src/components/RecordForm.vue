@@ -1,6 +1,6 @@
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
-import { useAccessTokenStore } from '@/stores/accessTokenStore'
+import { defineComponent, ref, onMounted, watch } from 'vue'
+import { useAuth0 } from '@auth0/auth0-vue'
 
 export default defineComponent({
   name: 'RecordForm',
@@ -22,7 +22,8 @@ export default defineComponent({
     const dialog = ref(false)
     const localRecord = ref({ ...props.record })
     const errorMessage = ref<string | null>(null)
-    const accessTokenStore = useAccessTokenStore()
+    const { getAccessTokenSilently, user } = useAuth0()
+    const accessToken = ref<string | null>(null)
 
     watch(
       () => props.record,
@@ -43,7 +44,7 @@ export default defineComponent({
         method: props.method,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessTokenStore.accessToken}`, // Include the access token
+          Authorization: `Bearer ${accessToken.value}`, // Include the access token
         },
         body: JSON.stringify(localRecord.value),
       })
@@ -64,7 +65,7 @@ export default defineComponent({
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessTokenStore.accessToken}`, // Include the access token
+          Authorization: `Bearer ${accessToken.value}`, // Include the access token
         },
         body: JSON.stringify(localRecord.value),
       })
@@ -75,6 +76,14 @@ export default defineComponent({
         window.location.reload()
       }
     }
+
+    const getAccessToken = async () => {
+      accessToken.value = await getAccessTokenSilently();
+    };
+
+    onMounted(async () => {
+      await getAccessToken()
+    })
 
     return {
       dialog,

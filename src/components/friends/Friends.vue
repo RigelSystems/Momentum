@@ -30,10 +30,30 @@ export default defineComponent({
       loading = false;
     });
 
+    const updateFriendRequest = async (id: number, status: string) => {
+      const apiUrl = `${import.meta.env.VITE_API_URL}friends/${id}`
+      const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${props.accessToken}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+      const updatedFriend = await response.json();
+      friends.value = friends.value.map((friend) => {
+        if (friend.id === updatedFriend.id) {
+          return updatedFriend;
+        }
+        return friend;
+      });
+    };
+
     return {
       loading,
       friends,
-      user
+      updateFriendRequest,
+      user,
     };
   },
 });
@@ -46,7 +66,11 @@ export default defineComponent({
     <div v-else>
       <ul>
         <li v-for="friend in friends" :key="friend.id">
-          <span v-if="user?.email === friend.user_two.email">{{ friend.user_one.email }} Wants to be friends: <button>Accept</button> <button>Decline</button></span>
+          <span v-if="user?.email === friend.user_two.email">
+            <span>{{ friend.user_one.email }} Wants to be friends:</span>
+            <button @click="updateFriendRequest(friend.id, `accepted`)">Accept</button>
+            <button @click="updateFriendRequest(friend.id, `declined`)">Decline</button>
+          </span>
           <span v-else>{{ friend.user_two.email }} - {{ friend.status }}</span>
         </li>
       </ul>

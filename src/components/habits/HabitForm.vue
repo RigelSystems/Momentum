@@ -80,7 +80,7 @@ export default defineComponent({
         <v-text-field v-model="record.name" label="Name" required></v-text-field>
 
         <SelectFromRequest
-          path="users"
+          path="friends/friends"
           key="email"
           name="email"
           v-model="record.users_id"

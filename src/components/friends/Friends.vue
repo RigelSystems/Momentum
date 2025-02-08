@@ -72,10 +72,15 @@ export default defineComponent({
               <button @click="updateFriendRequest(friend.id, `accepted`)">Accept</button>
               <button @click="updateFriendRequest(friend.id, `declined`)">Decline</button>
             </span>
-            <span v-else>{{ friend.user_two.email }} - {{ friend.status }}</span>
+            <span v-else>{{ friend.user_one.email }} - {{ friend.status }}</span>
           </div>
           <div v-else>
-            <span>{{ friend.user_two.email }} - {{ friend.status }}</span>
+            <span v-if="user?.email === friend.user_two.email">
+              <span>{{ friend.user_one.email }} - {{ friend.status }}</span>
+            </span>
+            <span v-else>
+              <span>{{ friend.user_two.email }} - {{ friend.status }}</span>
+            </span>
           </div>
         </li>
       </ul>

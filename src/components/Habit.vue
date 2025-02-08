@@ -27,6 +27,10 @@ export default defineComponent({
       type: Object as () => Habit,
       required: true,
     },
+    fetchHabits: {
+      type: Function,
+      required: true,
+    },
   },
   components: {
     HabitForm,
@@ -36,7 +40,10 @@ export default defineComponent({
 
 <template>
   <div class="d-flex justify-space-start align-center">
-    <HabitForm :habit="habit">
+    <HabitForm
+      :habit="habit"
+      :fetchHabits="fetchHabits"
+    >
       <template #trigger="{ openDialog }">
         <v-btn
         density="default"

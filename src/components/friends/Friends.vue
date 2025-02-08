@@ -61,7 +61,7 @@ export default defineComponent({
 
 <template>
   <div>
-    <h2>Friends</h2>
+    <h2>Friends - {{ friends.length }}</h2>
     <div v-if="loading">Loading...</div>
     <div v-else>
       <ul>

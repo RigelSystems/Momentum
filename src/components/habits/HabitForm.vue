@@ -25,6 +25,10 @@ export default defineComponent({
         icon: '',
       }),
     },
+    fetchHabits: {
+      type: Function,
+      required: true,
+    }
   },
   components: {
     RecordForm,
@@ -49,8 +53,10 @@ export default defineComponent({
       props.habit.icon = icon
     }
 
-    const handleSave = async (savedRecord: Habit) => {
-      window.location.reload()
+    const handleSave = (savedRecord: Habit) => {
+      console.log('fetchHabits', props.fetchHabits)
+      console.log('handleSave', savedRecord)
+      props.fetchHabits()
     }
 
     return {

@@ -18,7 +18,7 @@ export default defineComponent({
       default: 'POST', // Default to 'POST' for creating records
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const dialog = ref(false)
     const localRecord = ref({ ...props.record })
     const errorMessage = ref<string | null>(null)
@@ -48,14 +48,14 @@ export default defineComponent({
         },
         body: JSON.stringify(localRecord.value),
       })
-      console.log(JSON.stringify(localRecord.value))
 
       if (!response.ok) {
-        console.log(JSON.stringify(localRecord.value))
+        console.log('response not ok')
         errorMessage.value = await response.json()
       } else {
-        console.log(JSON.stringify(localRecord.value))
-        window.location.reload()
+        console.log('response ok')
+        dialog.value = false
+        emit('save', localRecord.value)
       }
     }
 

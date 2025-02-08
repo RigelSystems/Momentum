@@ -77,6 +77,7 @@ export default defineComponent({
     const lastSevenDaysNice = getLastXDaysNiceFormat(30);
 
     const fetchHabits = async () => {
+      console.log('fetching habits')
       console.log('accessToken', accessToken.value)
       const apiUrl = `${import.meta.env.VITE_API_URL}habits/get_habits`
       const response = await fetch(apiUrl, {
@@ -248,7 +249,10 @@ export default defineComponent({
               :key="habit.id"
             >
               <div class="table-habit-name">
-                <Habit :habit="habit" />
+                <Habit
+                  :habit="habit"
+                  :fetchHabits="fetchHabits"
+                />
               </div>
               <div class="table-cell" v-for="date in lastSevenDays" :key="date">
                 <HabitEntry
@@ -265,10 +269,13 @@ export default defineComponent({
           </div>
         </div>
       </div>
-    </div>
+
 
     <div class="mt-5 d-flex justify-space-start">
-      <HabitForm>
+      <HabitForm
+        v-if="fetchHabits"
+        :fetchHabits="fetchHabits"
+      >
         <template #trigger="{ openDialog }">
           <v-btn
             density="comfortable"
@@ -291,5 +298,7 @@ export default defineComponent({
         </template>
       </HabitGroupForm>
     </div>
+
+  </div>
   </div>
 </template>

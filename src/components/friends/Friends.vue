@@ -66,12 +66,17 @@ export default defineComponent({
     <div v-else>
       <ul>
         <li v-for="friend in friends" :key="friend.id">
-          <span v-if="user?.email === friend.user_two.email">
-            <span>{{ friend.user_one.email }} Wants to be friends:</span>
-            <button @click="updateFriendRequest(friend.id, `accepted`)">Accept</button>
-            <button @click="updateFriendRequest(friend.id, `declined`)">Decline</button>
-          </span>
-          <span v-else>{{ friend.user_two.email }} - {{ friend.status }}</span>
+          <div v-if="friend.status === 'pending'">
+            <span v-if="user?.email === friend.user_two.email">
+              <span>{{ friend.user_one.email }} Wants to be friends:</span>
+              <button @click="updateFriendRequest(friend.id, `accepted`)">Accept</button>
+              <button @click="updateFriendRequest(friend.id, `declined`)">Decline</button>
+            </span>
+            <span v-else>{{ friend.user_two.email }} - {{ friend.status }}</span>
+          </div>
+          <div v-else>
+            <span>{{ friend.user_two.email }} - {{ friend.status }}</span>
+          </div>
         </li>
       </ul>
     </div>

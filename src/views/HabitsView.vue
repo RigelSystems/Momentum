@@ -176,11 +176,7 @@ export default defineComponent({
     <PageHeader title="My Habits" />
 
     <div class="page-header-card shadow">
-      <h3 class="d-flex justify-space-between">
-        <b>Today</b>
-        <b>20th Monday</b>
-      </h3>
-      <p class="mb-3">72% avg / day</p>
+      <h2 class="mb-3"><b>Progress</b></h2>
 
       <v-progress-linear
       v-for="(data, habitGroup) in completionPercentages"
@@ -196,7 +192,7 @@ export default defineComponent({
     </div>
   </div>
 
-  <div class="text-center horizontal-scroll">
+  <!-- <div class="text-center horizontal-scroll">
     <v-chip
       v-for="habitGroup in habitGroups"
       :key="habitGroup.id"
@@ -207,16 +203,16 @@ export default defineComponent({
       <v-icon icon="mdi-twitter" start></v-icon>
       {{ habitGroup.name }}
     </v-chip>
-  </div>
+  </div> -->
 
   <div class="page-wrapper shadow">
-    <v-autocomplete
+    <!-- <v-autocomplete
       v-model="selectedTimeFrame"
       :items="availableTimeFrames"
       label="Select Time Frame"
       outlined
       dense
-    ></v-autocomplete>
+    ></v-autocomplete> -->
 
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>

@@ -2,10 +2,13 @@
 import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
+import SelectFromRequest from '../inputs/SelectFromRequest.vue'
 
 export interface Checklist {
   id?: number
   name: string
+  description?: string
+  status?: string
 }
 
 export default defineComponent({
@@ -20,7 +23,8 @@ export default defineComponent({
     },
   },
   components: {
-    RecordForm
+    RecordForm,
+    SelectFromRequest
   },
   setup(props) {
     const accessTokenStore = useAccessTokenStore()
@@ -66,6 +70,16 @@ export default defineComponent({
     <template #form="{ record }">
       <v-form>
         <v-text-field v-model="record.name" label="Name" required></v-text-field>
+
+        <v-textarea v-model="record.description" label="Description"></v-textarea>
+
+        <SelectFromRequest
+          path="checklist_items/status"
+          key="name"
+          name="name"
+          v-model="record.status"
+          label="Habit Type"
+        />
       </v-form>
     </template>
   </RecordForm>

@@ -66,6 +66,37 @@ export default defineComponent({
       :to="`/checklists/${checklist.id}`"
     >
       <v-list-item-title>{{ checklist.name }}</v-list-item-title>
+      <v-list-item-subtitle>{{ checklist.description }}</v-list-item-subtitle>
+
+      <template v-slot:append="{ isSelected }">
+          <v-list-item-action class="flex-column align-end">
+            <small class="mb-4 text-high-emphasis opacity-60"
+              >{{ checklist.created_at }}</small
+            >
+
+            <v-spacer></v-spacer>
+
+            <div v-if="checklist.status === 'not_started'" >
+              <small>Not Started - </small>
+              <v-icon color="black-darken-3">mdi mdi-thought-bubble-outline</v-icon>
+            </div>
+
+            <div v-if="checklist.status === 'blocked'" >
+              <small>Blocked - </small>
+              <v-icon color="red-darken-3">mdi mdi-alert-octagon-outline</v-icon>
+            </div>
+
+            <div v-if="checklist.status === 'in_progress'" >
+              <small>In Progress - </small>
+              <v-icon color="green-darken-3">mdi mdi-hammer-screwdriver</v-icon>
+            </div>
+
+            <div v-if="checklist.status === 'completed'" >
+              <small>Completed - </small>
+              <v-icon color="green-darken-1">mdi mdi-check-outline</v-icon>
+            </div>
+          </v-list-item-action>
+        </template>
     </v-list-item>
   </v-list>
 

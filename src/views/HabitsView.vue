@@ -77,8 +77,6 @@ export default defineComponent({
     const lastSevenDaysNice = getLastXDaysNiceFormat(30);
 
     const fetchHabits = async () => {
-      console.log('fetching habits')
-      console.log('accessToken', accessToken.value)
       const apiUrl = `${import.meta.env.VITE_API_URL}habits/get_habits`
       const response = await fetch(apiUrl, {
         method: 'POST',

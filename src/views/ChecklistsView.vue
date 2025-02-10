@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
-import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import PageHeader from '@/components/shared/PageHeader.vue'
-import ChecklistForm from '@/components/checklists/ChecklistForm.vue';
+import ChecklistForm from '@/components/checklists/ChecklistForm.vue'
+import { useAuth0 } from '@auth0/auth0-vue'
 
 export default defineComponent({
   name: 'ChecklistsView',
@@ -11,17 +11,18 @@ export default defineComponent({
     ChecklistForm,
   },
   setup() {
+    const { getAccessTokenSilently, user } = useAuth0()
+    const accessToken = ref<string | null>(null)
     const checklists = ref<Array<any>>([])
     const errorMessage = ref<string | null>(null)
     const loading = ref(true)
 
     const fetchChecklists = async () => {
-      const accessTokenStore = useAccessTokenStore()
       const apiUrl = `${import.meta.env.VITE_API_URL}checklists`
       const response = await fetch(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessTokenStore.accessToken}`,
+          Authorization: `Bearer ${accessToken.value}`,
         },
       })
 
@@ -34,18 +35,15 @@ export default defineComponent({
         loading.value = false
         const responseBody = await response.json()
         errorMessage.value = responseBody.error
-
-        // Not ideal but it works for now
-        if (errorMessage.value === 'Access token has expired or is invalid.') {
-          accessTokenStore.$reset()
-          accessTokenStore.clearState()
-          localStorage.clear()
-          sessionStorage.clear()
-        }
       }
     }
 
-    onMounted(() => {
+    const getAccessToken = async () => {
+      accessToken.value = await getAccessTokenSilently();
+    };
+
+    onMounted(async () => {
+      await getAccessToken()
       fetchChecklists()
     })
 

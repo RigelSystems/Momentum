@@ -1,6 +1,6 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
-import { useAccessTokenStore } from '@/stores/accessTokenStore'
+import { defineComponent, onMounted, ref, watch } from 'vue'
+import { useAuth0 } from '@auth0/auth0-vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import ChecklistForm from '@/components/checklists/ChecklistForm.vue'
 import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue';
@@ -31,6 +31,9 @@ export default defineComponent({
     ChecklistForm,
   },
   setup() {
+    const { getAccessTokenSilently, user } = useAuth0()
+    const accessToken = ref<string | null>(null)
+
     const checklist = ref<Checklist>({
       name: '',
       status: '',
@@ -45,15 +48,19 @@ export default defineComponent({
         href: '/check-mate/#/checklists',
       }
     ])
+    const route = useRoute()
+    const checklistId = ref(route.params.id)
+
+    watch(() => route.params.id, (newId) => {
+      checklistId.value = newId
+    })
 
     const fetchChecklists = async () => {
-      const accessTokenStore = useAccessTokenStore()
-      const checklistId = useRoute().params.id
-      const apiUrl = `${import.meta.env.VITE_API_URL}checklists/${checklistId}`
+      const apiUrl = `${import.meta.env.VITE_API_URL}checklists/${checklistId.value}`
       const response = await fetch(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessTokenStore.accessToken}`,
+          Authorization: `Bearer ${accessToken.value}`,
         },
       })
 
@@ -70,19 +77,16 @@ export default defineComponent({
         loading.value = false
         const responseBody = await response.json()
         errorMessage.value = responseBody.error
-
-        // Not ideal but it works for now
-        if (errorMessage.value === 'Access token has expired or is invalid.') {
-          accessTokenStore.$reset()
-          accessTokenStore.clearState()
-          localStorage.clear()
-          sessionStorage.clear()
-        }
       }
     }
 
-    onMounted(() => {
-      fetchChecklists()
+    const getAccessToken = async () => {
+      accessToken.value = await getAccessTokenSilently();
+    };
+
+    onMounted(async () => {
+      await getAccessToken()
+      await fetchChecklists()
     })
 
     return {

@@ -34,6 +34,12 @@ const router = createRouter({
       beforeEnter: authGuard,
     },
     {
+      path: '/habits/:id',
+      name: 'habit',
+      component: () => import('../views/HabitView.vue'),
+      beforeEnter: authGuard,
+    },
+    {
       path: '/checklists',
       name: 'checklists',
       component: () => import('../views/ChecklistsView.vue'),

@@ -1,7 +1,8 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import Drawing from '@/components/Drawing.vue'
+import { useAuth0 } from '@auth0/auth0-vue'
 
 export default defineComponent({
   name: 'DashboardView',
@@ -9,6 +10,22 @@ export default defineComponent({
     PageHeader,
     Drawing,
   },
+  setup() {
+    const { getAccessTokenSilently, user } = useAuth0()
+    const accessToken = ref<string | null>(null)
+
+    const getAccessToken = async () => {
+      accessToken.value = await getAccessTokenSilently();
+    };
+
+    onMounted(async () => {
+      await getAccessToken()
+    })
+
+    return {
+      accessToken
+    }
+  }
 })
 </script>
 
@@ -18,6 +35,6 @@ export default defineComponent({
   </div>
 
   <div class="page-content">
-    <Drawing />
+    <Drawing :accessToken="accessToken"/>
   </div>
 </template>

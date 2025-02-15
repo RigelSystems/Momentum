@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 
 export default defineComponent({
   name: 'Drawing',
@@ -10,14 +10,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // Define the color palette
-    const palette = ref<string[]>(['#ffffff', '#000000', '#ff0000', '#00ff00', '#0000ff']);
-    const selectedColor = ref<string>(palette.value[1]); // Default color
+    const selectedColor = ref<string>('#000000'); // Default color
     const icons = ref<string[]>([]);
 
     // Initialize the 8×8 grid with white color by default
     const pixelData = ref<string[][]>(
-      Array.from({ length: 8 }, () => Array(8).fill(palette.value[0]))
+      Array.from({ length: 8 }, () => Array(8).fill('#ffffff'))
     );
 
     // Function to change the color of a pixel
@@ -28,7 +26,6 @@ export default defineComponent({
     // Function to save the current pixel data as JSON
     const saveIcon = () => {
       const iconJson = JSON.stringify(pixelData.value);
-      console.log('Icon JSON:', iconJson);
 
       const apiUrl = `${import.meta.env.VITE_API_URL}icons`;
       fetch(apiUrl, {
@@ -77,9 +74,7 @@ export default defineComponent({
       }
     });
 
-
     return {
-      palette,
       selectedColor,
       pixelData,
       changeColor,
@@ -92,13 +87,7 @@ export default defineComponent({
 
 <template>
   <div class="palette">
-    <div
-      v-for="color in palette"
-      :key="color"
-      class="palette-color"
-      :style="{ backgroundColor: color }"
-      @click="selectedColor = color"
-    />
+    <input type="color" v-model="selectedColor" class="color-picker" />
   </div>
 
   <div class="pixel-canvas">
@@ -139,12 +128,11 @@ export default defineComponent({
   margin-bottom: 10px;
 }
 
-.palette-color {
-  width: 30px;
+.color-picker {
+  width: 100px;
   height: 30px;
-  border: 1px solid #ccc;
+  border: none;
   cursor: pointer;
-  margin-right: 5px;
 }
 
 .pixel-canvas {

@@ -1,17 +1,21 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
 
+export interface Icon {
+  id: number;
+  pixel_data: string[][];
+}
+
 export default defineComponent({
   name: 'Drawing',
   props: {
     accessToken: {
-      type: String,
-      required: true
+      type: String
     },
   },
   setup(props) {
     const selectedColor = ref<string>('#000000'); // Default color
-    const icons = ref<string[]>([]);
+    const icons = ref<Icon[]>([]);
 
     // Initialize the 8×8 grid with white color by default
     const pixelData = ref<string[][]>(

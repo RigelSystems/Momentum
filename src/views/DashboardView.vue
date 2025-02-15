@@ -12,7 +12,7 @@ export default defineComponent({
   },
   setup() {
     const { getAccessTokenSilently, user } = useAuth0()
-    const accessToken = ref<string | null>(null)
+    const accessToken = ref<string | undefined>(undefined)
 
     const getAccessToken = async () => {
       accessToken.value = await getAccessTokenSilently();

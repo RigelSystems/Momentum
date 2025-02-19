@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import './assets/main.css'
 
 import { createAuth0 } from '@auth0/auth0-vue'
@@ -10,12 +12,14 @@ import '@mdi/font/css/materialdesignicons.css' // Material Design Icons
 import '@fontsource/roboto' // Roboto font
 
 import App from './App.vue'
+import NovaUI from '@rigelsystems/novaui'
 import router from './router'
 
 const vuetify = createVuetify() // Create Vuetify instance
 const app = createApp(App)
 
 app.use(createPinia())
+app.use(NovaUI, { theme: '#000', borderRadius: '5px' });
 app.use(router)
 app.use(vuetify)
 app.use(

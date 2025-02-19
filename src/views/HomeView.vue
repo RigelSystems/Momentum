@@ -25,6 +25,6 @@ export default defineComponent({
 <template>
   <h1>Home</h1>
   <main>
-    <v-btn @click="loginWithRedirect" color="primary">Log In</v-btn>
+    <n-button label="Log In" primary @click="loginWithRedirect"/>
   </main>
 </template>

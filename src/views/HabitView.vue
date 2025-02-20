@@ -26,7 +26,7 @@ export default defineComponent({
       {
         title: 'Habits',
         disabled: false,
-        href: '/check-mate/#/habits',
+        href: '/momentum/#/habits',
       }
     ])
     const habit = ref({} as Habit)

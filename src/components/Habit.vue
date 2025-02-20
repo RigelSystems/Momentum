@@ -61,7 +61,7 @@ export default defineComponent({
       </div>
     </div>
     <div>
-      <a :href="`/check-mate/#/habits/${ habit.id }`">{{ habit.name }}</a>
+      <a :href="`/momentum/#/habits/${ habit.id }`">{{ habit.name }}</a>
     </div>
   </div>
 </template>

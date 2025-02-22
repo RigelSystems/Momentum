@@ -42,6 +42,8 @@ export default defineComponent({
       accessToken.value = await getAccessTokenSilently();
     };
 
+    const updateUrl = `${import.meta.env.VITE_API_URL}checklists/bulk_update`
+
     onMounted(async () => {
       await getAccessToken()
       fetchChecklists()
@@ -49,6 +51,9 @@ export default defineComponent({
 
     return {
       checklists,
+      loading,
+      accessToken,
+      updateUrl
     }
   },
 })
@@ -59,24 +64,17 @@ export default defineComponent({
     <PageHeader title="Checklists" />
   </div>
 
-  <v-list>
-    <v-list-item
-      v-for="checklist in checklists"
-      :key="checklist.id"
-      :to="`/checklists/${checklist.id}`"
-    >
-      <v-list-item-title>{{ checklist.name }}</v-list-item-title>
-      <v-list-item-subtitle>{{ checklist.description }}</v-list-item-subtitle>
-
-      <template v-slot:append="{ isSelected }">
-          <v-list-item-action class="flex-column align-end">
-            <small class="mb-4 text-high-emphasis opacity-60"
-              >{{ checklist.created_at }}</small
-            >
-
-            <v-spacer></v-spacer>
-
-            <div v-if="checklist.status === 'not_started'" >
+  <NOrderList
+    :items="checklists"
+    :updateUrl="updateUrl"
+    :loading="loading"
+    :accessToken="accessToken"
+    modelName="checklists"
+  >
+    <template #default="checklist">
+      <h3>{{  checklist.name }}</h3>
+      <p>{{ checklist.description }}</p>
+      <div v-if="checklist.status === 'not_started'" >
               <small>Not Started - </small>
               <v-icon color="black-darken-3">mdi mdi-thought-bubble-outline</v-icon>
             </div>
@@ -95,10 +93,14 @@ export default defineComponent({
               <small>Completed - </small>
               <v-icon color="green-darken-1">mdi mdi-check-outline</v-icon>
             </div>
-          </v-list-item-action>
-        </template>
-    </v-list-item>
-  </v-list>
+      <RouterLink
+        :to="{ name: 'checklist', params: { id: checklist.id } }"
+        class="mr-2"
+      >
+      View
+      </RouterLink>
+    </template>
+  </NOrderList>
 
   <ChecklistForm>
     <template #trigger="{ openDialog }">

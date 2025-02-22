@@ -64,7 +64,7 @@ export default defineComponent({
     <PageHeader title="Checklists" />
   </div>
 
-  <NOrderList
+  <n-order-list
     :items="checklists"
     :updateUrl="updateUrl"
     :loading="loading"
@@ -100,7 +100,7 @@ export default defineComponent({
       View
       </RouterLink>
     </template>
-  </NOrderList>
+  </n-order-list>
 
   <ChecklistForm>
     <template #trigger="{ openDialog }">

@@ -132,6 +132,15 @@ body {
   padding-bottom: 0.25rem;
 }
 
+.table-habit-tr .list-item {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.table-habit-group .list-container {
+  display: block;
+}
+
 .table-cell {
   width: 100%;
   min-width: 20px;

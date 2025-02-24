@@ -144,6 +144,8 @@ export default defineComponent({
       accessToken.value = await getAccessTokenSilently();
     };
 
+    const habitBulkUpdateUrl = `${import.meta.env.VITE_API_URL}habits/bulk_update`
+
     onMounted(async () => {
       await getAccessToken()
       fetchHabits()
@@ -165,7 +167,8 @@ export default defineComponent({
       fetchHabits,
       selectedTimeFrame,
       availableTimeFrames,
-      habitComplete
+      habitComplete,
+      habitBulkUpdateUrl
     }
   },
 })
@@ -228,6 +231,7 @@ export default defineComponent({
 
           <div v-for="(habits, groupName) in groupedHabits" :key="groupName" class="table-habit-group">
             <HabitGroup :habitGroup="habits[0].habit_group" />
+
             <div class="completion-percentages-container">
               <small class="table-cell" v-for="date in lastSevenDays" :key="date">
                 <div class="habit-complete" :style="`height: ${habits.length * 40}px`" v-if="habitComplete(completionPercentages[habits[0].habit_group.name][date]) && habits.length > 1">
@@ -237,33 +241,37 @@ export default defineComponent({
               </small>
             </div>
 
-            <div
+            <n-order-list
               class="table-habit-tr"
-              v-for="habit in habits"
-              :key="habit.id"
+              :items="habits"
+              :updateUrl="habitBulkUpdateUrl"
+              :loading="loading"
+              :accessToken="accessToken"
+              modelName="habits"
             >
-              <div class="table-habit-name">
-                <Habit
-                  :habit="habit"
-                  :fetchHabits="fetchHabits"
-                />
-              </div>
-              <div class="table-cell" v-for="date in lastSevenDays" :key="date">
-                <HabitEntry
-                  v-if="accessToken"
-                  :entry="getHabitEntiryForDate(habit, date)"
-                  :habit="habit"
-                  :date="date"
-                  :colour="habit.colour"
-                  :fetchHabits="fetchHabits"
-                  :accessToken="accessToken"
-                />
-              </div>
-            </div>
+              <template #default="habit">
+                <div class="table-habit-name">
+                  <Habit
+                    :habit="habit"
+                    :fetchHabits="fetchHabits"
+                  />
+                </div>
+                <div class="table-cell" v-for="date in lastSevenDays" :key="date">
+                  <HabitEntry
+                    v-if="accessToken"
+                    :entry="getHabitEntiryForDate(habit, date)"
+                    :habit="habit"
+                    :date="date"
+                    :colour="habit.colour"
+                    :fetchHabits="fetchHabits"
+                    :accessToken="accessToken"
+                  />
+                </div>
+              </template>
+            </n-order-list>
           </div>
         </div>
       </div>
-
 
     <div class="mt-5 d-flex justify-space-start">
       <HabitForm
@@ -292,7 +300,6 @@ export default defineComponent({
         </template>
       </HabitGroupForm>
     </div>
-
   </div>
   </div>
 </template>

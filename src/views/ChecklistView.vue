@@ -121,9 +121,7 @@ export default defineComponent({
     :key="item.id"
     :checklistItem="item"
   />
-
   <div class="py-5"></div>
-
   <ChecklistItemForm>
     <template #trigger="{ openDialog }">
       <v-btn

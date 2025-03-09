@@ -230,45 +230,51 @@ export default defineComponent({
           </div>
 
           <div v-for="(habits, groupName) in groupedHabits" :key="groupName" class="table-habit-group">
-            <HabitGroup :habitGroup="habits[0].habit_group" />
-
-            <div class="completion-percentages-container">
-              <small class="table-cell" v-for="date in lastSevenDays" :key="date">
-                <div class="habit-complete" :style="`height: ${habits.length * 40}px`" v-if="habitComplete(completionPercentages[habits[0].habit_group.name][date]) && habits.length > 1">
-                  <span>Complete</span>
-                </div>
-                %{{ completionPercentages[habits[0].habit_group.name][date] }}
-              </small>
-            </div>
-
-            <n-order-list
-              class="table-habit-tr"
-              :items="habits"
-              :updateUrl="habitBulkUpdateUrl"
-              :loading="loading"
-              :accessToken="accessToken"
-              modelName="habits"
-            >
-              <template #default="habit">
-                <div class="table-habit-name">
-                  <Habit
-                    :habit="habit"
-                    :fetchHabits="fetchHabits"
-                  />
-                </div>
-                <div class="table-cell" v-for="date in lastSevenDays" :key="date">
-                  <HabitEntry
-                    v-if="accessToken"
-                    :entry="getHabitEntiryForDate(habit, date)"
-                    :habit="habit"
-                    :date="date"
-                    :colour="habit.colour"
-                    :fetchHabits="fetchHabits"
-                    :accessToken="accessToken"
-                  />
-                </div>
+            <n-dropdown>
+              <template #label>
+                <HabitGroup :habitGroup="habits[0].habit_group" />
               </template>
-            </n-order-list>
+
+              <template #content>
+                <div class="completion-percentages-container">
+                  <small class="table-cell" v-for="date in lastSevenDays" :key="date">
+                    <div class="habit-complete" :style="`height: ${habits.length * 40}px`" v-if="habitComplete(completionPercentages[habits[0].habit_group.name][date]) && habits.length > 1">
+                      <span>Complete</span>
+                    </div>
+                    %{{ completionPercentages[habits[0].habit_group.name][date] }}
+                  </small>
+                </div>
+
+                <n-order-list
+                  class="table-habit-tr"
+                  :items="habits"
+                  :updateUrl="habitBulkUpdateUrl"
+                  :loading="loading"
+                  :accessToken="accessToken"
+                  modelName="habits"
+                >
+                  <template #default="habit">
+                    <div class="table-habit-name">
+                      <Habit
+                        :habit="habit"
+                        :fetchHabits="fetchHabits"
+                      />
+                    </div>
+                    <div class="table-cell" v-for="date in lastSevenDays" :key="date">
+                      <HabitEntry
+                        v-if="accessToken"
+                        :entry="getHabitEntiryForDate(habit, date)"
+                        :habit="habit"
+                        :date="date"
+                        :colour="habit.colour"
+                        :fetchHabits="fetchHabits"
+                        :accessToken="accessToken"
+                      />
+                    </div>
+                  </template>
+                </n-order-list>
+              </template>
+            </n-dropdown>
           </div>
         </div>
       </div>

@@ -26,7 +26,7 @@ export default defineComponent({
       {
         title: 'Habits',
         disabled: false,
-        href: '/momentum/#/habits',
+        href: '/#/habits',
       }
     ])
     const habit = ref({} as Habit)

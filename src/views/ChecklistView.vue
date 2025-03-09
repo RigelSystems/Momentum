@@ -45,7 +45,7 @@ export default defineComponent({
       {
         title: 'Checklists',
         disabled: false,
-        href: '/momentum/#/checklists',
+        href: '/#/checklists',
       }
     ])
     const route = useRoute()

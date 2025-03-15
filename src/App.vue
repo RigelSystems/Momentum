@@ -12,6 +12,47 @@ export default defineComponent({
   setup() {
     const accessTokenStore = useAccessTokenStore()
     const { getAccessTokenSilently } = useAuth0()
+    const links = [
+      {
+        label: 'Home',
+        url: '/',
+      },
+      {
+        label: 'Dashboard',
+        url: '/#/dashboard',
+      },
+      {
+        label: 'Habits',
+        url: '/#/habits',
+      },
+      {
+        label: 'Checklists',
+        url: '/#/checklists',
+      },
+      {
+        label: 'Account',
+        url: '/#/account',
+      },
+    ]
+
+    const mobileBottomLinks = [
+      {
+        label: 'Dashboard',
+        url: '/#/dashboard',
+      },
+      {
+        label: 'Habits',
+        url: '/#/habits',
+      },
+      {
+        label: 'Checklists',
+        url: '/#/checklists',
+      },
+      {
+        label: 'Account',
+        url: '/#/account',
+      },
+    ]
 
     // if (!accessTokenStore.accessToken) {
     //   getAccessTokenSilently({ cacheMode: 'on' })
@@ -22,12 +63,17 @@ export default defineComponent({
     //       console.error('Error fetching access token:', error)
     //     })
     // }
+    return {
+      links,
+      mobileBottomLinks
+    }
   },
 })
 </script>
 
 <template>
-  <Navigation />
+  <NNavigationBar :links="links" :mobile-bottom-links="mobileBottomLinks" />
+  <router-view />
 </template>
 
 <style scoped>

@@ -96,9 +96,9 @@ body {
   text-align: center;
   margin: auto;
   font-weight: 700;
-  line-height: 15px;
+  line-height: 9px;
   padding-bottom: 0.5rem;
-  font-size: 0.75rem;
+  font-size: 0.5rem;
 }
 
 .habit-table th {
@@ -208,8 +208,9 @@ body {
     gap: 0.5rem;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
-    margin-left: 160px;
+    margin-left: 171px;
     position: relative;
+    font-size: 0.5rem;
 }
 
 .completion-percentages-container .table-cell {
@@ -252,4 +253,10 @@ body {
 
 .circle {
   border-radius: 50%;
+}
+
+/* patch NovaUI for now */
+
+.n-dropdown__content {
+  overflow-x: scroll !important;
 }

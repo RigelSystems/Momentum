@@ -223,12 +223,6 @@ export default defineComponent({
     <div v-else>
       <div class="habit-table">
         <div class="horizontal-scroll">
-          <div class="table-habit-tr table-habit-dates">
-            <div class="table-cell" v-for="date in lastSevenDaysNice">
-              <span class="table-date" v-html="date"></span>
-            </div>
-          </div>
-
           <div v-for="(habits, groupName) in groupedHabits" :key="groupName" class="table-habit-group">
             <n-dropdown>
               <template #label>
@@ -237,11 +231,8 @@ export default defineComponent({
 
               <template #content>
                 <div class="completion-percentages-container">
-                  <small class="table-cell" v-for="date in lastSevenDays" :key="date">
-                    <div class="habit-complete" :style="`height: ${habits.length * 40}px`" v-if="habitComplete(completionPercentages[habits[0].habit_group.name][date]) && habits.length > 1">
-                      <span>Complete</span>
-                    </div>
-                    %{{ completionPercentages[habits[0].habit_group.name][date] }}
+                  <small class="table-cell" v-for="date in lastSevenDaysNice" :key="date">
+                    <span class="table-date" v-html="date"></span>
                   </small>
                 </div>
 

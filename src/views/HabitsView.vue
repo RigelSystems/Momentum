@@ -231,6 +231,7 @@ export default defineComponent({
 
               <template #content>
                 <div class="completion-percentages-container">
+                  <div class="table-habit-name"></div>
                   <small class="table-cell" v-for="date in lastSevenDaysNice" :key="date">
                     <span class="table-date" v-html="date"></span>
                   </small>

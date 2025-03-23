@@ -24,7 +24,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="table-group-name">
+  <div class="table-group-name habit-group">
     <div class="habit-group__name-wrapper">
       <h3>{{ habitGroup.name }}</h3>
       <v-icon class="mr-2" size="x-small">mdi-{{ habitGroup.icon }}</v-icon>

@@ -55,13 +55,14 @@ export default defineComponent({
       </template>
     </HabitForm>
     <v-icon class="mr-1">mdi-{{ habit.icon }}</v-icon>
-    <div class="mr-1" v-if="habit.users.length > 1">
-      <div v-for="user in habit.users" :key="user.id">
-        <img class="sm-icon circle" :src="user.image" :alt="user.name" />
-      </div>
-    </div>
     <div>
       <a :href="`/#/habits/${ habit.id }`">{{ habit.name }}</a>
     </div>
   </div>
 </template>
+
+<style scoped>
+.v-icon--size-default {
+  font-size: 0.75rem;
+}
+</style>

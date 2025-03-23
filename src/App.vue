@@ -37,19 +37,19 @@ export default defineComponent({
 
     const mobileBottomLinks = [
       {
-        label: 'Dashboard',
+        icon: 'mdi-view-dashboard-outline',
         url: '/#/dashboard',
       },
       {
-        label: 'Habits',
+        icon: 'mdi-check-circle-outline',
         url: '/#/habits',
       },
       {
-        label: 'Checklists',
+        icon: 'mdi-format-list-numbered',
         url: '/#/checklists',
       },
       {
-        label: 'Account',
+        icon: 'mdi-account-outline',
         url: '/#/account',
       },
     ]

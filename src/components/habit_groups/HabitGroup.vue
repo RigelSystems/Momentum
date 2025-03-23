@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import HabitGroupForm from '@/components/habit_groups/HabitGroupForm.vue'
+import './HabitGroup.css'
 
 export interface HabitGroup {
   id?: number,
@@ -24,6 +25,11 @@ export default defineComponent({
 
 <template>
   <div class="table-group-name">
+    <div class="habit-group__name-wrapper">
+      <h3>{{ habitGroup.name }}</h3>
+      <v-icon class="mr-2" size="x-small">mdi-{{ habitGroup.icon }}</v-icon>
+    </div>
+
     <HabitGroupForm :habitGroup="habitGroup">
       <template #trigger="{ openDialog }">
         <v-btn
@@ -35,7 +41,5 @@ export default defineComponent({
         ></v-btn>
       </template>
     </HabitGroupForm>
-    <v-icon class="mr-2" size="small">mdi-{{ habitGroup.icon }}</v-icon>
-    <h3>{{ habitGroup.name }}</h3>
   </div>
 </template>

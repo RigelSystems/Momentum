@@ -200,6 +200,8 @@ body {
 .table-group-name {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .table-group-name h3 {

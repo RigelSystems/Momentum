@@ -1,6 +1,7 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue'
 import Navigation from './components/Navigation.vue'
+import { useRoute } from 'vue-router'
 import { useAuth0 } from '@auth0/auth0-vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 
@@ -12,6 +13,18 @@ export default defineComponent({
   setup() {
     const accessTokenStore = useAccessTokenStore()
     const { getAccessTokenSilently } = useAuth0()
+
+    const currentPath = ref(window.location.hash.replace(/^#/, '') || '/')
+    const updatePath = () => {
+      currentPath.value = "/#" + window.location.hash.replace(/^#/, '') || '/'
+    }
+    onMounted(() => {
+      window.addEventListener('hashchange', updatePath)
+    })
+    onBeforeUnmount(() => {
+      window.removeEventListener('hashchange', updatePath)
+    })
+
     const links = [
       {
         label: 'Home',
@@ -65,14 +78,15 @@ export default defineComponent({
     // }
     return {
       links,
-      mobileBottomLinks
+      mobileBottomLinks,
+      currentPath,
     }
   },
 })
 </script>
 
 <template>
-  <NNavigationBar :links="links" :mobile-bottom-links="mobileBottomLinks" />
+  <NNavigationBar :links="links" :mobile-bottom-links="mobileBottomLinks" :current-path="currentPath" />
   <router-view />
 </template>
 

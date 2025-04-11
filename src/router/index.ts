@@ -34,6 +34,12 @@ const router = createRouter({
       beforeEnter: authGuard,
     },
     {
+      path: '/timeline',
+      name: 'timeline',
+      component: () => import('../views/TimelineView.vue'),
+      beforeEnter: authGuard,
+    },
+    {
       path: '/habits/:id',
       name: 'habit',
       component: () => import('../views/HabitView.vue'),

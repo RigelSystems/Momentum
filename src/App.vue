@@ -39,6 +39,10 @@ export default defineComponent({
         url: '/#/habits',
       },
       {
+        label: 'Timeline',
+        url: '/#/timeline',
+      },
+      {
         label: 'Checklists',
         url: '/#/checklists',
       },

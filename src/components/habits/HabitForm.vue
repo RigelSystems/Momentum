@@ -11,6 +11,7 @@ export interface Habit {
   colour: string,
   icon: string,
   habit_group_id: number,
+  start_time: string,
 }
 
 export default defineComponent({
@@ -38,6 +39,7 @@ export default defineComponent({
   setup(props) {
     const accessTokenStore = useAccessTokenStore()
     const value = ref<string[]>([])
+      const allowedMinutes = v => v % 5 === 0
 
     const isEditMode = computed(() => !!props.habit.id)
 
@@ -65,7 +67,8 @@ export default defineComponent({
       method,
       handleSave,
       value,
-      updateRecordIcon
+      updateRecordIcon,
+      allowedMinutes
     }
   },
 })
@@ -109,6 +112,26 @@ export default defineComponent({
           v-model="record.habit_type"
           label="Habit Type"
         />
+
+        <v-time-picker
+          key="start_time"
+          v-model="record.start_time"
+          format="24hr"
+          :allowed-minutes="allowedMinutes"
+        >
+
+        </v-time-picker>
+
+        <v-number-input
+          :reverse="false"
+          controlVariant="default"
+          label="Duration"
+          :hideInput="false"
+          :inset="false"
+          key="duration"
+          name="duration"
+          v-model="record.duration"
+        ></v-number-input>
 
         <v-menu :close-on-content-click="false" location="end">
           <template v-slot:activator="{ props }">

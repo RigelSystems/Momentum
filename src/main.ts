@@ -7,6 +7,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import { createVuetify } from 'vuetify'
+import { VTimePicker } from 'vuetify/labs/VTimePicker'
 import 'vuetify/styles' // Import Vuetify styles
 import '@mdi/font/css/materialdesignicons.css' // Material Design Icons
 import '@fontsource/roboto' // Roboto font
@@ -15,7 +16,11 @@ import App from './App.vue'
 import NovaUI from '@rigelsystems/novaui'
 import router from './router'
 
-const vuetify = createVuetify() // Create Vuetify instance
+const vuetify = createVuetify({
+  components: {
+    VTimePicker,
+  },
+}) // Create Vuetify instance
 const app = createApp(App)
 
 app.use(createPinia())

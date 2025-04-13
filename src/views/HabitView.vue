@@ -3,6 +3,10 @@ import { defineComponent, onMounted, ref, watch } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import { useRoute } from 'vue-router'
+import Habit from '@/components/habits/Habit.vue'
+import HabitEntry from '@/components/HabitEntry.vue'
+import { getLastXDaysFormatted } from '@/utils/dateUtils'
+import requestApi from '@/utils/requestApi'
 
 interface Habit {
   id: number
@@ -16,8 +20,12 @@ export default defineComponent({
   name: 'HabitView',
   components: {
     PageHeader,
+    HabitEntry,
+    Habit,
   },
   setup() {
+    const lastSevenDays = getLastXDaysFormatted(30, 'YYYY-MM-DD');
+    const lastSevenDaysNice = getLastXDaysFormatted(30, 'ddd<br>D');
     const { getAccessTokenSilently, user } = useAuth0()
     const accessToken = ref<string | null>(null)
     const errorMessage = ref<string | null>(null)
@@ -37,30 +45,24 @@ export default defineComponent({
       habitId.value = newId
     })
 
-    const fetchHabit = async () => {
-      const apiUrl = `${import.meta.env.VITE_API_URL}habits/${habitId.value}`
-      const response = await fetch(apiUrl, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken.value}`,
-        },
-      })
+    onMounted(async () => {
+     const apiUrl = `${import.meta.env.VITE_API_URL}habits/${habitId.value}`
+      const fetchRecords = requestApi(apiUrl, 'GET')
 
-      if (response.ok) {
-        loading.value = false
-        const responseBody = await response.json()
-        habit.value = responseBody
+      try {
+        const data = await fetchRecords()
+        console.log('Habit data:', data)
+        habit.value = data
         breadcrumbs.value.push({
-          title: responseBody.name,
+          title: data.name,
           disabled: true,
           href: `/habits/${habitId}`,
         })
-      } else {
-        loading.value = false
-        const responseBody = await response.json()
-        errorMessage.value = responseBody.error
+      } catch (e) {
+        errorMessage.value = 'Failed to fetch records'
       }
-    }
+      loading.value = false
+    })
 
     const getAccessToken = async () => {
       accessToken.value = await getAccessTokenSilently();
@@ -68,12 +70,19 @@ export default defineComponent({
 
     onMounted(async () => {
       await getAccessToken()
-      await fetchHabit()
     })
+
+    const getHabitEntiryForDate = (habit: any, date: string) => {
+      return habit.habit_entries.find((entry: any) => entry.date === date);
+    }
 
     return {
       habit,
-      breadcrumbs
+      breadcrumbs,
+      lastSevenDays,
+      lastSevenDaysNice,
+      getHabitEntiryForDate,
+      accessToken
     }
   },
 })
@@ -88,6 +97,36 @@ export default defineComponent({
         <v-icon icon="$vuetify" size="small"></v-icon>
       </template>
     </v-breadcrumbs>
+  </div>
+
+  <div class="page-wrapper shadow">
+    <div class="completion-percentages-container">
+      <div class="table-habit-name"></div>
+      <small class="table-cell" v-for="date in lastSevenDaysNice" :key="date">
+        <span class="table-date" v-html="date"></span>
+      </small>
+    </div>
+
+    <div class="habit-entires__container">
+      <div class="table-habit-name">
+        <Habit
+          :habit="habit"
+          :fetchHabits="fetchHabits"
+        />
+      </div>
+
+      <div class="table-cell" v-for="date in lastSevenDays" :key="date">
+        <HabitEntry
+          v-if="accessToken"
+          :entry="getHabitEntiryForDate(habit, date)"
+          :habit="habit"
+          :date="date"
+          :colour="habit.colour"
+          :fetchHabits="fetchHabits"
+          :accessToken="accessToken"
+        />
+      </div>
+    </div>
   </div>
 </template>
 

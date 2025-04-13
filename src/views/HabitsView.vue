@@ -1,13 +1,16 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
+import dayjs from 'dayjs'
 import User from '@/components/User.vue'
-import Habit from '@/components/Habit.vue'
+import Habit from '@/components/habits/Habit.vue'
 import HabitForm from '@/components/habits/HabitForm.vue'
 import HabitEntry from '@/components/HabitEntry.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import HabitGroup from '@/components/habit_groups/HabitGroup.vue'
 import HabitGroupForm from '@/components/habit_groups/HabitGroupForm.vue'
+import { getLastXDaysFormatted } from '@/utils/dateUtils'
+import requestApi from '@/utils/requestApi'
 
 interface CompletionPercentages {
   [key: string]: {
@@ -35,46 +38,10 @@ export default defineComponent({
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
     const completionPercentages = ref<CompletionPercentages>({})
-    const selectedTimeFrame = ref(null)
-    const availableTimeFrames = ["Today", "This Week", "This Month", "This Year"]
 
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const todaysDateFormatted = `${year}-${month}-${day}`;
-
-    function getLastXDays(days = 7) {
-      const dates = [];
-      const today = new Date();
-
-      for (let i = 0; i < days; i++) {
-        const date = new Date();
-        date.setDate(today.getDate() - i);
-        const formattedDate = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-        dates.push(formattedDate);
-      }
-
-      return dates;
-    }
-    const lastSevenDays = getLastXDays(30);
-
-    function getLastXDaysNiceFormat(days = 7) {
-      const dates = [];
-      const today = new Date();
-      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-      for (let i = 0; i < days; i++) {
-        const date = new Date();
-        date.setDate(today.getDate() - i);
-        const dayName = daysOfWeek[date.getDay()];
-        const dayOfMonth = date.getDate();
-        dates.push(`${dayName}<br>${dayOfMonth}`);
-      }
-
-      return dates;
-    }
-    const lastSevenDaysNice = getLastXDaysNiceFormat(30);
+    const todaysDateFormatted = dayjs().format('YYYY-MM-DD');
+    const lastSevenDays = getLastXDaysFormatted(30, 'YYYY-MM-DD');
+    const lastSevenDaysNice = getLastXDaysFormatted(30, 'ddd<br>D');
 
     const fetchHabits = async () => {
       const apiUrl = `${import.meta.env.VITE_API_URL}habits/get_habits`
@@ -84,9 +51,6 @@ export default defineComponent({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken.value}`,
         },
-        body: JSON.stringify({
-          time_frame: selectedTimeFrame.value
-        }),
       })
 
       if (response.ok) {
@@ -165,8 +129,6 @@ export default defineComponent({
       getHabitEntiryForDate,
       lastSevenDaysNice,
       fetchHabits,
-      selectedTimeFrame,
-      availableTimeFrames,
       habitComplete,
       habitBulkUpdateUrl
     }
@@ -195,28 +157,7 @@ export default defineComponent({
     </div>
   </div>
 
-  <!-- <div class="text-center horizontal-scroll">
-    <v-chip
-      v-for="habitGroup in habitGroups"
-      :key="habitGroup.id"
-      class="ma-2 shadow"
-      color="blue"
-      label
-    >
-      <v-icon icon="mdi-twitter" start></v-icon>
-      {{ habitGroup.name }}
-    </v-chip>
-  </div> -->
-
   <div class="page-wrapper shadow">
-    <!-- <v-autocomplete
-      v-model="selectedTimeFrame"
-      :items="availableTimeFrames"
-      label="Select Time Frame"
-      outlined
-      dense
-    ></v-autocomplete> -->
-
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
     <div v-else-if="groupedHabits.length === 0">No habits found</div>

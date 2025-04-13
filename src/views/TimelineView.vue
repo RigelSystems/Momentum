@@ -2,50 +2,46 @@
 import { defineComponent, watchEffect, ref, onMounted } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import dayjs from 'dayjs'
+import requestApi from '../utils/requestApi'
+import Habit from '@/components/habits/Habit.vue'
 
 export default defineComponent({
   name: 'TimelineView',
+  components: {
+    Habit,
+  },
   setup() {
-    const { getAccessTokenSilently, user } = useAuth0()
-    const accessToken = ref<string | null>(null)
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
     const startDateTime = dayjs().startOf('day').format('YYYY-MM-DDTHH:mm:ss')
-    console.log('startDateTime', startDateTime)
     const endDateTime = dayjs().endOf('day').format('YYYY-MM-DDTHH:mm:ss')
     const minuteInterval = 15
     const items = ref<any[]>([])
-
-    const fetchHabits = async () => {
-      const apiUrl = `${import.meta.env.VITE_API_URL}habits/for_timeline`
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken.value}`,
-        },
-        body: JSON.stringify({}),
-      })
-
-      if (response.ok) {
-        const responseBody = await response.json()
-        items.value = responseBody
-        loading.value = false
-        console.log('responseBody', responseBody)
-      } else {
-        loading.value = false
-        const responseBody = await response.json()
-        errorMessage.value = responseBody.error
-      }
-    }
-
-    const getAccessToken = async () => {
-      accessToken.value = await getAccessTokenSilently();
-    };
+    const expiredHabits = ref<any[]>([])
 
     onMounted(async () => {
-      await getAccessToken()
-      fetchHabits()
+      const apiUrl = `${import.meta.env.VITE_API_URL}habits/for_timeline`
+      const fetchRecords = requestApi(apiUrl, 'POST')
+
+      try {
+        const data = await fetchRecords()
+        items.value = data
+      } catch (e) {
+        errorMessage.value = 'Failed to fetch records'
+      }
+      loading.value = false
+    })
+
+    onMounted(async () => {
+      const apiUrl = `${import.meta.env.VITE_API_URL}habits/past_start_time`
+      const fetchRecords = requestApi(apiUrl, 'POST')
+
+      try {
+        const data = await fetchRecords()
+        expiredHabits.value = data
+      } catch (e) {
+        errorMessage.value = 'Failed to fetch records'
+      }
     })
 
     return {
@@ -53,12 +49,26 @@ export default defineComponent({
       endDateTime,
       minuteInterval,
       items,
+      expiredHabits
     }
   },
 })
 </script>
 
 <template>
+  <div>
+    <h3 class="text-h5">Expired Habits</h3>
+    <Habit
+      v-if="expiredHabits.length > 0"
+      v-for="habit in expiredHabits"
+      :key="habit.id"
+      :habit="habit"
+    />
+    <p v-else>No expired habits!</p>
+  </div>
+
+  <h3 class="text-h5">Timeline</h3>
+
   <n-timeline
     v-if="items?.length > 0"
     :startDateTime="startDateTime"
@@ -67,8 +77,4 @@ export default defineComponent({
     :items="items"
   >
   </n-timeline>
-
-
-
-
 </template>

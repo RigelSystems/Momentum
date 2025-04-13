@@ -277,3 +277,10 @@ body {
 .n-dropdown__content {
   overflow-x: scroll !important;
 }
+
+.habit-entires__container {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0;
+  width: fit-content;
+}

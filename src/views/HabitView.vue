@@ -99,7 +99,7 @@ export default defineComponent({
     </v-breadcrumbs>
   </div>
 
-  <div class="page-wrapper shadow">
+  <div class="page-wrapper">
     <div class="completion-percentages-container">
       <div class="table-habit-name"></div>
       <small class="table-cell" v-for="date in lastSevenDaysNice" :key="date">

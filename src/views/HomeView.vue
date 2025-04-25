@@ -23,8 +23,16 @@ export default defineComponent({
 </script>
 
 <template>
-  <h1>Home</h1>
-  <main>
-    <n-button label="Log In" primary @click="loginWithRedirect"/>
-  </main>
+  <NHeroSection
+    :actionButtons="[{
+      label: 'Log in / Sign up',
+      primary: true,
+      onClick: () => {
+        loginWithRedirect()
+      }
+    }]"
+    content="Sign up or log in to access your personalized dashboard."
+    subtitle="Helping you stay organized and productive"
+    title="Momentum"
+  />
 </template>

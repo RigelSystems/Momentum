@@ -26,6 +26,7 @@ export default defineComponent({
 
     return {
       accessToken,
+      user
     }
   }
 })
@@ -39,6 +40,17 @@ export default defineComponent({
   <div class="page-content">
     <Friends v-if="accessToken" :accessToken="accessToken"/>
   </div>
+
+
+  <div v-if="false">
+    <hr>
+    <br/>
+    <p>To recieve notifications connect to our helpful bot.</p>
+    <a href="https://t.me/momentum_rigelsystems_bot?start=1">Connect Bot</a>
+    <br/>
+    <hr>
+  </div>
+
 
   <FriendForm>
     <template #trigger="{ openDialog }">

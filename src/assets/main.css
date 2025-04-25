@@ -48,10 +48,7 @@ body {
 }
 
 .page-wrapper {
-  margin: 1rem;
   padding: 1rem;
-  background-color: #fff;
-  border-radius: 4px;
 }
 
 .capitalize {
@@ -121,7 +118,7 @@ body {
   text-align: left;
   font-size: 0.5rem;
   background: rgb(249,249,249);
-  background: linear-gradient(90deg, rgba(249,249,249,1) 0%, rgba(249,249,249,1) 85%, rgba(249,249,249,0) 100%);
+  background: linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 85%, rgba(255, 255, 255, 0) 100%);
   width: 150px;
   width: 100%;
   min-width: 150px;
@@ -184,7 +181,6 @@ body {
 }
 
 .table-habit-group {
-  border-bottom: 1px solid #e2e2e2;
   margin-bottom: 0.5rem;
 }
 

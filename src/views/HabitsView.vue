@@ -157,7 +157,7 @@ export default defineComponent({
     </div>
   </div>
 
-  <div class="page-wrapper shadow">
+  <div class="page-wrapper">
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
     <div v-else-if="groupedHabits.length === 0">No habits found</div>

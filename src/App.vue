@@ -1,7 +1,6 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue'
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import Navigation from './components/Navigation.vue'
-import { useRoute } from 'vue-router'
 import { useAuth0 } from '@auth0/auth0-vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 
@@ -12,85 +11,53 @@ export default defineComponent({
   },
   setup() {
     const accessTokenStore = useAccessTokenStore()
-    const { getAccessTokenSilently } = useAuth0()
+    const { getAccessTokenSilently, isAuthenticated, user } = useAuth0()
 
     const currentPath = ref(window.location.hash.replace(/^#/, '') || '/')
     const updatePath = () => {
       currentPath.value = "/#" + window.location.hash.replace(/^#/, '') || '/'
+      if (currentPath.value === '/#/') {
+        currentPath.value = '/'
+      }
     }
+    window.addEventListener('hashchange', updatePath)
     onMounted(() => {
-      window.addEventListener('hashchange', updatePath)
+      updatePath()
     })
     onBeforeUnmount(() => {
       window.removeEventListener('hashchange', updatePath)
     })
 
-    const links = [
-      {
-        label: 'Home',
-        url: '/',
-      },
-      {
-        label: 'Dashboard',
-        url: '/#/dashboard',
-      },
-      {
-        label: 'Habits',
-        url: '/#/habits',
-      },
-      {
-        label: 'Timeline',
-        url: '/#/timeline',
-      },
-      {
-        label: 'Checklists',
-        url: '/#/checklists',
-      },
-      {
-        label: 'Account',
-        url: '/#/account',
-      },
-    ]
+    const isLoggedIn = computed(() => !!user.value?.email)
 
-    const mobileBottomLinks = [
-      {
-        icon: 'mdi-view-dashboard-outline',
-        url: '/#/dashboard',
-      },
-      {
-        icon: 'mdi-check-circle-outline',
-        url: '/#/habits',
-      },
-      {
-        icon: 'mdi-format-list-numbered',
-        url: '/#/checklists',
-      },
-      {
-        icon: 'mdi-account-outline',
-        url: '/#/account',
-      },
-    ]
+    const links = computed(() => [
+      { label: 'Home',       url: '/' },
+      { label: 'Dashboard',  url: '/#/dashboard', visible: isLoggedIn.value },
+      { label: 'Habits',     url: '/#/habits',    visible: isLoggedIn.value },
+      { label: 'Timeline',   url: '/#/timeline',  visible: isLoggedIn.value },
+      { label: 'Checklists', url: '/#/checklists',visible: isLoggedIn.value },
+      { label: 'Account',    url: '/#/account',   visible: isLoggedIn.value },
+    ])
 
-    // if (!accessTokenStore.accessToken) {
-    //   getAccessTokenSilently({ cacheMode: 'on' })
-    //     .then((token) => {
-    //       accessTokenStore.setAccessToken(token)
-    //     })
-    //     .catch((error) => {
-    //       console.error('Error fetching access token:', error)
-    //     })
-    // }
+    const mobileBottomLinks = computed(() => [
+      { icon: 'mdi-view-dashboard-outline', url: '/#/dashboard', visible: isLoggedIn.value },
+      { icon: 'mdi-check-circle-outline',   url: '/#/habits',    visible: isLoggedIn.value },
+      { icon: 'mdi-format-list-numbered',   url: '/#/checklists',visible: isLoggedIn.value },
+      { icon: 'mdi-account-outline',        url: '/#/account',   visible: isLoggedIn.value },
+    ])
+
     return {
       links,
       mobileBottomLinks,
       currentPath,
+      user
     }
   },
 })
 </script>
 
 <template>
-  <NNavigationBar :links="links" :mobile-bottom-links="mobileBottomLinks" :current-path="currentPath" />
+  <NNavigationBar :links="links" :mobile-bottom-links="mobileBottomLinks" :current-path="currentPath" :show-mobile-bottom-links="true" />
   <router-view />
 </template>
 

@@ -40,10 +40,11 @@ export default defineComponent({
     ])
 
     const mobileBottomLinks = computed(() => [
-      { icon: 'mdi-view-dashboard-outline', url: '/#/dashboard', visible: isLoggedIn.value },
-      { icon: 'mdi-check-circle-outline',   url: '/#/habits',    visible: isLoggedIn.value },
-      { icon: 'mdi-format-list-numbered',   url: '/#/checklists',visible: isLoggedIn.value },
-      { icon: 'mdi-account-outline',        url: '/#/account',   visible: isLoggedIn.value },
+      { icon: 'mdi-view-dashboard-outline', url: '/#/dashboard', visible: isLoggedIn.value, label: 'Dashboard' },
+      { icon: 'mdi-check-circle-outline',   url: '/#/habits',    visible: isLoggedIn.value, label: 'Habits' },
+      { icon: 'mdi-timeline-text',          url: '/#/timeline',  visible: isLoggedIn.value, label: 'Timeline' },
+      { icon: 'mdi-format-list-checks',     url: '/#/checklists',visible: isLoggedIn.value, label: 'Checklists' },
+      { icon: 'mdi-account-outline',        url: '/#/account',   visible: isLoggedIn.value, label: 'Account' },
     ])
 
     return {

@@ -1,15 +1,10 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
-import PageHeader from '@/components/shared/PageHeader.vue'
-import Drawing from '@/components/Drawing.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
+
 
 export default defineComponent({
   name: 'DashboardView',
-  components: {
-    PageHeader,
-    Drawing,
-  },
   setup() {
     const { getAccessTokenSilently, user } = useAuth0()
     const accessToken = ref<string | undefined>(undefined)
@@ -30,11 +25,34 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="page-header">
-    <PageHeader title="Dashboard" />
-  </div>
-
-  <div class="page-content">
-    <Drawing :accessToken="accessToken"/>
-  </div>
+   <NRow :cols="{sm: [100], md: [50, 50], lg: [33.33,33.33,33.33]}" style="padding: 1rem">
+    <NDashboardTile
+      :title="'Tile 1'"
+      :value="'value 1'"
+      :icon="'mdi-home'"
+      :bottomText="'Bottom Text 1'"
+      :style="{background: '#fff', padding: '1rem', borderRadius: '8px'}"
+    ></NDashboardTile>
+    <NDashboardTile
+      :title="'Tile 1'"
+      :value="'value 1'"
+      :icon="'mdi-home'"
+      :bottomText="'Bottom Text 1'"
+      :style="{background: '#fff', padding: '1rem', borderRadius: '8px'}"
+    ></NDashboardTile>
+    <NDashboardTile
+      :title="'Tile 1'"
+      :value="'value 1'"
+      :icon="'mdi-home'"
+      :bottomText="'Bottom Text 1'"
+      :style="{background: '#fff', padding: '1rem', borderRadius: '8px'}"
+    ></NDashboardTile>
+    <NDashboardTile
+      :title="'Tile 1'"
+      :value="'value 1'"
+      :icon="'mdi-home'"
+      :bottomText="'Bottom Text 1'"
+      :style="{background: '#fff', padding: '1rem', borderRadius: '8px'}"
+    ></NDashboardTile>
+   </NRow>
 </template>

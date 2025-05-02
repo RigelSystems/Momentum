@@ -13,8 +13,34 @@ export default defineComponent({
     FriendForm,
   },
   setup() {
-    const { getAccessTokenSilently, user } = useAuth0()
+    const { getAccessTokenSilently } = useAuth0()
     const accessToken = ref<string | null>(null)
+    const loading = ref(true)
+    const errorMessage = ref<string | null>(null)
+    const user = ref<any>(null)
+
+    const fetchUser = async () => {
+      const apiUrl = `${import.meta.env.VITE_API_URL}users/me`
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken.value}`,
+        },
+      })
+
+      if (response.ok) {
+        loading.value = false
+        const responseBody = await response.json()
+
+        user.value = responseBody
+
+      } else {
+        loading.value = false
+        const responseBody = await response.json()
+        errorMessage.value = responseBody.error
+      }
+    }
 
     const getAccessToken = async () => {
       accessToken.value = await getAccessTokenSilently();
@@ -22,6 +48,7 @@ export default defineComponent({
 
     onMounted(async () => {
       await getAccessToken()
+      fetchUser()
     })
 
     return {
@@ -42,14 +69,18 @@ export default defineComponent({
   </div>
 
 
-  <div v-if="false">
-    <hr>
-    <br/>
-    <p>To recieve notifications connect to our helpful bot.</p>
-    <a href="https://t.me/momentum_rigelsystems_bot?start=1">Connect Bot</a>
-    <br/>
-    <hr>
-  </div>
+  <NCard subtitle="Get notifications and ask helpful questions about your data" title="Helpful Bot">
+    <template #content v-if="user?.telegram_chat_id">
+      <br>
+      <p>You're connected to your bot. Click the link below to chat.</p>
+    </template>
+    <template #content>
+      <br>
+      <p>Send this message to your bot to start, you'll only have to do this once.</p>
+      <p><b>/start {{ user?.telegram_link_token }}</b></p>
+      <a href="https://t.me/momentum_rigelsystems_bot?start=1">Connect Bot</a>
+    </template>
+  </NCard>
 
 
   <FriendForm>

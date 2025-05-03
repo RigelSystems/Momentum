@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, emit } from 'vue';
 import { useAuthToken } from '@/composables/useAuthToken';
-import axios from 'axios';
 
 export default defineComponent({
   name: 'RequestButton',
@@ -12,6 +11,7 @@ export default defineComponent({
     },
     url: {
       type: String,
+      required: true,
     },
     method: {
       type: String,
@@ -31,12 +31,15 @@ export default defineComponent({
 
     const makeRequest = async () => {
       try {
-        const response = await axios.request({
-          url: props.url,
+        loading.value = true;
+        errorMessage.value = null;
+        const response = await fetch(props.url, {
           method: props.method,
-          data: props.method.toLowerCase() === 'post' ? props.params : undefined,
-          params: props.method.toLowerCase() === 'get' ? props.params : undefined,
-          headers: { Authorization: `Bearer ${accessToken.value}` }
+          headers: {
+            'Authorization': `Bearer ${accessToken.value}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(props.params),
         });
 
         headers.value = response.data.headers;

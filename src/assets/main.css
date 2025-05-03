@@ -6,12 +6,21 @@
   font-weight: normal;
 }
 
-/* * {
-  outline: 1px solid red !important;
-} */
+:root {
+  --theme-color: #88bdb9;
+}
+
+.hero-image {
+  width: 100%;
+  max-width: 450px;
+}
 
 .gap-1 {
   gap: 1rem;
+}
+
+.p-1 {
+  padding: 1rem;
 }
 
 body {

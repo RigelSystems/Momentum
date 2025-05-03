@@ -1,58 +1,64 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
-import { useAuth0 } from '@auth0/auth0-vue'
-
+import { defineComponent, ref, onMounted, watch } from 'vue'
+import { useAuthToken } from '@/composables/useAuthToken'
 
 export default defineComponent({
   name: 'DashboardView',
   setup() {
-    const { getAccessTokenSilently, user } = useAuth0()
-    const accessToken = ref<string | undefined>(undefined)
+    const { accessToken } = useAuthToken()
+    const loading = ref(true)
+    const data = ref<any[]>([])
+    const errorMessage = ref<string | null>(null)
 
-    const getAccessToken = async () => {
-      accessToken.value = await getAccessTokenSilently();
-    };
+    const fetchDashboardData = async () => {
+      try {
+        console.log('Fetching dashboard data...')
+        console.log('Access token:', accessToken.value)
 
-    onMounted(async () => {
-      await getAccessToken()
-    })
+        const apiUrl = `${import.meta.env.VITE_API_URL}dashboard`;
+        const response = await fetch(apiUrl, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken.value}`,
+          },
+        })
+
+        const responseBody = await response.json()
+        data.value = responseBody
+      } catch (error) {
+        errorMessage.value = 'Failed to fetch data'
+        console.error(error)
+        return null
+      } finally {
+        loading.value = false
+      }
+    }
+
+    watch(accessToken, (newValue) => {
+      if (newValue && accessToken.value) {
+        console.log('Access token changed:', newValue)
+        fetchDashboardData()
+      }
+    }, { immediate: true })
 
     return {
-      accessToken
+      data
     }
   }
 })
 </script>
 
 <template>
-   <NRow :cols="{sm: [100], md: [50, 50], lg: [33.33,33.33,33.33]}" style="padding: 1rem">
+  <div class="d-flex flex-column gap-1 p-1">
     <NDashboardTile
-      :title="'Tile 1'"
-      :value="'value 1'"
-      :icon="'mdi-home'"
-      :bottomText="'Bottom Text 1'"
-      :style="{background: '#fff', padding: '1rem', borderRadius: '8px'}"
+      v-if="data.length > 0"
+      v-for="(item, index) in data"
+      :key="index"
+      :title="item.title"
+      :value="item.value"
+      :icon="item.icon"
+      :colour="item.colour"
+      :bottomText="item.bottomText"
     ></NDashboardTile>
-    <NDashboardTile
-      :title="'Tile 1'"
-      :value="'value 1'"
-      :icon="'mdi-home'"
-      :bottomText="'Bottom Text 1'"
-      :style="{background: '#fff', padding: '1rem', borderRadius: '8px'}"
-    ></NDashboardTile>
-    <NDashboardTile
-      :title="'Tile 1'"
-      :value="'value 1'"
-      :icon="'mdi-home'"
-      :bottomText="'Bottom Text 1'"
-      :style="{background: '#fff', padding: '1rem', borderRadius: '8px'}"
-    ></NDashboardTile>
-    <NDashboardTile
-      :title="'Tile 1'"
-      :value="'value 1'"
-      :icon="'mdi-home'"
-      :bottomText="'Bottom Text 1'"
-      :style="{background: '#fff', padding: '1rem', borderRadius: '8px'}"
-    ></NDashboardTile>
-   </NRow>
+  </div>
 </template>

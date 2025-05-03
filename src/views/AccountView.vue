@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import Friends from '@/components/friends/Friends.vue'
 import FriendForm from '@/components/friends/FriendForm.vue'
+import User from '@/components/User.vue'
 
 export default defineComponent({
   name: 'AccountView',
@@ -11,6 +12,7 @@ export default defineComponent({
     PageHeader,
     Friends,
     FriendForm,
+    User,
   },
   setup() {
     const { getAccessTokenSilently } = useAuth0()
@@ -60,6 +62,8 @@ export default defineComponent({
 </script>
 
 <template>
+
+  <User></User>
   <NRow :cols="{sm: [100], md: [100], lg: [100]}" style="padding: 1rem">
     <NCard subtitle="Get notifications and ask helpful questions about your data" title="Helpful Bot">
       <template #content v-if="user?.telegram_chat_id">
@@ -73,21 +77,6 @@ export default defineComponent({
         <a href="https://t.me/momentum_rigelsystems_bot?start=1">Connect Bot</a>
       </template>
     </NCard>
-
-
-    <h2>Friends</h2>
-
-    <FriendForm>
-      <template #trigger="{ openDialog }">
-        <v-btn
-          density="comfortable"
-          variant="tonal"
-          text="Find Friend"
-          class="mr-2"
-          @click="openDialog"
-        ></v-btn>
-      </template>
-    </FriendForm>
 
     <Friends v-if="accessToken" :accessToken="accessToken"/>
   </NRow>

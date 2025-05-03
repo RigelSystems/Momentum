@@ -2,6 +2,8 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
+import RequestButton from '@/components/shared/RequestButton.vue';
+import FriendForm from '@/components/friends/FriendForm.vue';
 
 export default defineComponent({
   name: 'Friends',
@@ -11,15 +13,22 @@ export default defineComponent({
       required: false,
     },
   },
+  components: {
+    RequestButton,
+    FriendForm,
+  },
   setup(props) {
     let loading = false;
     let friends = ref<Array<any>>([]);
     const { user } = useAuth0();
 
     onMounted(async () => {
+      fetchFriends();
+    });
+
+    const fetchFriends = async () => {
       loading = true;
       const apiUrl = `${import.meta.env.VITE_API_URL}friends`
-      console.log('apiUrl', apiUrl)
       const response = await fetch(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
@@ -28,7 +37,7 @@ export default defineComponent({
       });
       friends.value = await response.json();
       loading = false;
-    });
+    };
 
     const updateFriendRequest = async (id: number, status: string) => {
       const apiUrl = `${import.meta.env.VITE_API_URL}friends/${id}`
@@ -49,10 +58,16 @@ export default defineComponent({
       });
     };
 
+    const deleteFriendRequestUrl = (id: number) => {
+      return `${import.meta.env.VITE_API_URL}friends/${id}`;
+    };
+
     return {
       loading,
       friends,
+      fetchFriends,
       updateFriendRequest,
+      deleteFriendRequestUrl,
       user,
     };
   },
@@ -60,25 +75,50 @@ export default defineComponent({
 </script>
 
 <template>
+  <h2>Friends</h2>
+
+  <FriendForm
+    @requestSent="fetchFriends"
+  >
+    <template #trigger="{ openDialog }">
+      <v-btn
+        density="comfortable"
+        variant="tonal"
+        text="Find Friend"
+        class="mr-2 my-4"
+        @click="openDialog"
+      ></v-btn>
+    </template>
+  </FriendForm>
+
   <div class="d-flex flex-column gap-1">
-    <NCard :title="friend.user_one.email" :subtitle="friend.status" v-for="friend in friends" :key="friend.id">
-      <div v-if="friend.status === 'pending'">
-        <span v-if="user?.email === friend.user_two.email">
-          <span>{{ friend.user_one.email }} Wants to be friends:</span>
-          <button @click="updateFriendRequest(friend.id, `accepted`)">Accept</button>
-          <button @click="updateFriendRequest(friend.id, `declined`)">Decline</button>
-        </span>
-        <span v-else>{{ friend.user_one.email }} - {{ friend.status }}</span>
-      </div>
-      <div v-else>
-        <!-- The API should handle this logic instead. -->
-        <span v-if="user?.email === friend.user_two.email">
-          <span>{{ friend.user_one.email }} - {{ friend.status }}</span>
-        </span>
-        <span v-else>
-          <span>{{ friend.user_two.email }} - {{ friend.status }}</span>
-        </span>
-      </div>
+    <p v-if="friends.length == 0">You don't have any friends :(</p>
+    <NCard :title="friend.user_two.email" v-for="friend in friends" :key="friend.id">
+      <template #content>
+        <div v-if="friend.status === 'pending'">
+          <span v-if="user?.email === friend.user_two.email">
+            <span>{{ friend.user_one.email }} Wants to be friends:</span>
+            <button @click="updateFriendRequest(friend.id, `accepted`)">Accept</button>
+            <button @click="updateFriendRequest(friend.id, `declined`)">Decline</button>
+          </span>
+          <span v-else>{{ friend.user_one.email }} - {{ friend.status }}</span>
+        </div>
+        <div v-else>
+          <span v-if="user?.email === friend.user_two.email">
+            <span>{{ friend.user_one.email }} - {{ friend.status }}</span>
+          </span>
+          <span v-else>
+            <span>{{ friend.user_two.email }} - {{ friend.status }}</span>
+          </span>
+        </div>
+
+        <RequestButton
+          @requestCompleted="fetchFriends"
+          label="Delete Friend"
+          :url="deleteFriendRequestUrl(friend.id)"
+          method="delete"
+        ></RequestButton>
+      </template>
     </NCard>
   </div>
 </template>

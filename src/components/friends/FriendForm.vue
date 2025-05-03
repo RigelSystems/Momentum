@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, computed, ref, emit } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import SelectFromRequest from '../inputs/SelectFromRequest.vue'
 
@@ -25,7 +25,7 @@ export default defineComponent({
     RecordForm,
     SelectFromRequest,
   },
-  setup(props) {
+  setup(props, { emit }) {
     const value = ref<string[]>([])
 
     const isEditMode = computed(() => !!props.friend.id)
@@ -39,7 +39,7 @@ export default defineComponent({
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
 
     const handleSave = async (savedRecord: Friend) => {
-      window.location.reload()
+      emit('requestSent',)
     }
 
     return {

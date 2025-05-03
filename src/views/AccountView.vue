@@ -60,38 +60,35 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="page-header">
-    <PageHeader title="Account" />
-  </div>
+  <NRow :cols="{sm: [100], md: [100], lg: [100]}" style="padding: 1rem">
+    <NCard subtitle="Get notifications and ask helpful questions about your data" title="Helpful Bot">
+      <template #content v-if="user?.telegram_chat_id">
+        <br>
+        <p>You're connected to your bot. Click the link below to chat.</p>
+      </template>
+      <template #content>
+        <br>
+        <p>Send this message to your bot to start, you'll only have to do this once.</p>
+        <p><b>/start {{ user?.telegram_link_token }}</b></p>
+        <a href="https://t.me/momentum_rigelsystems_bot?start=1">Connect Bot</a>
+      </template>
+    </NCard>
 
-  <div class="page-content">
+
+    <h2>Friends</h2>
+
+    <FriendForm>
+      <template #trigger="{ openDialog }">
+        <v-btn
+          density="comfortable"
+          variant="tonal"
+          text="Find Friend"
+          class="mr-2"
+          @click="openDialog"
+        ></v-btn>
+      </template>
+    </FriendForm>
+
     <Friends v-if="accessToken" :accessToken="accessToken"/>
-  </div>
-
-
-  <NCard subtitle="Get notifications and ask helpful questions about your data" title="Helpful Bot">
-    <template #content v-if="user?.telegram_chat_id">
-      <br>
-      <p>You're connected to your bot. Click the link below to chat.</p>
-    </template>
-    <template #content>
-      <br>
-      <p>Send this message to your bot to start, you'll only have to do this once.</p>
-      <p><b>/start {{ user?.telegram_link_token }}</b></p>
-      <a href="https://t.me/momentum_rigelsystems_bot?start=1">Connect Bot</a>
-    </template>
-  </NCard>
-
-
-  <FriendForm>
-    <template #trigger="{ openDialog }">
-      <v-btn
-        density="comfortable"
-        variant="tonal"
-        text="Find Friend"
-        class="mr-2"
-        @click="openDialog"
-      ></v-btn>
-    </template>
-  </FriendForm>
+  </NRow>
 </template>

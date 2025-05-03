@@ -60,8 +60,19 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="page-header">
-    <PageHeader title="Checklists" />
+  <div class="page-wrapper">
+  <div class="mb-5 d-flex justify-space-start">
+    <ChecklistForm>
+      <template #trigger="{ openDialog }">
+        <v-btn
+          density="comfortable"
+          variant="tonal"
+          text="New Checklist"
+          class="mr-2"
+          @click="openDialog"
+        ></v-btn>
+      </template>
+    </ChecklistForm>
   </div>
 
   <n-order-list
@@ -72,45 +83,19 @@ export default defineComponent({
     modelName="checklists"
   >
     <template #default="checklist">
-      <h3>{{  checklist.name }}</h3>
-      <p>{{ checklist.description }}</p>
-      <div v-if="checklist.status === 'not_started'" >
-              <small>Not Started - </small>
-              <v-icon color="black-darken-3">mdi mdi-thought-bubble-outline</v-icon>
-            </div>
+      <NCard :subtitle="checklist.status" :title="checklist.name">
+        <template #content>
+          <p>{{ checklist.description }}</p>
 
-            <div v-if="checklist.status === 'blocked'" >
-              <small>Blocked - </small>
-              <v-icon color="red-darken-3">mdi mdi-alert-octagon-outline</v-icon>
-            </div>
-
-            <div v-if="checklist.status === 'in_progress'" >
-              <small>In Progress - </small>
-              <v-icon color="green-darken-3">mdi mdi-hammer-screwdriver</v-icon>
-            </div>
-
-            <div v-if="checklist.status === 'completed'" >
-              <small>Completed - </small>
-              <v-icon color="green-darken-1">mdi mdi-check-outline</v-icon>
-            </div>
-      <RouterLink
-        :to="{ name: 'checklist', params: { id: checklist.id } }"
-        class="mr-2"
-      >
-      View
-      </RouterLink>
+          <RouterLink
+            :to="{ name: 'checklist', params: { id: checklist.id } }"
+            class="mr-2"
+          >
+          View
+          </RouterLink>
+        </template>
+      </NCard>
     </template>
   </n-order-list>
-
-  <ChecklistForm>
-    <template #trigger="{ openDialog }">
-      <v-btn
-        density="comfortable"
-        variant="tonal"
-        text="New Checklist"
-        class="mr-2"
-        @click="openDialog"
-      ></v-btn>
-    </template>
-  </ChecklistForm>
+</div>
 </template>

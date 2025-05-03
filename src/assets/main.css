@@ -10,6 +10,10 @@
   outline: 1px solid red !important;
 } */
 
+.gap-1 {
+  gap: 1rem;
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);

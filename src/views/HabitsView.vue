@@ -137,27 +137,35 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="page-header">
-    <PageHeader title="My Habits" />
-
-    <div class="page-header-card shadow">
-      <h2 class="mb-3"><b>Progress</b></h2>
-
-      <v-progress-linear
-      v-for="(data, habitGroup) in completionPercentages"
-        color="light-blue"
-        height="25"
-        :model-value="data[todaysDateFormatted]"
-        striped
-      >
-        <template v-slot:default="{ value }">
-          <strong>{{ habitGroup }} {{ Math.ceil(value) }}%</strong>
-        </template>
-      </v-progress-linear>
-    </div>
-  </div>
-
   <div class="page-wrapper">
+    <div class="mb-5 d-flex justify-space-start">
+      <HabitForm
+        v-if="fetchHabits"
+        :fetchHabits="fetchHabits"
+      >
+        <template #trigger="{ openDialog }">
+          <v-btn
+            density="comfortable"
+            variant="tonal"
+            text="New Habit"
+            class="mr-2"
+            @click="openDialog"
+          ></v-btn>
+        </template>
+      </HabitForm>
+
+      <HabitGroupForm>
+        <template #trigger="{ openDialog }">
+          <v-btn
+            density="comfortable"
+            variant="tonal"
+            text="New Habit Group"
+            @click="openDialog"
+          ></v-btn>
+        </template>
+      </HabitGroupForm>
+    </div>
+
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
     <div v-else-if="groupedHabits.length === 0">No habits found</div>
@@ -211,34 +219,6 @@ export default defineComponent({
           </div>
         </div>
       </div>
-
-    <div class="mt-5 d-flex justify-space-start">
-      <HabitForm
-        v-if="fetchHabits"
-        :fetchHabits="fetchHabits"
-      >
-        <template #trigger="{ openDialog }">
-          <v-btn
-            density="comfortable"
-            variant="tonal"
-            text="New Habit"
-            class="mr-2"
-            @click="openDialog"
-          ></v-btn>
-        </template>
-      </HabitForm>
-
-      <HabitGroupForm>
-        <template #trigger="{ openDialog }">
-          <v-btn
-            density="comfortable"
-            variant="tonal"
-            text="New Habit Group"
-            @click="openDialog"
-          ></v-btn>
-        </template>
-      </HabitGroupForm>
-    </div>
   </div>
   </div>
 </template>

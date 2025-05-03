@@ -56,25 +56,28 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>
-    <h3 class="text-h5">Expired Habits</h3>
-    <Habit
-      v-if="expiredHabits.length > 0"
-      v-for="habit in expiredHabits"
-      :key="habit.id"
-      :habit="habit"
-    />
-    <p v-else>No expired habits!</p>
-  </div>
+  <NRow :cols="{sm: [100], md: [30, 70], lg: [20, 80]}" style="padding: 1rem">
+    <div>
+      <h3 class="text-h5">Expired Habits</h3>
+      <Habit
+        v-if="expiredHabits.length > 0"
+        v-for="habit in expiredHabits"
+        :key="habit.id"
+        :habit="habit"
+      />
+      <p v-else>No expired habits!</p>
+    </div>
 
-  <h3 class="text-h5">Timeline</h3>
-
-  <n-timeline
-    v-if="items?.length > 0"
-    :startDateTime="startDateTime"
-    :endDateTime="endDateTime"
-    :minuteInterval="15"
-    :items="items"
-  >
-  </n-timeline>
+    <div>
+      <h3 class="text-h5">Timeline</h3>
+      <n-timeline
+        v-if="items?.length > 0"
+        :startDateTime="startDateTime"
+        :endDateTime="endDateTime"
+        :minuteInterval="15"
+        :items="items"
+      >
+      </n-timeline>
+    </div>
+  </NRow>
 </template>

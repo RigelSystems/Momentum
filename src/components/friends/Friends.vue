@@ -60,31 +60,26 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>
-    <h2>Friends - {{ friends.length }}</h2>
-    <div v-if="loading">Loading...</div>
-    <div v-else>
-      <ul>
-        <li v-for="friend in friends" :key="friend.id">
-          <div v-if="friend.status === 'pending'">
-            <span v-if="user?.email === friend.user_two.email">
-              <span>{{ friend.user_one.email }} Wants to be friends:</span>
-              <button @click="updateFriendRequest(friend.id, `accepted`)">Accept</button>
-              <button @click="updateFriendRequest(friend.id, `declined`)">Decline</button>
-            </span>
-            <span v-else>{{ friend.user_one.email }} - {{ friend.status }}</span>
-          </div>
-          <div v-else>
-            <span v-if="user?.email === friend.user_two.email">
-              <span>{{ friend.user_one.email }} - {{ friend.status }}</span>
-            </span>
-            <span v-else>
-              <span>{{ friend.user_two.email }} - {{ friend.status }}</span>
-            </span>
-          </div>
-        </li>
-      </ul>
-    </div>
+  <div class="d-flex flex-column gap-1">
+    <NCard :title="friend.user_one.email" :subtitle="friend.status" v-for="friend in friends" :key="friend.id">
+      <div v-if="friend.status === 'pending'">
+        <span v-if="user?.email === friend.user_two.email">
+          <span>{{ friend.user_one.email }} Wants to be friends:</span>
+          <button @click="updateFriendRequest(friend.id, `accepted`)">Accept</button>
+          <button @click="updateFriendRequest(friend.id, `declined`)">Decline</button>
+        </span>
+        <span v-else>{{ friend.user_one.email }} - {{ friend.status }}</span>
+      </div>
+      <div v-else>
+        <!-- The API should handle this logic instead. -->
+        <span v-if="user?.email === friend.user_two.email">
+          <span>{{ friend.user_one.email }} - {{ friend.status }}</span>
+        </span>
+        <span v-else>
+          <span>{{ friend.user_two.email }} - {{ friend.status }}</span>
+        </span>
+      </div>
+    </NCard>
   </div>
 </template>
 

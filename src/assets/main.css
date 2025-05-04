@@ -293,3 +293,13 @@ body {
   padding: 0;
   width: fit-content;
 }
+
+/* atlas */
+
+.atlas-section .n-hero-section__subtitle {
+  color: #846ae2 !important;
+}
+
+.atlas-section .n-button {
+  background-color: #846ae2 !important;
+}

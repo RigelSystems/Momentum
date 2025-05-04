@@ -80,4 +80,18 @@ export default defineComponent({
       <img src="/chatbot.png" alt="Hero Image" class="hero-image"/>
     </template>
   </NHeroSection>
+
+  <div class="atlas-section">
+  <NHeroSection
+    layout="left"
+    title="Atlas"
+    subtitle="RigelSystems"
+    content="Checkout our other products and services at RigelSystems. We are dedicated to providing you with the best tools for productivity and organization."
+    :actionButtons="[{label: 'Visit Atlas', href: 'https://atlas.rigelsystems.co.uk/'}]"
+  >
+    <template #image>
+      <img src="/atlas.png" alt="Hero Image" class="hero-image"/>
+    </template>
+  </NHeroSection>
+  </div>
 </template>

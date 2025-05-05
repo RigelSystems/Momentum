@@ -49,7 +49,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="d-flex flex-column gap-1 p-1">
+  <div class="standard-container-3 p-1 ">
     <NDashboardTile
       v-if="data.length > 0"
       v-for="(item, index) in data"

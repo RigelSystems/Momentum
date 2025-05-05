@@ -3,15 +3,17 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import Navigation from './components/Navigation.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
+import User from './components/User.vue'
 
 export default defineComponent({
   name: 'App',
   components: {
     Navigation,
+    User,
   },
   setup() {
     const accessTokenStore = useAccessTokenStore()
-    const { getAccessTokenSilently, isAuthenticated, user } = useAuth0()
+    const { getAccessTokenSilently, isAuthenticated, user, loginWithRedirect } = useAuth0()
 
     const currentPath = ref(window.location.hash.replace(/^#/, '') || '/')
     const updatePath = () => {
@@ -58,7 +60,23 @@ export default defineComponent({
 </script>
 
 <template>
-  <NNavigationBar :links="links" :mobile-bottom-links="mobileBottomLinks" :current-path="currentPath" :show-mobile-bottom-links="true" />
+  <NNavigationBar :links="links" :mobile-bottom-links="mobileBottomLinks" :current-path="currentPath" :show-mobile-bottom-links="true">
+    <template #logo>
+      <img class="logo" src="./assets/images/momentum-favicon.png" alt="Logo" />
+    </template>
+
+    <template #user>
+      <User v-if="user"/>
+      <NButton
+        v-else
+        class="login-button"
+        size="small"
+        text
+        @click="loginWithRedirect"
+      >Log in / Sign up</NButton>
+    </template>
+  </NNavigationBar>
+
   <router-view />
 </template>
 
@@ -66,11 +84,6 @@ export default defineComponent({
 header {
   line-height: 1.5;
   max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
 }
 
 nav {

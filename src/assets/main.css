@@ -15,6 +15,10 @@
   max-width: 450px;
 }
 
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
 .gap-1 {
   gap: 1rem;
 }
@@ -302,4 +306,16 @@ body {
 
 .atlas-section .n-button {
   background-color: #846ae2 !important;
+}
+
+/* navbar */
+
+.logo-slot {
+  height: 35px;
+  width: 35px;
+}
+
+.logo {
+  width: 35px;
+  height: 35px;
 }

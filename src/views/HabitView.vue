@@ -14,6 +14,21 @@ interface Habit {
   description: string
   created_at: string
   updated_at: string
+  habit_entries: Array<{
+    id: number
+    date: string
+    value: number
+    created_at: string
+    updated_at: string
+  }>
+  dashboard_data: Array<{
+    title: string
+    value: number
+    icon: string
+    colour: string
+    bottomText: string
+  }>
+  colour: string
 }
 
 export default defineComponent({
@@ -53,6 +68,7 @@ export default defineComponent({
         const data = await fetchRecords()
         console.log('Habit data:', data)
         habit.value = data
+        console.log(data)
         breadcrumbs.value.push({
           title: data.name,
           disabled: true,
@@ -99,7 +115,20 @@ export default defineComponent({
     </v-breadcrumbs>
   </div>
 
-  <div class="page-wrapper">
+  <div class="standard-container-3 p-1 ">
+    <NDashboardTile
+      v-if="habit?.dashboard_data?.length > 0"
+      v-for="(item, index) in habit.dashboard_data"
+      :key="index"
+      :title="item.title"
+      :value="item.value"
+      :icon="item.icon"
+      :colour="item.colour"
+      :bottomText="item.bottomText"
+    ></NDashboardTile>
+  </div>
+
+  <div class="page-wrapper overflow-x-auto">
     <div class="completion-percentages-container">
       <div class="table-habit-name"></div>
       <small class="table-cell" v-for="date in lastSevenDaysNice" :key="date">
@@ -126,6 +155,7 @@ export default defineComponent({
           :accessToken="accessToken"
         />
       </div>
+
     </div>
   </div>
 </template>

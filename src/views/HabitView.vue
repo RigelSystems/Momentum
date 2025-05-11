@@ -115,18 +115,73 @@ export default defineComponent({
     </v-breadcrumbs>
   </div>
 
-  <div class="standard-container-3 p-1 ">
-    <NDashboardTile
-      v-if="habit?.dashboard_data?.length > 0"
-      v-for="(item, index) in habit.dashboard_data"
-      :key="index"
-      :title="item.title"
-      :value="item.value"
-      :icon="item.icon"
-      :colour="item.colour"
-      :bottomText="item.bottomText"
-    ></NDashboardTile>
-  </div>
+  <n-tabs>
+    <template #tabs="{ activeTab, setActiveTab }">
+      <n-tab
+        label="Totals"
+        :active="activeTab === 0"
+        @click="setActiveTab(0)"
+      />
+      <n-tab
+        label="Averages"
+        :active="activeTab === 1"
+        @click="setActiveTab(1)"
+      />
+      <n-tab
+        label="Changes"
+        :active="activeTab === 2"
+        @click="setActiveTab(2)"
+      />
+    </template>
+
+    <template #default="{ activeTab }">
+      <n-tab-panel :index="0" :activeTab="activeTab">
+        <!-- Totals -->
+        <div class="standard-container-3">
+          <NDashboardTile
+            v-if="habit?.dashboard_data_totals?.length > 0"
+            v-for="(item, index) in habit.dashboard_data_totals"
+            :key="index"
+            :title="item.title"
+            :value="item.value"
+            :icon="item.icon"
+            :colour="item.colour"
+            :bottomText="item.bottomText"
+          ></NDashboardTile>
+        </div>
+      </n-tab-panel>
+      <n-tab-panel :index="1" :activeTab="activeTab">
+        <!-- Averages -->
+        <div class="standard-container-3">
+          <NDashboardTile
+            v-if="habit?.dashboard_data_averages?.length > 0"
+            v-for="(item, index) in habit.dashboard_data_averages"
+            :key="index"
+            :title="item.title"
+            :value="item.value"
+            :icon="item.icon"
+            :colour="item.colour"
+            :bottomText="item.bottomText"
+          ></NDashboardTile>
+        </div>
+      </n-tab-panel>
+      <n-tab-panel :index="2" :activeTab="activeTab">
+        <!-- Changes -->
+        <div class="standard-container-3">
+          <NDashboardTile
+            v-if="habit?.dashboard_data_changes?.length > 0"
+            v-for="(item, index) in habit.dashboard_data_changes"
+            :key="index"
+            :title="item.title"
+            :value="item.value"
+            :icon="item.icon"
+            :colour="item.colour"
+            :bottomText="item.bottomText"
+          ></NDashboardTile>
+        </div>
+      </n-tab-panel>
+    </template>
+  </n-tabs>
 
   <div class="page-wrapper overflow-x-auto">
     <div class="completion-percentages-container">
@@ -155,7 +210,6 @@ export default defineComponent({
           :accessToken="accessToken"
         />
       </div>
-
     </div>
   </div>
 </template>

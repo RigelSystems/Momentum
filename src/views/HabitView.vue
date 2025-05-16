@@ -39,8 +39,8 @@ export default defineComponent({
     Habit,
   },
   setup() {
-    const lastSevenDays = getLastXDaysFormatted(30, 'YYYY-MM-DD');
-    const lastSevenDaysNice = getLastXDaysFormatted(30, 'ddd<br>D');
+    const lastSevenDays = getLastXDaysFormatted(365, 'YYYY-MM-DD');
+    const lastSevenDaysNice = getLastXDaysFormatted(365, 'ddd<br>D');
     const { getAccessTokenSilently, user } = useAuth0()
     const accessToken = ref<string | null>(null)
     const errorMessage = ref<string | null>(null)
@@ -184,22 +184,8 @@ export default defineComponent({
   </n-tabs>
 
   <div class="page-wrapper overflow-x-auto">
-    <div class="completion-percentages-container">
-      <div class="table-habit-name"></div>
-      <small class="table-cell" v-for="date in lastSevenDaysNice" :key="date">
-        <span class="table-date" v-html="date"></span>
-      </small>
-    </div>
-
-    <div class="habit-entires__container">
-      <div class="table-habit-name">
-        <Habit
-          :habit="habit"
-          :fetchHabits="fetchHabits"
-        />
-      </div>
-
-      <div class="table-cell" v-for="date in lastSevenDays" :key="date">
+    <div class="habit-yearly-container">
+      <div class="habit-yearly-wrapper" v-for="date in lastSevenDays" :key="date">
         <HabitEntry
           v-if="accessToken"
           :entry="getHabitEntiryForDate(habit, date)"

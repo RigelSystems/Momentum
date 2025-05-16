@@ -319,3 +319,13 @@ body {
   width: 35px;
   height: 35px;
 }
+
+.habit-container {
+  display: block;
+}
+
+.habit-yearly-wrapper {
+  width: 33px;
+  height: 33px;
+  display: inline-block
+}

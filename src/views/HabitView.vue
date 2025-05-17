@@ -60,6 +60,27 @@ export default defineComponent({
       habitId.value = newId
     })
 
+    const fetchHabit = async () => {
+      loading.value = true
+      const apiUrl = `${import.meta.env.VITE_API_URL}habits/${habitId.value}`
+      const fetchRecords = requestApi(apiUrl, 'GET')
+
+      try {
+        const data = await fetchRecords()
+        console.log('Habit data:', data)
+        habit.value = data
+        console.log(data)
+        breadcrumbs.value.push({
+          title: data.name,
+          disabled: true,
+          href: `/habits/${habitId}`,
+        })
+      } catch (e) {
+        errorMessage.value = 'Failed to fetch records'
+      }
+      loading.value = false
+    }
+
     onMounted(async () => {
      const apiUrl = `${import.meta.env.VITE_API_URL}habits/${habitId.value}`
       const fetchRecords = requestApi(apiUrl, 'GET')
@@ -80,6 +101,10 @@ export default defineComponent({
       loading.value = false
     })
 
+    const getHabitEntiryForDate = (habit: any, date: string) => {
+      return habit.habit_entries.find((entry: any) => entry.date === date);
+    }
+
     const getAccessToken = async () => {
       accessToken.value = await getAccessTokenSilently();
     };
@@ -87,10 +112,6 @@ export default defineComponent({
     onMounted(async () => {
       await getAccessToken()
     })
-
-    const getHabitEntiryForDate = (habit: any, date: string) => {
-      return habit.habit_entries.find((entry: any) => entry.date === date);
-    }
 
     return {
       habit,
@@ -131,6 +152,11 @@ export default defineComponent({
         label="Changes"
         :active="activeTab === 2"
         @click="setActiveTab(2)"
+      />
+      <n-tab
+        label="Records"
+        :active="activeTab === 3"
+        @click="setActiveTab(3)"
       />
     </template>
 
@@ -180,21 +206,46 @@ export default defineComponent({
           ></NDashboardTile>
         </div>
       </n-tab-panel>
+      <n-tab-panel :index="3" :activeTab="activeTab">
+        <!-- Records -->
+        <div class="standard-container-3">
+          <NDashboardTile
+            v-if="habit?.dashboard_data_records?.length > 0"
+            v-for="(item, index) in habit.dashboard_data_records"
+            :key="index"
+            :title="item.title"
+            :value="item.value"
+            :icon="item.icon"
+            :colour="item.colour"
+            :bottomText="item.bottomText"
+          ></NDashboardTile>
+        </div>
+      </n-tab-panel>
     </template>
   </n-tabs>
 
-  <div class="page-wrapper overflow-x-auto">
-    <div class="habit-yearly-container">
-      <div class="habit-yearly-wrapper" v-for="date in lastSevenDays" :key="date">
-        <HabitEntry
-          v-if="accessToken"
-          :entry="getHabitEntiryForDate(habit, date)"
-          :habit="habit"
-          :date="date"
-          :colour="habit.colour"
-          :fetchHabits="fetchHabits"
-          :accessToken="accessToken"
-        />
+  <div>
+    <div v-for="month in habit.monthly_data" :key="month.month">
+      <div>
+        <h4>{{ month.month }}</h4>
+
+        <div class="habit-yearly-container">
+          <div class="habit-yearly-wrapper" v-for="entry in month.entries" :key="entry.id">
+            <HabitEntry
+            v-if="accessToken"
+            :entry="entry.entry"
+            :habit="habit"
+            :date="entry.date"
+            :colour="habit.colour"
+            :fetchHabits="fetchHabits"
+            :accessToken="accessToken"
+            />
+          </div>
+        </div>
+
+        <p>Total: {{ month.total_entries }}</p>
+        <p>Daily Average: {{ month.daily_average }}</p>
+        <p>Monthly Average: {{ month.monthly_average }}</p>
       </div>
     </div>
   </div>

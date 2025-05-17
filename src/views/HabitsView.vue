@@ -34,7 +34,6 @@ export default defineComponent({
     const accessToken = ref<string | null>(null)
 
     const groupedHabits = ref<Array<any>>([])
-    const habitGroups = ref<Array<any>>([])
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
     const completionPercentages = ref<CompletionPercentages>({})
@@ -56,32 +55,10 @@ export default defineComponent({
       if (response.ok) {
         loading.value = false
         const responseBody = await response.json()
+        console.log('responseBody Habits', responseBody)
         completionPercentages.value = responseBody.completion_percentages
-        groupedHabits.value = responseBody.habits
+        groupedHabits.value = responseBody.habit_groups
 
-        console.log(completionPercentages.value)
-
-      } else {
-        loading.value = false
-        const responseBody = await response.json()
-        errorMessage.value = responseBody.error
-      }
-    }
-
-    const fetchHabitGroups = async () => {
-      console.log('accessToken', accessToken.value)
-      const apiUrl = `${import.meta.env.VITE_API_URL}habit_groups`
-      const response = await fetch(apiUrl, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken.value}`,
-        },
-      })
-
-      if (response.ok) {
-        loading.value = false
-        const responseBody = await response.json()
-        habitGroups.value = responseBody
       } else {
         loading.value = false
         const responseBody = await response.json()
@@ -106,14 +83,12 @@ export default defineComponent({
     onMounted(async () => {
       await getAccessToken()
       fetchHabits()
-      fetchHabitGroups()
     })
 
     return {
       accessToken,
       user,
       groupedHabits,
-      habitGroups,
       loading,
       errorMessage,
       lastSevenDays,
@@ -165,10 +140,10 @@ export default defineComponent({
     <div v-else>
       <div class="habit-table">
         <div class="horizontal-scroll">
-          <div v-for="(habits, groupName) in groupedHabits" :key="groupName" class="table-habit-group">
+          <div v-for="(object) in groupedHabits" :key="object" class="table-habit-group">
             <n-dropdown>
               <template #label>
-                <HabitGroup :habitGroup="habits[0].habit_group" />
+                <HabitGroup :habitGroup="object.habit_group" />
               </template>
 
               <template #content>
@@ -181,7 +156,7 @@ export default defineComponent({
 
                 <n-order-list
                   class="table-habit-tr"
-                  :items="habits"
+                  :items="object.habits"
                   :updateUrl="habitBulkUpdateUrl"
                   :loading="loading"
                   :accessToken="accessToken"

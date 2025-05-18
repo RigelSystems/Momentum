@@ -7,6 +7,7 @@ import requestApi from '@/utils/requestApi'
 import { useAuth0 } from '@auth0/auth0-vue'
 import Habit from '@/components/habits/Habit.vue'
 import HabitEntry from '@/components/HabitEntry.vue'
+import HabitForm from '@/components/habits/HabitForm.vue'
 
 export interface HabitGroup {
   id?: number,
@@ -24,6 +25,7 @@ export default defineComponent({
   },
   components: {
     HabitGroupForm,
+    HabitForm,
     HabitEntry,
     Habit,
   },
@@ -93,8 +95,6 @@ export default defineComponent({
 
 
 <template>
-  {{ errorMessage }}
-
   <n-dropdown>
     <template #label>
       <div class="table-group-name habit-group">
@@ -113,7 +113,8 @@ export default defineComponent({
     </template>
 
     <template #content>
-      <div class="completion-percentages-container">
+      <p class="p-1" v-if="habits.length === 0">Add your first habit to this group.</p>
+      <div v-else class="completion-percentages-container">
         <div class="table-habit-name"></div>
         <small class="table-cell" v-for="date in last30daysNiceFormat" :key="date">
           <span class="table-date" v-html="date"></span>
@@ -132,6 +133,17 @@ export default defineComponent({
           </div>
         </template>
       </n-order-list>
+
+      <HabitForm v-if="fetchHabits" :fetchHabits="fetchHabits">
+        <template #trigger="{ openDialog }">
+          <v-btn
+            density="comfortable"
+            variant="tonal"
+            text="New Habit"
+            @click="openDialog"
+          ></v-btn>
+        </template>
+      </HabitForm>
     </template>
   </n-dropdown>
 </template>

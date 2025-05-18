@@ -2,6 +2,7 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import HabitGroup from '@/components/habit_groups/HabitGroup.vue'
+import HabitGroupForm from '@/components/habit_groups/HabitGroupForm.vue'
 import { getLastXDaysFormatted } from '@/utils/dateUtils'
 import requestApi from '@/utils/requestApi'
 
@@ -15,6 +16,7 @@ export default defineComponent({
   name: 'HabitsView',
   components: {
     HabitGroup,
+    HabitGroupForm,
   },
   setup() {
     const habitGroups = ref<Array<any>>([])
@@ -43,6 +45,7 @@ export default defineComponent({
 
     return {
       habitGroups,
+      fetchHabitGroups,
       loading,
       errorMessage,
     }
@@ -51,10 +54,23 @@ export default defineComponent({
 </script>
 
 <template>
+  <div class="p-1">
+    <HabitGroupForm>
+      <template #trigger="{ openDialog }">
+        <v-btn
+        density="comfortable"
+        variant="tonal"
+        text="New Habit Group"
+        @click="openDialog"
+        ></v-btn>
+      </template>
+    </HabitGroupForm>
+  </div>
+
   <div class="page-wrapper">
     <div v-if="loading">Loading...</div>
     <div v-else-if="errorMessage">{{ errorMessage }}</div>
-    <div v-else-if="habitGroups.length === 0">No habits found</div>
+    <div v-else-if="habitGroups.length === 0">Create your first habit group.</div>
     <div v-else>
       <div class="habit-table">
         <div class="horizontal-scroll">

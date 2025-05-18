@@ -1,32 +1,28 @@
+// requestApi.ts
 import { useAuth0 } from '@auth0/auth0-vue'
 
-export default function requestApi(url: string, method: string = 'GET') {
-  const { getAccessTokenSilently } = useAuth0()
-  let accessToken: string | null = null
+export default function requestApi(
+  url: string,
+  method: string = 'GET',
+  body: unknown = null
+) {
+  return async function fetchData() {
+    // <-- NOW we’re inside component code, so provide/inject is ready
+    const { getAccessTokenSilently } = useAuth0()
+    const token = await getAccessTokenSilently()
 
-  const getAccessToken = async () => {
-    accessToken = await getAccessTokenSilently()
-  }
-
-  const getRequestHeaders = async () => {
-    await getAccessToken()
-    return {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    }
-  }
-
-  const fetchData = async () => {
-    const headers = await getRequestHeaders()
-    const response = await fetch(url, {
+    const res = await fetch(url, {
       method,
-      headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: body ? JSON.stringify(body) : undefined
     })
-    if (!response.ok) {
-      throw new Error('Network response was not ok')
-    }
-    return response.json()
-  }
 
-  return fetchData
+    if (!res.ok) {
+      throw new Error(`API ${method} ${url} failed (${res.status})`)
+    }
+    return res.json()
+  }
 }

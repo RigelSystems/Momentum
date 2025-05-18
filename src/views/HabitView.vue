@@ -69,7 +69,7 @@ export default defineComponent({
         const data = await fetchRecords()
         console.log('Habit data:', data)
         habit.value = data
-        console.log(data)
+
         breadcrumbs.value.push({
           title: data.name,
           disabled: true,

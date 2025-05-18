@@ -37,8 +37,6 @@ export default defineComponent({
     let loading = false;
     let value = ref(props.entry?.value || 0);
 
-    console.log('HabitEntry props:', props)
-
     const updateExistingRecord = async (new_value: String) => {
       loading = true;
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries/${props.entry?.id}`

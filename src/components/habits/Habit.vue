@@ -59,17 +59,6 @@ export default defineComponent({
       <a :href="`/#/habits/${ habit.id }`">{{ habit.name }}</a>
     </div>
   </div>
-  <div class="table-cell" v-for="date in lastSevenDays" :key="date">
-    <HabitEntry
-      v-if="accessToken"
-      :entry="getHabitEntiryForDate(habit, date)"
-      :habit="habit"
-      :date="date"
-      :colour="habit.colour"
-      :fetchHabits="fetchHabits"
-      :accessToken="accessToken"
-    />
-  </div>
 </template>
 
 <style scoped>

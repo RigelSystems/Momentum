@@ -35,18 +35,24 @@ export default defineComponent({
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
 
-    const fetchHabits = async () => {
+    const fetchHabits = async (habitGroupId) => {
+      // habits.value = []
       loading.value = true
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_groups/${props.habitGroup.id}/habits`
-      const fetchRecords = requestApi(apiUrl, 'GET')
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken.value}`,
+        },
+      })
 
-      try {
-        const data = await fetchRecords()
-        console.log('data:', data)
-        habits.value = data
-
-      } catch (e) {
-        errorMessage.value = 'Failed to fetch records'
+      if (response.ok) {
+        const responseBody = await response.json()
+        habits.value = responseBody
+      } else {
+        const responseBody = await response.json()
+        errorMessage.value = responseBody.error
       }
       loading.value = false
     }
@@ -60,11 +66,9 @@ export default defineComponent({
 
     onMounted(async () => {
       await getAccessToken();
-    })
-
-    onMounted(async () => {
       fetchHabits()
     })
+
 
     const getHabitEntiryForDate = (habit: any, date: string) => {
       return habit.habit_entries.find((entry: any) => entry.date === date);
@@ -87,7 +91,10 @@ export default defineComponent({
 });
 </script>
 
+
 <template>
+  {{ errorMessage }}
+
   <n-dropdown>
     <template #label>
       <div class="table-group-name habit-group">
@@ -121,7 +128,7 @@ export default defineComponent({
           </div>
           <div class="table-cell" v-for="date in last30days" :key="date">
             <HabitEntry v-if="accessToken" :accessToken="accessToken" :entry="getHabitEntiryForDate(habit, date)" :habit="habit" :date="date"
-              :colour="habit.colour" :fetchHabits="fetchHabits" />
+              :colour="habit.colour" @updated="fetchHabits" :loading="loading" />
           </div>
         </template>
       </n-order-list>

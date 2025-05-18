@@ -25,21 +25,21 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    fetchHabits: {
-      type: Function,
-      required: true,
+    loading: {
+      type: Boolean,
+      required: false,
     },
   },
   components: {
     SelectIcon,
   },
-  setup(props) {
+  setup(props, { emit }) {
     let loading = false;
     let value = ref(props.entry?.value || 0);
 
     const updateExistingRecord = async (new_value: String) => {
       loading = true;
-      const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries/${props.entry?.id}`
+      const apiUrl = `${import.meta.env.VITE_API_URL}habit_entries/${props.entry.id}`
       const response = await fetch(apiUrl, {
         method: 'PATCH',
         headers: {
@@ -81,7 +81,9 @@ export default defineComponent({
         loading = false;
         const responseBody = await response.json()
         value.value = responseBody.value
-        props.fetchHabits()
+        // props.fetchHabits()
+        console.log('updated entry', responseBody)
+        emit('updated')
       } else {
         loading = false;
         const responseBody = await response.json()

@@ -7,7 +7,6 @@ export default function requestApi(
   body: unknown = null
 ) {
   return async function fetchData() {
-    // <-- NOW we’re inside component code, so provide/inject is ready
     const { getAccessTokenSilently } = useAuth0()
     const token = await getAccessTokenSilently()
 

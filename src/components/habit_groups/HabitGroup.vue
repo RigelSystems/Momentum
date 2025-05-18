@@ -13,6 +13,8 @@ export interface HabitGroup {
   id?: number,
   name: string,
   icon: string,
+  habits_with_goals_count?: number,
+  completed_today_count?: number,
 }
 
 export default defineComponent({
@@ -37,8 +39,38 @@ export default defineComponent({
     const loading = ref(true)
     const errorMessage = ref<string | null>(null)
 
+    const habitGroup = ref<HabitGroup>({
+      id: props.habitGroup.id,
+      name: props.habitGroup.name,
+      icon: props.habitGroup.icon,
+      habits_with_goals_count: props.habitGroup.habits_with_goals_count,
+      completed_today_count: props.habitGroup.completed_today_count,
+    })
+
+    const fetchHabitGroup = async (habitGroupId) => {
+      console.log('fetchHabitGroup', habitGroupId)
+      const apiUrl = `${import.meta.env.VITE_API_URL}habit_groups/${habitGroupId}`
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken.value}`,
+        },
+      })
+      console.log('response', response)
+
+      if (response.ok) {
+        const responseBody = await response.json()
+        console.log('responseBody', responseBody)
+        habitGroup.value = responseBody
+      } else {
+        const responseBody = await response.json()
+        errorMessage.value = responseBody.error
+      }
+    }
+
     const fetchHabits = async (habitGroupId) => {
-      // habits.value = []
+      console.log('fetchHabits', habitGroupId)
       loading.value = true
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_groups/${props.habitGroup.id}/habits`
       const response = await fetch(apiUrl, {
@@ -57,6 +89,12 @@ export default defineComponent({
         errorMessage.value = responseBody.error
       }
       loading.value = false
+    }
+
+    const updateComponent = async () => {
+      console.log('updateComponent', props.habitGroup.id)
+      fetchHabitGroup(props.habitGroup.id)
+      fetchHabits(props.habitGroup.id)
     }
 
     const { getAccessTokenSilently, user } = useAuth0()
@@ -79,6 +117,8 @@ export default defineComponent({
     const habitBulkUpdateUrl = `${import.meta.env.VITE_API_URL}habits/bulk_update`
 
     return {
+      habitGroup,
+      updateComponent,
       accessToken,
       habits,
       last30daysNiceFormat,
@@ -99,6 +139,14 @@ export default defineComponent({
     <template #label>
       <div class="table-group-name habit-group">
         <div class="habit-group__name-wrapper">
+          <NCircleProgress
+            :current="habitGroup.completed_today_count"
+            :total="habitGroup.habits_with_goals_count"
+            :fontSize="35"
+            :size="30"
+            :strokeWidth="11"
+            progressColor="#88bdb9"
+          />
           <h3>{{ habitGroup.name }}</h3>
           <v-icon class="mr-2" size="x-small">mdi-{{ habitGroup.icon }}</v-icon>
         </div>
@@ -129,7 +177,7 @@ export default defineComponent({
           </div>
           <div class="table-cell" v-for="date in last30days" :key="date">
             <HabitEntry v-if="accessToken" :accessToken="accessToken" :entry="getHabitEntiryForDate(habit, date)" :habit="habit" :date="date"
-              :colour="habit.colour" @updated="fetchHabits" :loading="loading" />
+              :colour="habit.colour" @updated="updateComponent" :loading="loading" />
           </div>
         </template>
       </n-order-list>

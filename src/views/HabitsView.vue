@@ -57,12 +57,9 @@ export default defineComponent({
   <div class="p-1">
     <HabitGroupForm>
       <template #trigger="{ openDialog }">
-        <v-btn
-        density="comfortable"
-        variant="tonal"
-        text="New Habit Group"
-        @click="openDialog"
-        ></v-btn>
+        <n-button
+          @click="openDialog"
+        >New Habit Group</n-button>
       </template>
     </HabitGroupForm>
   </div>

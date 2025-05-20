@@ -158,6 +158,14 @@ export default defineComponent({
 
         <SelectIcon v-model="record.icon" @update="updateRecordIcon"/>
 
+        <SelectFromRequest
+          path="habits/goal_conditions"
+          key="name"
+          name="name"
+          v-model="record.goal_condition"
+          label="Goal Condition"
+        />
+
         <v-text-field v-model="record.goal_value" label="Goal Value" required></v-text-field>
       </v-form>
     </template>

@@ -1,132 +1,145 @@
+<!-- RecordForm.vue -->
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from 'vue'
-import { useAuth0 } from '@auth0/auth0-vue'
+import { defineComponent, ref, onMounted, watch, computed } from 'vue';
+import { useAuth0 } from '@auth0/auth0-vue';
+import NModal   from '@rigelsystems/novaui/src/stories/NModal/NModal.vue';
+import NButton  from '@rigelsystems/novaui/src/stories/NButton/NButton.vue';
 
 export default defineComponent({
   name: 'RecordForm',
-  props: {
-    record: {
-      type: Object,
-      default: () => ({}), // Default to an empty object for new records
-    },
-    endpoint: {
-      type: String,
-      required: true,
-    },
-    method: {
-      type: String,
-      default: 'POST', // Default to 'POST' for creating records
-    },
-  },
-  setup(props, { emit }) {
-    const dialog = ref(false)
-    const localRecord = ref({ ...props.record })
-    const errorMessage = ref<string | null>(null)
-    const { getAccessTokenSilently, user } = useAuth0()
-    const accessToken = ref<string | null>(null)
 
+  props: {
+    record:   { type: Object,  default: () => ({}) },   // empty ⇒ “new” record
+    endpoint: { type: String,  required: true },
+    method:   { type: String,  default: 'POST' },
+  },
+
+  setup(props, { emit }) {
+    /* ------------------------------------------------------------------
+     * state
+     * ------------------------------------------------------------------ */
+    const show         = ref(false);                      // bound to <NModal v-model>
+    const localRecord  = ref({ ...props.record });
+    const errorMessage = ref<string | null>(null);
+
+    const { getAccessTokenSilently } = useAuth0();
+    const accessToken = ref<string | null>(null);
+
+    const modalTitle  = computed(() =>
+      Object.keys(props.record ?? {}).length
+        ? 'Edit Record'
+        : 'Add Record'
+    );
+
+    /* ------------------------------------------------------------------
+     * re-sync local copy whenever the parent sends a new record
+     * ------------------------------------------------------------------ */
     watch(
       () => props.record,
-      (newRecord) => {
-        localRecord.value = { ...newRecord }
-      },
+      newRec => { localRecord.value = { ...newRec }; },
       { deep: true, immediate: true },
-    )
+    );
 
-    const openDialog = () => {
-      dialog.value = true
-    }
+    /* ------------------------------------------------------------------
+     * helpers
+     * ------------------------------------------------------------------ */
+    const openDialog  = () => { show.value = true;  };
+    const closeDialog = () => { show.value = false; };
 
     const saveRecord = async () => {
-      console.error(JSON.stringify(localRecord.value))
-      errorMessage.value = null
-      const response = await fetch(props.endpoint, {
-        method: props.method,
+      errorMessage.value = null;
+
+      const res = await fetch(props.endpoint, {
+        method:  props.method,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken.value}`, // Include the access token
+          Authorization:  `Bearer ${accessToken.value}`,
         },
         body: JSON.stringify(localRecord.value),
-      })
+      });
 
-      if (!response.ok) {
-        console.log('response not ok')
-        errorMessage.value = await response.json()
+      if (!res.ok) {
+        errorMessage.value = await res.json();
       } else {
-        console.log('response ok')
-        dialog.value = false
-        emit('save', localRecord.value)
+        closeDialog();
+        emit('save', localRecord.value);
       }
-    }
+    };
 
     const deleteRecord = async () => {
-      errorMessage.value = null
-      const response = await fetch(props.endpoint, {
-        method: 'DELETE',
+      errorMessage.value = null;
+
+      const res = await fetch(props.endpoint, {
+        method:  'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken.value}`, // Include the access token
+          Authorization:  `Bearer ${accessToken.value}`,
         },
         body: JSON.stringify(localRecord.value),
-      })
+      });
 
-      if (!response.ok) {
-        errorMessage.value = await response.json()
+      if (!res.ok) {
+        errorMessage.value = await res.json();
       } else {
-        window.location.reload()
+        window.location.reload();
       }
-    }
+    };
 
-    const getAccessToken = async () => {
+    const fetchToken = async () => {
       accessToken.value = await getAccessTokenSilently();
     };
 
-    onMounted(async () => {
-      await getAccessToken()
-    })
+    onMounted(fetchToken);
 
     return {
-      dialog,
+      /* template bindings */
+      show,
       localRecord,
+      modalTitle,
+      errorMessage,
+
+      /* public helpers */
       openDialog,
       saveRecord,
       deleteRecord,
-      errorMessage,
-    }
+      closeDialog,
+    };
   },
-})
+});
 </script>
 
 <template>
-  <div>
-    <!-- Customizable trigger button -->
-    <slot name="trigger" :openDialog="openDialog">
-      <v-btn color="primary" @click="openDialog">Add Record</v-btn>
-    </slot>
+  <!-- ********************* -->
+  <!--       NModal         -->
+  <!-- ********************* -->
+  <NModal v-model="show" :title="modalTitle">
+    <!-- 1. Trigger  ************************************************ -->
+    <template #trigger="{ openModal }">
+      <!-- Forward the helper so existing parent templates keep working -->
+      <slot name="trigger" :openDialog="openModal">
+        <!-- Fallback trigger button if parent doesn’t provide one -->
+        <NButton label="Add Record" class="n-modal__trigger" @click="openModal" />
+      </slot>
+    </template>
 
-    <!-- Dialog for the form -->
-    <v-dialog v-model="dialog" max-width="500">
-      <v-card>
-        <!-- Customizable title -->
-        <v-card-title>
-          <slot name="title">Add/Edit Record</slot>
-        </v-card-title>
+    <!-- 2. Header  (optional – the prop already renders a title) **** -->
+    <template #header>
+      <slot name="title">
+        <h2 class="n-modal__title">{{ modalTitle }}</h2>
+      </slot>
+    </template>
 
-        <!-- Form content -->
-        <v-card-text>
-          <slot name="form" :record="localRecord">No form provided</slot>
-        </v-card-text>
+    <!-- 3. Body  **************************************************** -->
+    <slot name="form" :record="localRecord">No form provided</slot>
+    <p v-if="errorMessage" class="error text-center">{{ errorMessage }}</p>
 
-        <p v-if="errorMessage" class="error text-center">{{ errorMessage }}</p>
-
-        <v-card-actions>
-          <slot name="actions">
-            <v-btn color="red" class="mr-auto" @click="deleteRecord">Delete</v-btn>
-            <v-btn color="secondary" @click="dialog = false">Cancel</v-btn>
-            <v-btn color="primary" @click="saveRecord">Save</v-btn>
-          </slot>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+    <!-- 4. Footer / actions  **************************************** -->
+    <template #footer>
+      <slot name="actions">
+        <NButton class="mr-auto"  colour="danger"    label="Delete"  @click="deleteRecord" />
+        <NButton class="mx-2"     colour="secondary" label="Cancel"  @click="closeDialog" />
+        <NButton label="Save"    @click="saveRecord" />
+      </slot>
+    </template>
+  </NModal>
 </template>

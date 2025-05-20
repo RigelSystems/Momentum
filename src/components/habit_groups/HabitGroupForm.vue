@@ -65,7 +65,7 @@ export default defineComponent({
   <RecordForm :record="habitGroup" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
-        <v-btn color="primary">{{ isEditMode ? 'Edit Habit Group' : 'Add Habit Group' }}</v-btn>
+        <n-button color="primary">{{ isEditMode ? 'Edit Habit Group' : 'Add Habit Group' }}</n-button>
       </slot>
     </template>
     <template #title>

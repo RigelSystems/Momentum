@@ -1,9 +1,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
-import { useAuth0 } from '@auth0/auth0-vue'
 import HabitGroup from '@/components/habit_groups/HabitGroup.vue'
 import HabitGroupForm from '@/components/habit_groups/HabitGroupForm.vue'
-import { getLastXDaysFormatted } from '@/utils/dateUtils'
+import HabitForm from '@/components/habits/HabitForm.vue'
 import requestApi from '@/utils/requestApi'
 
 interface CompletionPercentages {
@@ -16,6 +15,7 @@ export default defineComponent({
   name: 'HabitsView',
   components: {
     HabitGroup,
+    HabitForm,
     HabitGroupForm,
   },
   setup() {
@@ -54,7 +54,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="p-1">
+  <div class="standard-container p-1">
     <HabitGroupForm>
       <template #trigger="{ openDialog }">
         <n-button
@@ -62,6 +62,14 @@ export default defineComponent({
         >New Habit Group</n-button>
       </template>
     </HabitGroupForm>
+
+    <HabitForm @saved="fetchHabitGroups" v-if="habitGroups.length > 0">
+        <template #trigger="{ openDialog }">
+          <n-button
+            @click="openDialog"
+          >New Habit</n-button>
+        </template>
+      </HabitForm>
   </div>
 
   <div class="page-wrapper">

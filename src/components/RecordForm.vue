@@ -109,31 +109,22 @@ export default defineComponent({
 </script>
 
 <template>
-  <!-- ********************* -->
-  <!--       NModal         -->
-  <!-- ********************* -->
   <NModal v-model="show" :title="modalTitle">
-    <!-- 1. Trigger  ************************************************ -->
     <template #trigger="{ openModal }">
-      <!-- Forward the helper so existing parent templates keep working -->
       <slot name="trigger" :openDialog="openModal">
-        <!-- Fallback trigger button if parent doesn’t provide one -->
         <NButton label="Add Record" class="n-modal__trigger" @click="openModal" />
       </slot>
     </template>
 
-    <!-- 2. Header  (optional – the prop already renders a title) **** -->
     <template #header>
       <slot name="title">
         <h2 class="n-modal__title">{{ modalTitle }}</h2>
       </slot>
     </template>
 
-    <!-- 3. Body  **************************************************** -->
     <slot name="form" :record="localRecord">No form provided</slot>
     <p v-if="errorMessage" class="error text-center">{{ errorMessage }}</p>
 
-    <!-- 4. Footer / actions  **************************************** -->
     <template #footer>
       <slot name="actions">
         <NButton class="mr-auto"  colour="danger"    label="Delete"  @click="deleteRecord" />

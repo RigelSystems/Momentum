@@ -1,10 +1,9 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, watch, ref } from 'vue';
 import HabitGroupForm from '@/components/habit_groups/HabitGroupForm.vue'
 import './HabitGroup.css'
 import { getLastXDaysFormatted } from '@/utils/dateUtils'
-import requestApi from '@/utils/requestApi'
-import { useAuth0 } from '@auth0/auth0-vue'
+import { useAuthToken } from '@/composables/useAuthToken'
 import Habit from '@/components/habits/Habit.vue'
 import HabitEntry from '@/components/HabitEntry.vue'
 import HabitForm from '@/components/habits/HabitForm.vue'
@@ -32,6 +31,8 @@ export default defineComponent({
     Habit,
   },
   setup(props) {
+    const { accessToken } = useAuthToken()
+
     const last30daysNiceFormat = getLastXDaysFormatted(30, 'ddd<br>D');
     const last30days = getLastXDaysFormatted(30, 'YYYY-MM-DD');
 
@@ -69,7 +70,7 @@ export default defineComponent({
       }
     }
 
-    const fetchHabits = async (habitGroupId) => {
+    const fetchHabits = async (habitGroupId: any) => {
       console.log('fetchHabits', habitGroupId)
       loading.value = true
       const apiUrl = `${import.meta.env.VITE_API_URL}habit_groups/${props.habitGroup.id}/habits`
@@ -97,18 +98,12 @@ export default defineComponent({
       fetchHabits(props.habitGroup.id)
     }
 
-    const { getAccessTokenSilently, user } = useAuth0()
-    const accessToken = ref<string | null>(null)
-
-    const getAccessToken = async () => {
-      accessToken.value = await getAccessTokenSilently();
-    };
-
-    onMounted(async () => {
-      await getAccessToken();
-      fetchHabits()
-    })
-
+    // watch the accessToken for changes, then fetch habits
+    watch(accessToken, (newValue) => {
+      if (newValue && accessToken.value) {
+        fetchHabits(props.habitGroup.id)
+      }
+    }, { immediate: true })
 
     const getHabitEntiryForDate = (habit: any, date: string) => {
       return habit.habit_entries.find((entry: any) => entry.date === date);
@@ -181,17 +176,6 @@ export default defineComponent({
           </div>
         </template>
       </n-order-list>
-
-      <HabitForm v-if="fetchHabits" :fetchHabits="fetchHabits">
-        <template #trigger="{ openDialog }">
-          <v-btn
-            density="comfortable"
-            variant="tonal"
-            text="New Habit"
-            @click="openDialog"
-          ></v-btn>
-        </template>
-      </HabitForm>
     </template>
   </n-dropdown>
 </template>

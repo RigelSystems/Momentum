@@ -140,9 +140,7 @@ body {
   width: 100%;
   min-width: 150px;
   max-width: 150px;
-  position: sticky;
   left: 0;
-  z-index: 1;
   min-height: 34px;
   padding-left: 0.75rem;
   overflow: auto;
@@ -163,7 +161,7 @@ body {
   min-width: 25px;
   max-width: 25px;
   text-align: center;
-  position: relative;
+  /* position: relative; */
 }
 
 .habit-entry {

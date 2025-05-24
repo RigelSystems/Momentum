@@ -1,9 +1,11 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
-import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import SelectFromRequest from '../inputs/SelectFromRequest.vue'
 import SelectIcon from '../inputs/SelectIcon.vue'
+import NTextInput from '@rigelsystems/novaui/src/stories/NTextInput/NTextInput.vue'
+import { useAuthToken } from '@/composables/useAuthToken'
+import NSelectInputFromRequest from '@rigelsystems/novaui/src/stories/NSelectInputFromRequest/NSelectInputFromRequest.vue'
 
 export interface Habit {
   id?: number,
@@ -25,19 +27,16 @@ export default defineComponent({
         colour: '#fff',
         icon: '',
       }),
-    },
-    fetchHabits: {
-      type: Function,
-      required: true,
     }
   },
+  emits: ['saved'],
   components: {
     RecordForm,
     SelectFromRequest,
     SelectIcon
   },
-  setup(props) {
-    const accessTokenStore = useAccessTokenStore()
+  setup(props, { emit }) {
+    const { accessToken } = useAuthToken()
     const value = ref<string[]>([])
       const allowedMinutes = v => v % 5 === 0
 
@@ -56,13 +55,24 @@ export default defineComponent({
     }
 
     const handleSave = (savedRecord: Habit) => {
-      console.log('fetchHabits', props.fetchHabits)
-      console.log('handleSave', savedRecord)
-      props.fetchHabits()
+      console.log('habit form handle save', savedRecord)
+      // reload the page for now
+      window.location.reload()
+      emit('saved', savedRecord)
     }
+
+    const friendsUrl = `${import.meta.env.VITE_API_URL}/friends/friends`
+    const habitGroupsUrl = `${import.meta.env.VITE_API_URL}/habit_groups`
+    const habitTypesUrl = `${import.meta.env.VITE_API_URL}/habits/types`
+    const goalConditionsUrl = `${import.meta.env.VITE_API_URL}/habits/goal_conditions`
 
     return {
       isEditMode,
+      accessToken,
+      friendsUrl,
+      habitGroupsUrl,
+      habitTypesUrl,
+      goalConditionsUrl,
       endpoint,
       method,
       handleSave,
@@ -82,45 +92,55 @@ export default defineComponent({
       </slot>
     </template>
     <template #title>
-      <span>{{ isEditMode ? 'Edit Habit' : 'Add New Habit' }}</span>
+      <h2 class="n-modal__title">{{ isEditMode ? 'Edit Habit' : 'Add New Habit' }}</h2>
     </template>
     <template #form="{ record }">
       <v-form>
-        <v-text-field v-model="record.name" label="Name" required></v-text-field>
+        <h1>Details</h1>
 
-        <SelectFromRequest
-          path="friends/friends"
-          key="email"
-          name="email"
-          v-model="record.users_id"
-          :multiple="true"
-          label="Users"
-        />
+        <NTextInput v-model:value="record.name" label="Name" required></NTextInput>
 
-        <SelectFromRequest
-          path="habit_groups"
-          key="name"
+        <NSelectInputFromRequest
+          :url="habitGroupsUrl"
+          valueKey="id"
           name="habit_group_id"
-          v-model="record.habit_group_id"
           label="Habit Group"
+          :accessToken="accessToken"
+          v-model="record.habit_group_id"
         />
 
-        <SelectFromRequest
-          path="habits/types"
-          key="name"
-          name="name"
-          v-model="record.habit_type"
+        <NSelectInputFromRequest
+          :url="habitTypesUrl"
+          valueKey="name"
+          name="habit_type"
           label="Habit Type"
+          :accessToken="accessToken"
+          v-model="record.habit_type"
         />
 
-        <v-time-picker
-          key="start_time"
-          v-model="record.start_time"
-          format="24hr"
-          :allowed-minutes="allowedMinutes"
-        >
+        <SelectIcon v-model="record.icon" @update="updateRecordIcon"/>
 
-        </v-time-picker>
+        <NColourPicker v-model="record.colour"></NColourPicker>
+
+        <h1>Goal</h1>
+
+        <NSelectInputFromRequest
+          :url="goalConditionsUrl"
+          valueKey="name"
+          name="goal_condition"
+          label="Goal Condition"
+          :accessToken="accessToken"
+          v-model="record.goal_condition"
+        />
+
+        <NTextInput v-model:value="record.goal_value" label="Goal Value"></NTextInput>
+
+        <h1>Reminder</h1>
+
+        <NTimeInput
+          label="Select Time"
+          v-model:value="record.start_time"
+        />
 
         <v-number-input
           :reverse="false"
@@ -133,40 +153,16 @@ export default defineComponent({
           v-model="record.duration"
         ></v-number-input>
 
-        <v-menu :close-on-content-click="false" location="end">
-          <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" variant="tonal">
-              Habit colour
-              <div
-                :style="{
-                  width: '24px',
-                  height: '24px',
-                  backgroundColor: record.colour || '#fff',
-                  borderRadius: '5px',
-                  display: 'inline-block',
-                  marginLeft: '10px',
-                }"
-              ></div>
-            </v-btn>
-          </template>
+        <h1>Access</h1>
 
-          <v-card min-width="300">
-            <v-color-picker v-model="record.colour" :modes="['hex']"></v-color-picker>
-          </v-card>
-
-        </v-menu>
-
-        <SelectIcon v-model="record.icon" @update="updateRecordIcon"/>
-
-        <SelectFromRequest
-          path="habits/goal_conditions"
-          key="name"
-          name="name"
-          v-model="record.goal_condition"
-          label="Goal Condition"
+        <NSelectInputFromRequest
+          :url="friendsUrl"
+          valueKey="id"
+          name="role"
+          label="Select Users"
+          :accessToken="accessToken"
+          v-model="record.users_id"
         />
-
-        <v-text-field v-model="record.goal_value" label="Goal Value" required></v-text-field>
       </v-form>
     </template>
   </RecordForm>

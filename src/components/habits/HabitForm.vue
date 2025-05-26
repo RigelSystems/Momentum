@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
-import SelectFromRequest from '../inputs/SelectFromRequest.vue'
 import SelectIcon from '../inputs/SelectIcon.vue'
 import NTextInput from '@rigelsystems/novaui/src/stories/NTextInput/NTextInput.vue'
 import { useAuthToken } from '@/composables/useAuthToken'
@@ -14,6 +13,11 @@ export interface Habit {
   icon: string,
   habit_group_id: number,
   start_time: string,
+  duration?: number,
+  goal_condition?: string,
+  goal_value?: number,
+  habit_type?: string,
+  wants_reminder?: boolean,
 }
 
 export default defineComponent({
@@ -32,7 +36,6 @@ export default defineComponent({
   emits: ['saved'],
   components: {
     RecordForm,
-    SelectFromRequest,
     SelectIcon
   },
   setup(props, { emit }) {
@@ -98,7 +101,7 @@ export default defineComponent({
       <v-form>
         <h1>Details</h1>
 
-        <NTextInput v-model:value="record.name" label="Name" required></NTextInput>
+        <NTextInput v-model:value="record.name" label="Name"></NTextInput>
 
         <NSelectInputFromRequest
           :url="habitGroupsUrl"
@@ -133,16 +136,24 @@ export default defineComponent({
           v-model="record.goal_condition"
         />
 
-        <NTextInput v-model:value="record.goal_value" label="Goal Value"></NTextInput>
+        <NTextInput
+          v-if="!(record.goal_condition === 'No Goal' || record.goal_condition === 'Anything')"
+          v-model:value="record.goal_value"
+          label="Goal Value"
+          ></NTextInput>
 
         <h1>Reminder</h1>
 
+        <p>Would you like a reminder set for this habit? <input type="checkbox" v-model="record.wants_reminder"></p>
+
         <NTimeInput
+          v-if="record.wants_reminder"
           label="Select Time"
           v-model:value="record.start_time"
         />
 
         <v-number-input
+          v-if="record.wants_reminder"
           :reverse="false"
           controlVariant="default"
           label="Duration"

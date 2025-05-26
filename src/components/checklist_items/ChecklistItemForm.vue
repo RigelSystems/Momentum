@@ -1,16 +1,19 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
-import { useAccessTokenStore } from '@/stores/accessTokenStore'
+import { useAuthToken } from '@/composables/useAuthToken'
 import SelectIcon from '../inputs/SelectIcon.vue'
 import { useRoute } from 'vue-router'
 import SelectFromRequest from '../inputs/SelectFromRequest.vue'
+import NTextInput from '@rigelsystems/novaui/src/stories/NTextInput/NTextInput.vue'
 
 export interface ChecklistItem {
   id?: number // Optional for new records
   name: string,
   icon: string,
   checklist_id: number
+  checklist_item_type?: string[]
+  status?: string[]
 }
 
 export default defineComponent({
@@ -31,7 +34,7 @@ export default defineComponent({
     SelectFromRequest,
   },
   setup(props) {
-    const accessTokenStore = useAccessTokenStore()
+    const { accessToken } = useAuthToken()
     const value = ref<string[]>([])
     const route = useRoute()
     const statusOptions = ref<string[]>(['not started', 'blocked', 'done'])
@@ -45,8 +48,8 @@ export default defineComponent({
     const endpoint = computed(
       () =>
         isEditMode.value
-          ? `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItem.id}` // Edit endpoint
-          : `${import.meta.env.VITE_API_URL}/checklist_items`, // Add endpoint
+          ? `${import.meta.env.VITE_API_URL}checklist_items/${props.checklistItem.id}` // Edit endpoint
+          : `${import.meta.env.VITE_API_URL}checklist_items`, // Add endpoint
     )
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
 
@@ -54,14 +57,20 @@ export default defineComponent({
       window.location.reload()
     }
 
+    const statusUrl = `${import.meta.env.VITE_API_URL}/checklist_items/statuses`
+    const typesUrl = `${import.meta.env.VITE_API_URL}/checklist_items/checklist_item_types`
+
     return {
+      accessToken,
       isEditMode,
       endpoint,
       method,
       handleSave,
       value,
       checklistId,
-      statusOptions
+      statusOptions,
+      statusUrl,
+      typesUrl
     }
   },
 })
@@ -81,15 +90,67 @@ export default defineComponent({
       <v-form>
         <input type="hidden" name="chcklist_id" v-model="record.checklist_id" />
 
-        <v-text-field variant="outlined" v-model="record.name" label="Name" required></v-text-field>
-
-        <SelectFromRequest
-          path="checklist_items/status"
-          key="name"
+        <NTextInput
+          v-model:value="record.name"
           name="name"
-          v-model="record.status"
-          label="Habit Type"
+          label="Name"
+        ></NTextInput>
+
+        <NSelectInputFromRequest
+          :url="typesUrl"
+          valueKey="name"
+          name="checklist_item_types"
+          :accessToken="accessToken"
+          v-model="record.checklist_item_type"
+          label="checklist_item_types"
         />
+
+       <!-- TODO: use component :is="ChecklistItemInputs record.checklist_item_type_classify" instead. -->
+
+        <NSelectInputFromRequest
+          v-if="record.checklist_item_type === 'task'"
+          :url="statusUrl"
+          valueKey="name"
+          name="statuses"
+          :accessToken="accessToken"
+          v-model="record.status"
+          label="statuses"
+        />
+
+        <NTextInput
+          v-if="record.checklist_item_type === 'weighted_exercise'"
+          v-model:value="record.sets"
+          name="sets"
+          label="Sets"
+        ></NTextInput>
+
+        <NTextInput
+          v-if="record.checklist_item_type === 'weighted_exercise'"
+          v-model:value="record.reps"
+          name="reps"
+          label="Reps"
+        ></NTextInput>
+
+        <NTextInput
+          v-if="record.checklist_item_type === 'weighted_exercise'"
+          v-model:value="record.weight"
+          name="weight"
+          label="Weight"
+        ></NTextInput>
+
+        <NTextInput
+          v-if="record.checklist_item_type === 'weighted_exercise'"
+          v-model:value="record.unit"
+          name="unit"
+          label="Unit"
+        ></NTextInput>
+
+        <NTextInput
+          v-if="record.checklist_item_type === 'weighted_exercise'"
+          v-model:value="record.rest"
+          name="rest"
+          label="Rest (seconds)"
+        ></NTextInput>
       </v-form>
     </template>
   </RecordForm>

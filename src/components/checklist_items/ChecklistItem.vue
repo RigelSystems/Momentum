@@ -1,6 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue'
+import ChecklistItemWeightedExercise from '@/components/checklist_items/ChecklistItemWeightedExercise.vue'
+import ChecklistItemTimedExercise from './ChecklistItemTimedExercise.vue';
+import ChecklistItemTask from './ChecklistItemTask.vue';
 
 export interface ChecklistItem {
   id?: number,
@@ -8,6 +11,8 @@ export interface ChecklistItem {
   icon: string,
   status: string,
   checklist_id: number,
+  checklist_item_type?: string[],
+  checklist_item_type_classify?: string,
 }
 
 export default defineComponent({
@@ -20,12 +25,15 @@ export default defineComponent({
   },
   components: {
     ChecklistItemForm,
+    ChecklistItemWeightedExercise,
+    ChecklistItemTimedExercise,
+    ChecklistItemTask,
   },
 });
 </script>
 
 <template>
-  <div class="table-group-name">
+  <div>
     <ChecklistItemForm :checklistItem="checklistItem">
       <template #trigger="{ openDialog }">
         <v-btn
@@ -37,7 +45,9 @@ export default defineComponent({
         ></v-btn>
       </template>
     </ChecklistItemForm>
-    <v-icon class="mr-2" size="small">mdi-{{ checklistItem.icon }}</v-icon>
-    <h3>{{ checklistItem.name }} - {{ checklistItem.status }}</h3>
+    <component
+      :is="`ChecklistItem${checklistItem.checklist_item_type_classify}`"
+      :checklistItem="checklistItem"
+    ></component>
   </div>
 </template>

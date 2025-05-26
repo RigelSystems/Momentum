@@ -127,9 +127,9 @@ export default defineComponent({
 
     <template #footer>
       <slot name="actions">
-        <NButton class="mr-auto"  colour="danger"    label="Delete"  @click="deleteRecord" />
-        <NButton class="mx-2"     colour="secondary" label="Cancel"  @click="closeDialog" />
-        <NButton label="Save"    @click="saveRecord" />
+        <NButton class="mr-auto" colour="danger" label="Delete" @click="deleteRecord" />
+        <NButton class="mx-2" colour="secondary" label="Cancel" @click="closeDialog" />
+        <NButton label="Save" @click="saveRecord"/>
       </slot>
     </template>
   </NModal>

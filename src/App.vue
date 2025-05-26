@@ -38,6 +38,7 @@ export default defineComponent({
       { label: 'Habits',     url: '/#/habits',    visible: isLoggedIn.value },
       { label: 'Timeline',   url: '/#/timeline',  visible: isLoggedIn.value },
       { label: 'Checklists', url: '/#/checklists',visible: isLoggedIn.value },
+      { label: 'Admin',    url: '/#/admin',   visible: isLoggedIn.value },
       { label: 'Account',    url: '/#/account',   visible: isLoggedIn.value },
     ])
 

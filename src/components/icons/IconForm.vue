@@ -2,47 +2,45 @@
 import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
-import SelectFromRequest from '../inputs/SelectFromRequest.vue'
+import SelectIcon from '../inputs/SelectIcon.vue'
 
-export interface Checklist {
-  id?: number
-  name: string
-  description?: string
-  status?: string
+export interface Icon {
+  id?: number // Optional for new records
+  pixel_data: any,
 }
 
 export default defineComponent({
-  name: 'ChecklistForm',
+  name: 'IconForm',
   props: {
-    checklist: {
-      type: Object as () => Checklist,
-      required: false,
+    icon: {
+      type: Object as () => Icon,
+      required: false, // Optional for adding new records
       default: () => ({
         name: '',
-      }),
+      }), // Default values for new records
     },
   },
   components: {
     RecordForm,
-    SelectFromRequest
+    SelectIcon,
   },
   setup(props) {
     const accessTokenStore = useAccessTokenStore()
     const value = ref<string[]>([])
 
     // Determine if we're editing or adding a new record
-    const isEditMode = computed(() => !!props.checklist.id)
+    const isEditMode = computed(() => !!props.icon.id)
 
     // Compute the endpoint and HTTP method
     const endpoint = computed(
       () =>
         isEditMode.value
-          ? `${import.meta.env.VITE_API_URL}/checklists/${props.checklist.id}` // Edit endpoint
-          : `${import.meta.env.VITE_API_URL}/checklists`, // Add endpoint
+          ? `${import.meta.env.VITE_API_URL}/icons/${props.icon.id}` // Edit endpoint
+          : `${import.meta.env.VITE_API_URL}/icons`, // Add endpoint
     )
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
 
-    const handleSave = async (savedRecord: Checklist) => {
+    const handleSave = async (savedRecord: Icon) => {
       window.location.reload()
     }
 
@@ -51,27 +49,25 @@ export default defineComponent({
       endpoint,
       method,
       handleSave,
-      value,
+      value
     }
   },
 })
 </script>
 
 <template>
-  <RecordForm :record="checklist" :endpoint="endpoint" :method="method" @save="handleSave">
+  <RecordForm :record="icon" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
-        <v-btn color="primary">{{ isEditMode ? 'Edit Checklist' : 'Add Checklist' }}</v-btn>
+        <n-button color="primary">{{ isEditMode ? 'Edit Habit Group' : 'Add Habit Group' }}</n-button>
       </slot>
     </template>
     <template #title>
-      <span>{{ isEditMode ? 'Edit Checklist' : 'Add New Checklist' }}</span>
+      <span>{{ isEditMode ? 'Edit Habit Group' : 'Add New Habit Group' }}</span>
     </template>
     <template #form="{ record }">
       <v-form>
-        <v-text-field v-model="record.name" label="Name" required></v-text-field>
-
-        <v-textarea v-model="record.description" label="Description"></v-textarea>
+        <NPaint v-model:pixelData="record.pixel_data"></NPaint>
       </v-form>
     </template>
   </RecordForm>

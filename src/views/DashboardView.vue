@@ -36,7 +36,6 @@ export default defineComponent({
 
     watch(accessToken, (newValue) => {
       if (newValue && accessToken.value) {
-        console.log('Access token changed:', newValue)
         fetchDashboardData()
       }
     }, { immediate: true })

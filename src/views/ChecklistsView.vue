@@ -83,7 +83,7 @@ export default defineComponent({
     modelName="checklists"
   >
     <template #default="checklist">
-      <NCard :subtitle="checklist.status" :title="checklist.name">
+      <NCard :title="checklist.name">
         <template #content>
           <p>{{ checklist.description }}</p>
 

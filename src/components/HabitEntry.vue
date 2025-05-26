@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import SelectIcon from './inputs/SelectIcon.vue'
+import HabitEntryChecklist from './habit_entries/HabitEntryChecklist.vue'
 
 export default defineComponent({
   name: 'HabitEntry',
@@ -32,6 +33,7 @@ export default defineComponent({
   },
   components: {
     SelectIcon,
+    HabitEntryChecklist,
   },
   setup(props, { emit }) {
     let loading = false;
@@ -108,6 +110,8 @@ export default defineComponent({
       }
     }
 
+    const checklistUrl = `${import.meta.env.VITE_API_URL}checklists`
+
     return {
       entry: props.entry,
       updateEntry,
@@ -116,7 +120,8 @@ export default defineComponent({
       startHold,
       endHold,
       modalIsActive,
-      updateRecordIcon
+      updateRecordIcon,
+      checklistUrl,
     };
   },
 });
@@ -203,5 +208,9 @@ export default defineComponent({
         </v-card>
       </template>
     </v-dialog>
+  </div>
+
+  <div v-if="habit.habit_type === 'Checklist'">
+    <HabitEntryChecklist :colour="colour" :date="date"></HabitEntryChecklist>
   </div>
 </template>

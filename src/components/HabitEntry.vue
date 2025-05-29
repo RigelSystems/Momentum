@@ -211,6 +211,6 @@ export default defineComponent({
   </div>
 
   <div v-if="habit.habit_type === 'Checklist'">
-    <HabitEntryChecklist :colour="colour" :date="date"></HabitEntryChecklist>
+    <HabitEntryChecklist :colour="colour" :date="date" :value="value"></HabitEntryChecklist>
   </div>
 </template>

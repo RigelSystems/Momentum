@@ -20,6 +20,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    value: {
+      type: Number,
+      required: false,
+    },
   },
   components: {
     ChecklistItemWeightedExercise,
@@ -28,13 +32,16 @@ export default defineComponent({
   setup(props) {
     const { accessToken } = useAuthToken()
     const styles = {
-      backgroundColor: props.colour,
+      backgroundColor: props.value ? props.colour : '#f0f0f0',
     };
     const show = ref(false);
     const openDialog  = () => { show.value = true;  };
     const closeDialog = () => { show.value = false; };
     const checklistId = ref<number | null>(null);
     const checklist = ref<HabitEntry | null>(null);
+    const checklistSelected = ref(false);
+    const currentItemCount = ref(0);
+    const currentSetCount = ref(1);
 
     const fetchChecklist = async (id: number) => {
       console.log(`Fetching checklist with ID: ${id}`);
@@ -61,15 +68,40 @@ export default defineComponent({
 
     const checklistUrl = `${import.meta.env.VITE_API_URL}/checklists`;
 
+    const startChecklist = () => {
+      checklistSelected.value = true;
+    }
+
+    const nextAction = () => {
+      const currentItem = checklist.value?.checklist_items[currentItemCount.value];
+
+      if (currentItem && currentItem.sets) {
+        if (currentSetCount.value < currentItem.sets) {
+          currentSetCount.value++;
+        } else {
+          currentItemCount.value++;
+          currentSetCount.value = 1;
+        }
+      } else {
+        currentItemCount.value++;
+        currentSetCount.value = 1;
+      }
+    };
+
     return {
       show,
       openDialog,
       closeDialog,
       styles,
+      checklistSelected,
       accessToken,
       checklistUrl,
       checklistId,
       checklist,
+      startChecklist,
+      currentItemCount,
+      currentSetCount,
+      nextAction
     };
   }
 });
@@ -94,6 +126,7 @@ export default defineComponent({
       </template>
 
       <NSelectInputFromRequest
+        v-if="!checklistSelected"
         :url="checklistUrl"
         valueKey="id"
         name="role"
@@ -102,7 +135,7 @@ export default defineComponent({
         :accessToken="accessToken"
       />
 
-      <div class="standard-container-1">
+      <div class="standard-container-1" v-if="!checklistSelected">
         <div v-for="item in checklist?.checklist_items" :key="item.id">
           <component
           :is="`ChecklistItem${item.checklist_item_type_classify}`"
@@ -111,10 +144,38 @@ export default defineComponent({
         </div>
       </div>
 
+      <div v-if="checklistSelected">
+        <p class="text-center">You have started the checklist.</p>
+        <p class="text-center">Please complete the items in your checklist.</p>
+
+        <NCircleProgress
+          :current="currentItemCount + 1"
+          :total="checklist?.checklist_items?.length"
+          :fontSize="35"
+          :size="40"
+          :strokeWidth="11"
+          progressColor="#88bdb9"
+        />
+
+        <component
+          :is="`ChecklistItem${checklist?.checklist_items[currentItemCount]?.checklist_item_type_classify}`"
+          :checklistItem="checklist?.checklist_items[currentItemCount]"
+          ></component>
+
+        <div v-for="set in checklist?.checklist_items[currentItemCount]?.sets" :key="set.id">
+          <p :style="[`border: ${set == currentSetCount ? 'solid grey 1px' : ''};`]">
+            <strong>Set {{ set }}:</strong>
+            {{ checklist?.checklist_items[currentItemCount]?.reps }} reps at {{ checklist?.checklist_items[currentItemCount]?.weight }} kg
+          </p>
+        </div>
+      </div>
+
       <template #footer>
         <slot name="actions">
+          <NButton label="Back" @click="currentItemCount--" v-if="checklistSelected"/>
           <NButton class="mx-2" colour="secondary" label="Cancel" @click="closeDialog" />
-          <NButton label="Save" @click=""/>
+          <NButton label="Start" @click="startChecklist" v-if="checklistId && checklist?.checklist_items && !checklistSelected"/>
+          <NButton label="Next" @click="nextAction" v-if="checklistSelected"/>
         </slot>
       </template>
   </NModal>

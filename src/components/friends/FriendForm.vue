@@ -57,7 +57,7 @@ export default defineComponent({
   <RecordForm :record="friend" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
-        <v-btn color="primary">{{ isEditMode ? 'Edit Friend' : 'Add Friend' }}</v-btn>
+        <NButton :label="isEditMode ? 'Edit Friend' : 'Add Friend'" />
       </slot>
     </template>
     <template #title>

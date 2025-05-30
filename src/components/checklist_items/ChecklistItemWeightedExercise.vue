@@ -36,12 +36,11 @@ export default defineComponent({
     <h3>
       <ChecklistItemForm :checklistItem="checklistItem">
         <template #trigger="{ openDialog }">
-          <v-btn
-            density="default"
+          <NButton
             icon="mdi-pencil-box-outline"
             @click="openDialog"
             size="medium"
-          ></v-btn>
+          />
         </template>
       </ChecklistItemForm>
       {{ checklistItem.name }}

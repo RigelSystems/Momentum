@@ -37,7 +37,8 @@ export default defineComponent({
       { label: 'Dashboard',  url: '/#/dashboard', visible: isLoggedIn.value },
       { label: 'Habits',     url: '/#/habits',    visible: isLoggedIn.value },
       { label: 'Timeline',   url: '/#/timeline',  visible: isLoggedIn.value },
-      { label: 'Lists', url: '/#/checklists',visible: isLoggedIn.value },
+      { label: 'Workouts', url: '/#/workouts', visible: isLoggedIn.value },
+      { label: 'Tasks', url: '/#/tasks', visible: isLoggedIn.value },
       { label: 'Admin',    url: '/#/admin',   visible: isLoggedIn.value },
       { label: 'Account',    url: '/#/account',   visible: isLoggedIn.value },
     ])
@@ -46,7 +47,7 @@ export default defineComponent({
       { icon: 'mdi-view-dashboard-outline', url: '/#/dashboard', visible: isLoggedIn.value, label: 'Dashboard' },
       { icon: 'mdi-check-circle-outline',   url: '/#/habits',    visible: isLoggedIn.value, label: 'Habits' },
       { icon: 'mdi-timeline-text',          url: '/#/timeline',  visible: isLoggedIn.value, label: 'Timeline' },
-      { icon: 'mdi-format-list-checks',     url: '/#/checklists',visible: isLoggedIn.value, label: 'Lists' },
+      { icon: 'mdi-format-list-checks',     url: '/#/lists',visible: isLoggedIn.value, label: 'Lists' },
       { icon: 'mdi-account-outline',        url: '/#/account',   visible: isLoggedIn.value, label: 'Account' },
     ])
 

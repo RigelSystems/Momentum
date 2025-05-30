@@ -5,6 +5,7 @@ import SelectIcon from '../inputs/SelectIcon.vue'
 import NTextInput from '@rigelsystems/novaui/src/stories/NTextInput/NTextInput.vue'
 import { useAuthToken } from '@/composables/useAuthToken'
 import NSelectInputFromRequest from '@rigelsystems/novaui/src/stories/NSelectInputFromRequest/NSelectInputFromRequest.vue'
+import NButton from '@rigelsystems/novaui/src/stories/NButton/NButton.vue'
 
 export interface Habit {
   id?: number,
@@ -36,7 +37,8 @@ export default defineComponent({
   emits: ['saved'],
   components: {
     RecordForm,
-    SelectIcon
+    SelectIcon,
+    NButton,
   },
   setup(props, { emit }) {
     const { accessToken } = useAuthToken()
@@ -91,7 +93,7 @@ export default defineComponent({
   <RecordForm :record="habit" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
-        <v-btn color="primary">{{ isEditMode ? 'Edit Habit' : 'Add Habit' }}</v-btn>
+        <NButton :label="isEditMode ? 'Edit Habit' : 'Add Habit'" />
       </slot>
     </template>
     <template #title>

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from 'vue'
-import { useAuth0 } from '@auth0/auth0-vue'
+import { useAuthToken } from '@/composables/useAuthToken'
 
 export default defineComponent({
   name: 'SelectFromRequest',
@@ -31,8 +31,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const { getAccessTokenSilently } = useAuth0()
-    const accessToken = ref<string | null>(null)
+    const { accessToken } = useAuthToken()
     const items = ref<string[]>([])
     const selected = ref(props.modelValue)
     const loading = ref<boolean>(true)
@@ -85,12 +84,7 @@ export default defineComponent({
       }
     }
 
-    const getAccessToken = async () => {
-      accessToken.value = await getAccessTokenSilently();
-    };
-
     onMounted(async () => {
-      await getAccessToken()
       fetchItems()
     })
 

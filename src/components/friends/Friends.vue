@@ -1,9 +1,9 @@
-
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
 import RequestButton from '@/components/shared/RequestButton.vue';
 import FriendForm from '@/components/friends/FriendForm.vue';
+import NButton from '@rigelsystems/novaui/src/stories/NButton/NButton.vue';
 
 export default defineComponent({
   name: 'Friends',
@@ -16,6 +16,7 @@ export default defineComponent({
   components: {
     RequestButton,
     FriendForm,
+    NButton,
   },
   setup(props) {
     let loading = false;
@@ -81,13 +82,11 @@ export default defineComponent({
     @requestSent="fetchFriends"
   >
     <template #trigger="{ openDialog }">
-      <v-btn
-        density="comfortable"
-        variant="tonal"
-        text="Find Friend"
+      <NButton
+        label="Find Friend"
         class="mr-2 my-4"
         @click="openDialog"
-      ></v-btn>
+      />
     </template>
   </FriendForm>
 

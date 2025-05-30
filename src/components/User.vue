@@ -38,42 +38,32 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-menu
-    rounded
-  >
-    <template v-slot:activator="{ props }">
-      <v-btn
-        icon
-        v-bind="props"
-      >
+  <NDropdown>
+    <template #trigger>
+      <NButton icon>
         <v-avatar
           color="brown"
           size="large"
         >
-        <v-img
-              :src="user?.picture"
-              alt="User avatar"
-            />
+          <v-img
+            :src="user?.picture"
+            alt="User avatar"
+          />
         </v-avatar>
-      </v-btn>
+      </NButton>
     </template>
-    <v-card>
-      <v-card-text>
-        <div class="mx-auto text-center">
-          <h3>{{ user?.given_name }} {{ user?.family_name }}</h3>
-          <p class="text-caption mt-1">
-            {{ user?.email }}
-          </p>
-          <v-divider class="my-3"></v-divider>
-          <v-btn
-            variant="text"
-            rounded
-            @click="logoutAndClearState"
-          >
-            Logout
-          </v-btn>
-        </div>
-      </v-card-text>
-    </v-card>
-  </v-menu>
+    <template #default>
+      <div class="mx-auto text-center">
+        <h3>{{ user?.given_name }} {{ user?.family_name }}</h3>
+        <p class="text-caption mt-1">
+          {{ user?.email }}
+        </p>
+        <v-divider class="my-3"></v-divider>
+        <NButton
+          label="Logout"
+          @click="logoutAndClearState"
+        />
+      </div>
+    </template>
+  </NDropdown>
 </template>

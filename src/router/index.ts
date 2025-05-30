@@ -1,7 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DashboardView from '../views/DashboardView.vue'
-import ChecklistView from '@/views/ChecklistView.vue'
 import AccountView from '@/views/AccountView.vue'
 import { authGuard } from '@auth0/auth0-vue'
 
@@ -52,15 +51,27 @@ const router = createRouter({
       beforeEnter: authGuard,
     },
     {
-      path: '/checklists',
-      name: 'checklists',
-      component: () => import('../views/ChecklistsView.vue'),
+      path: '/tasks',
+      name: 'tasks',
+      component: () => import('../views/TasksView.vue'),
       beforeEnter: authGuard,
     },
     {
-      path: '/checklists/:id',
-      name: 'checklist',
-      component: ChecklistView,
+      path: '/tasks/:id',
+      name: 'task',
+      component: () => import('../views/TaskView.vue'),
+      beforeEnter: authGuard,
+    },
+    {
+      path: '/workouts',
+      name: 'workouts',
+      component: () => import('../views/WorkoutsView.vue'),
+      beforeEnter: authGuard,
+    },
+    {
+      path: '/workouts/:id',
+      name: 'workout',
+      component: () => import('../views/WorkoutView.vue'),
       beforeEnter: authGuard,
     },
     {

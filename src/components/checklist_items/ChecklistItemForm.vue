@@ -5,7 +5,6 @@ import { useAuthToken } from '@/composables/useAuthToken'
 import SelectIcon from '../inputs/SelectIcon.vue'
 import { useRoute } from 'vue-router'
 import SelectFromRequest from '../inputs/SelectFromRequest.vue'
-import NTextInput from '@rigelsystems/novaui/src/stories/NTextInput/NTextInput.vue'
 
 export interface ChecklistItem {
   id?: number // Optional for new records
@@ -31,7 +30,7 @@ export default defineComponent({
   components: {
     RecordForm,
     SelectIcon,
-    SelectFromRequest,
+    SelectFromRequest
   },
   setup(props) {
     const { accessToken } = useAuthToken()
@@ -80,7 +79,7 @@ export default defineComponent({
   <RecordForm :record="checklistItem" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
-        <v-btn color="primary">{{ isEditMode ? 'Edit Checklist Item' : 'Add Checklist Item' }}</v-btn>
+        <NButton :label="isEditMode ? 'Edit Checklist Item' : 'Add Checklist Item'" />
       </slot>
     </template>
     <template #title>

@@ -21,11 +21,15 @@
 }
 
 .gap-1 {
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .p-1 {
-  padding: 1rem;
+  padding: 0.5rem;
+}
+
+.m-1 {
+  margin: 0.5rem;
 }
 
 body {

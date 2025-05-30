@@ -62,7 +62,6 @@ export default defineComponent({
 </script>
 
 <template>
-
   <n-tabs>
     <template #tabs="{ activeTab, setActiveTab }">
       <n-tab

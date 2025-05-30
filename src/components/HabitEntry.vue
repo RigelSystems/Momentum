@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import SelectIcon from './inputs/SelectIcon.vue'
 import HabitEntryChecklist from './habit_entries/HabitEntryChecklist.vue'
 
@@ -38,6 +38,28 @@ export default defineComponent({
   setup(props, { emit }) {
     let loading = false;
     let value = ref(props.entry?.value || 0);
+
+    const habitEntryStyle = computed(() => {
+      let fontSize = null;
+      const stringValue = props.entry?.value.toString().length;
+
+      if (stringValue === 1) {
+        fontSize = '18px';
+      } else if (stringValue === 2) {
+        fontSize = '16px';
+      } else if (stringValue === 3) {
+        fontSize = '10px';
+      } else if (stringValue === 4) {
+        fontSize = '8px';
+      } else if (stringValue >= 5) {
+        fontSize = '6px';
+      }
+
+      return {
+        fontSize: fontSize,
+        backgroundColor: (value.value === '0' || value.value === null) ? null : `${props.colour} !important`
+      };
+    });
 
     const updateExistingRecord = async (new_value: String) => {
       loading = true;
@@ -122,6 +144,7 @@ export default defineComponent({
       modalIsActive,
       updateRecordIcon,
       checklistUrl,
+      habitEntryStyle,
     };
   },
 });
@@ -150,7 +173,7 @@ export default defineComponent({
           :text="value || '-'"
           variant="flat"
           class="habit-entry habit-entry--number"
-          :style="(value == '0' || value === null) ? null : { backgroundColor: `${colour} !important` }"
+          :style="habitEntryStyle"
         ></v-btn>
       </template>
 

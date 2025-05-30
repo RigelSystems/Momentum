@@ -34,20 +34,10 @@ export default defineComponent({
 
 <template>
   <div>
-    <ChecklistItemForm :checklistItem="checklistItem">
-      <template #trigger="{ openDialog }">
-        <v-btn
-          density="default"
-          icon="mdi-dots-vertical"
-          @click="openDialog"
-          size="medium"
-          class="mr-2 kabab-menu"
-        ></v-btn>
-      </template>
-    </ChecklistItemForm>
     <component
       :is="`ChecklistItem${checklistItem.checklist_item_type_classify}`"
       :checklistItem="checklistItem"
-    ></component>
+      >
+    </component>
   </div>
 </template>

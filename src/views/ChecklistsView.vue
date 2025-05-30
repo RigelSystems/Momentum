@@ -13,9 +13,10 @@ export default defineComponent({
   setup() {
     const { getAccessTokenSilently, user } = useAuth0()
     const accessToken = ref<string | null>(null)
-    const checklists = ref<Array<any>>([])
     const errorMessage = ref<string | null>(null)
     const loading = ref(true)
+    const tasks = ref<Array<any>>([])
+    const workouts = ref<Array<any>>([])
 
     const fetchChecklists = async () => {
       const apiUrl = `${import.meta.env.VITE_API_URL}checklists`
@@ -29,8 +30,14 @@ export default defineComponent({
       if (response.ok) {
         loading.value = false
         const responseBody = await response.json()
-        checklists.value = responseBody
-        console.log(checklists.value)
+
+        tasks.value = responseBody.filter((checklist: any) => checklist.checklist_type === 'tasks')
+        workouts.value = responseBody.filter((checklist: any) => checklist.checklist_type === 'workout')
+
+        console.log('Fetched tasks:', tasks.value)
+        console.log('Fetched workouts:', workouts.value)
+
+        console.log('Fetched checklists:', responseBody)
       } else {
         loading.value = false
         const responseBody = await response.json()
@@ -50,7 +57,8 @@ export default defineComponent({
     })
 
     return {
-      checklists,
+      tasks,
+      workouts,
       loading,
       accessToken,
       updateUrl
@@ -60,42 +68,79 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="page-wrapper">
-  <div class="mb-5 d-flex justify-space-start">
-    <ChecklistForm>
-      <template #trigger="{ openDialog }">
-        <v-btn
-          density="comfortable"
-          variant="tonal"
-          text="New Checklist"
-          class="mr-2"
-          @click="openDialog"
-        ></v-btn>
-      </template>
-    </ChecklistForm>
-  </div>
-
-  <n-order-list
-    :items="checklists"
-    :updateUrl="updateUrl"
-    :loading="loading"
-    :accessToken="accessToken"
-    modelName="checklists"
-  >
-    <template #default="checklist">
-      <NCard :title="checklist.name">
-        <template #content>
-          <p>{{ checklist.description }}</p>
-
-          <RouterLink
-            :to="{ name: 'checklist', params: { id: checklist.id } }"
-            class="mr-2"
-          >
-          View
-          </RouterLink>
+    <div class="standard-container p-1">
+      <ChecklistForm>
+        <template #trigger="{ openDialog }">
+          <n-button @click="openDialog">New List</n-button>
         </template>
-      </NCard>
-    </template>
-  </n-order-list>
-</div>
+      </ChecklistForm>
+    </div>
+
+    <n-tabs>
+      <template #tabs="{ activeTab, setActiveTab }">
+        <n-tab
+          label="Tasks"
+          :active="activeTab === 0"
+          @click="setActiveTab(0)"
+        />
+        <n-tab
+          label="Workouts"
+          :active="activeTab === 1"
+          @click="setActiveTab(1)"
+        />
+      </template>
+
+      <template #default="{ activeTab }">
+        <n-tab-panel :index="0" :activeTab="activeTab">
+          <!-- Tasks -->
+          <n-order-list
+            :items="tasks"
+            :updateUrl="updateUrl"
+            :loading="loading"
+            :accessToken="accessToken"
+            modelName="checklists"
+          >
+            <template #default="checklist">
+              <NCard :title="checklist.name">
+                <template #content>
+                  <p>{{ checklist.description }}</p>
+
+                  <RouterLink
+                    :to="{ name: 'checklist', params: { id: checklist.id } }"
+                    class="mr-2"
+                  >
+                  View
+                  </RouterLink>
+                </template>
+              </NCard>
+            </template>
+          </n-order-list>
+        </n-tab-panel>
+        <n-tab-panel :index="1" :activeTab="activeTab">
+          <!-- Workouts -->
+          <n-order-list
+            :items="workouts"
+            :updateUrl="updateUrl"
+            :loading="loading"
+            :accessToken="accessToken"
+            modelName="checklists"
+          >
+            <template #default="checklist">
+              <NCard :title="checklist.name">
+                <template #content>
+                  <p>{{ checklist.description }}</p>
+
+                  <RouterLink
+                    :to="{ name: 'checklist', params: { id: checklist.id } }"
+                    class="mr-2"
+                  >
+                  View
+                  </RouterLink>
+                </template>
+              </NCard>
+            </template>
+          </n-order-list>
+        </n-tab-panel>
+      </template>
+    </n-tabs>
 </template>

@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
+import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue';
 
 export interface ChecklistItem {
   id?: number,
@@ -18,6 +19,9 @@ export interface ChecklistItem {
 
 export default defineComponent({
   name: 'ChecklistItemWeightedExercise',
+  components: {
+    ChecklistItemForm,
+  },
   props: {
     checklistItem: {
       type: Object as () => ChecklistItem,
@@ -29,7 +33,19 @@ export default defineComponent({
 
 <template>
   <div class="n-container-style">
-    <h3>{{ checklistItem.name }}</h3>
+    <h3>
+      <ChecklistItemForm :checklistItem="checklistItem">
+        <template #trigger="{ openDialog }">
+          <v-btn
+            density="default"
+            icon="mdi-pencil-box-outline"
+            @click="openDialog"
+            size="medium"
+          ></v-btn>
+        </template>
+      </ChecklistItemForm>
+      {{ checklistItem.name }}
+    </h3>
     <p>
       <span class="mdi mdi-weight">{{ checklistItem.weight }}{{ checklistItem.unit }}</span>
       <span class="mdi mdi-repeat">{{ checklistItem.sets }} × {{ checklistItem.reps }}</span>

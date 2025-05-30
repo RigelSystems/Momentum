@@ -6,6 +6,7 @@ import ChecklistForm from '@/components/checklists/ChecklistForm.vue'
 import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue';
 import ChecklistItem from '@/components/checklist_items/ChecklistItem.vue';
 import { useRoute } from 'vue-router'
+import { useAuthToken } from '@/composables/useAuthToken'
 
 export interface Checklist {
   id?: number,
@@ -32,7 +33,7 @@ export default defineComponent({
   },
   setup() {
     const { getAccessTokenSilently, user } = useAuth0()
-    const accessToken = ref<string | null>(null)
+    const { accessToken } = useAuthToken()
 
     const checklist = ref<Checklist>({
       name: '',
@@ -55,7 +56,7 @@ export default defineComponent({
       checklistId.value = newId
     })
 
-    const fetchChecklists = async () => {
+    const fetchChecklist = async () => {
       const apiUrl = `${import.meta.env.VITE_API_URL}checklists/${checklistId.value}`
       const response = await fetch(apiUrl, {
         headers: {
@@ -86,12 +87,18 @@ export default defineComponent({
 
     onMounted(async () => {
       await getAccessToken()
-      await fetchChecklists()
+      await fetchChecklist()
     })
+
+    const checklistItemBulkUpdateUrl = `${import.meta.env.VITE_API_URL}checklist_items/bulk_update`
 
     return {
       checklist,
-      breadcrumbs
+      breadcrumbs,
+      checklistItemBulkUpdateUrl,
+      accessToken,
+      errorMessage,
+      loading,
     }
   },
 })
@@ -101,12 +108,11 @@ export default defineComponent({
   <div class="page-header">
     <PageHeader :title="checklist.name" />
     <ChecklistForm :checklist="checklist">
-      <template #trigger="{ openDialog }">
-        <v-btn
-          density="default"
-          @click="openDialog"
-        >Edit checklist</v-btn>
-      </template>
+        <template #trigger="{ openDialog }">
+          <n-button
+            @click="openDialog"
+          >Edit List</n-button>
+        </template>
     </ChecklistForm>
 
     <v-breadcrumbs :items="breadcrumbs">
@@ -116,20 +122,21 @@ export default defineComponent({
     </v-breadcrumbs>
   </div>
 
-  <ChecklistItem
-    v-for="item in checklist.checklist_items"
-    :key="item.id"
-    :checklistItem="item"
-  />
-  <div class="py-5"></div>
+  <div class="p-1">
+    <n-order-list :items="checklist.checklist_items" :updateUrl="checklistItemBulkUpdateUrl" :accessToken="accessToken" :loading="loading" modelName="checklist_items">
+      <template #default="checklist_item">
+        <ChecklistItem
+          :checklistItem="checklist_item"/>
+      </template>
+    </n-order-list>
+  </div>
+
   <ChecklistItemForm>
     <template #trigger="{ openDialog }">
-      <v-btn
-        density="comfortable"
-        variant="tonal"
-        text="New Checklist Item"
-        @click="openDialog"
-      ></v-btn>
+      <n-button
+        class="m-1"
+          @click="openDialog"
+        >New List Item</n-button>
     </template>
   </ChecklistItemForm>
 </template>

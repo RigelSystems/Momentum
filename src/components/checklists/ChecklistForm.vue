@@ -3,12 +3,14 @@ import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import SelectFromRequest from '../inputs/SelectFromRequest.vue'
+import { useAuthToken } from '@/composables/useAuthToken'
 
 export interface Checklist {
   id?: number
   name: string
   description?: string
   status?: string
+  ai_prompt?: string
 }
 
 export default defineComponent({
@@ -27,7 +29,7 @@ export default defineComponent({
     SelectFromRequest
   },
   setup(props) {
-    const accessTokenStore = useAccessTokenStore()
+    const { accessToken } = useAuthToken()
     const value = ref<string[]>([])
 
     // Determine if we're editing or adding a new record
@@ -46,12 +48,16 @@ export default defineComponent({
       window.location.reload()
     }
 
+    const checklistTypeUrl = `${import.meta.env.VITE_API_URL}/checklists/checklist_types`
+
     return {
       isEditMode,
       endpoint,
       method,
       handleSave,
       value,
+      accessToken,
+      checklistTypeUrl
     }
   },
 })
@@ -69,9 +75,20 @@ export default defineComponent({
     </template>
     <template #form="{ record }">
       <v-form>
-        <v-text-field v-model="record.name" label="Name" required></v-text-field>
+        <NTextInput v-model:value="record.name" label="Name"></NTextInput>
 
         <v-textarea v-model="record.description" label="Description"></v-textarea>
+
+        <NSelectInputFromRequest
+          :url="checklistTypeUrl"
+          valueKey="name"
+          name="checklist_type"
+          label="Type"
+          :accessToken="accessToken"
+          v-model="record.checklist_type"
+        />
+
+        <NTextInput v-model:value="record.ai_prompt" label="AI Prompt"></NTextInput>
       </v-form>
     </template>
   </RecordForm>

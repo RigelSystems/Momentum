@@ -3,7 +3,6 @@ import { defineComponent, ref, onMounted } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
 import RequestButton from '@/components/shared/RequestButton.vue';
 import FriendForm from '@/components/friends/FriendForm.vue';
-import NButton from '@rigelsystems/novaui/src/stories/NButton/NButton.vue';
 
 export default defineComponent({
   name: 'Friends',
@@ -16,7 +15,6 @@ export default defineComponent({
   components: {
     RequestButton,
     FriendForm,
-    NButton,
   },
   setup(props) {
     let loading = false;

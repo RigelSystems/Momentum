@@ -5,7 +5,6 @@ import SelectIcon from '../inputs/SelectIcon.vue'
 import NTextInput from '@rigelsystems/novaui/src/stories/NTextInput/NTextInput.vue'
 import { useAuthToken } from '@/composables/useAuthToken'
 import NSelectInputFromRequest from '@rigelsystems/novaui/src/stories/NSelectInputFromRequest/NSelectInputFromRequest.vue'
-import NButton from '@rigelsystems/novaui/src/stories/NButton/NButton.vue'
 
 export interface Habit {
   id?: number,
@@ -38,7 +37,6 @@ export default defineComponent({
   components: {
     RecordForm,
     SelectIcon,
-    NButton,
   },
   setup(props, { emit }) {
     const { accessToken } = useAuthToken()

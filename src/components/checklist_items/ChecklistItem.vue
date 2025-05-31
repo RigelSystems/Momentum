@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue'
-import ChecklistItemWeightedExercise from '@/components/checklist_items/ChecklistItemWeightedExercise.vue'
-import ChecklistItemTimedExercise from './ChecklistItemTimedExercise.vue';
+import ChecklistItemWeightedExercise from '@/components/workouts/ChecklistItemWeightedExercise.vue'
+import ChecklistItemTimedExercise from '../workouts/ChecklistItemTimedExercise.vue';
 import ChecklistItemTask from './ChecklistItemTask.vue';
 
 export interface ChecklistItem {

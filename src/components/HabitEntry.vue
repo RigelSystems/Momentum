@@ -42,6 +42,7 @@ export default defineComponent({
     const habitEntryStyle = computed(() => {
       let fontSize = null;
       const stringValue = props.entry?.value.toString().length;
+      const backgroundColor = !value.value ? null : `${props.colour} !important`
 
       if (stringValue === 1) {
         fontSize = '18px';
@@ -57,7 +58,7 @@ export default defineComponent({
 
       return {
         fontSize: fontSize,
-        backgroundColor: (value.value === '0' || value.value === null) ? null : `${props.colour} !important`
+        backgroundColor: backgroundColor,
       };
     });
 

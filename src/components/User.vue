@@ -38,6 +38,10 @@ export default defineComponent({
 </script>
 
 <template>
+  <NButton
+          label="Logout"
+          @click="logoutAndClearState"
+        />
   <NDropdown>
     <template #trigger>
       <NButton icon>

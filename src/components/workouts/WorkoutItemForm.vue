@@ -1,128 +1,130 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
-import RecordForm from '../RecordForm.vue'
+import { defineComponent, computed, ref } from 'vue'
 import { useAuthToken } from '@/composables/useAuthToken'
+import { useRoute } from 'vue-router'
+import RecordForm from '../RecordForm.vue'
+import WeightedExerciseForm from './WeightedExerciseForm.vue'
+import TimedExerciseForm from './TimedExerciseForm.vue'
+import type { WeightedExercise } from './WeightedExerciseForm.vue'
+import type { TimedExercise } from './TimedExerciseForm.vue'
 
-export interface WorkoutItem {
-  id: number
-  name: string
-  icon: string
-  status: string
-  workout_id: number
-  exercise_type: 'weighted' | 'timed'
-  sets_completed?: number
-  reps_completed?: number
-  duration_completed?: number
-  weight_completed?: number
-  target_sets?: number
-  target_reps?: number
-  target_duration?: number
-  target_weight?: number
-}
+export type ExerciseType = 'weighted' | 'timed'
+export type Exercise = WeightedExercise | TimedExercise
 
 export default defineComponent({
   name: 'WorkoutItemForm',
+  components: {
+    RecordForm,
+    WeightedExerciseForm,
+    TimedExerciseForm
+  },
   props: {
     workoutId: {
-      type: [String, Number],
+      type: Number,
       required: true
     }
   },
-  components: {
-    RecordForm
-  },
   setup(props) {
     const { accessToken } = useAuthToken()
-    const workoutItem = ref<Partial<WorkoutItem>>({
+    const exerciseType = ref<ExerciseType>('weighted')
+    const exercise = ref<Exercise>({
       name: '',
-      workout_id: Number(props.workoutId),
       exercise_type: 'weighted',
       target_sets: 0,
       target_reps: 0,
-      target_duration: 0,
-      target_weight: 0
+      target_weight: 0,
+      weight_unit: 'kg',
+      rest_period: 60
     })
 
-    const isWeightedExercise = computed(() => workoutItem.value.exercise_type === 'weighted')
-    const isTimedExercise = computed(() => workoutItem.value.exercise_type === 'timed')
+    const handleExerciseTypeChange = (type: ExerciseType) => {
+      exerciseType.value = type
+      if (type === 'weighted') {
+        exercise.value = {
+          name: '',
+          exercise_type: 'weighted',
+          target_sets: 0,
+          target_reps: 0,
+          target_weight: 0,
+          weight_unit: 'kg',
+          rest_period: 60
+        }
+      } else {
+        exercise.value = {
+          name: '',
+          exercise_type: 'timed',
+          target_duration: 0,
+          target_distance: 0,
+          distance_unit: 'km',
+          rest_period: 60
+        }
+      }
+    }
 
-    const endpoint = `${import.meta.env.VITE_API_URL}workout_items`
-    const method = 'POST'
+    const endpoint = computed(() => `${import.meta.env.VITE_API_URL}workout_items`)
+    const method = computed(() => 'POST')
 
-    const handleSave = async (savedRecord: WorkoutItem) => {
+    const handleSave = async (savedExercise: Exercise) => {
       window.location.reload()
     }
 
     return {
-      workoutItem,
-      endpoint,
-      method,
-      handleSave,
       accessToken,
-      isWeightedExercise,
-      isTimedExercise
+      exerciseType,
+      exercise,
+      handleExerciseTypeChange,
+      handleSave,
+      endpoint,
+      method
     }
   }
 })
 </script>
 
 <template>
-  <RecordForm :record="workoutItem" :endpoint="endpoint" :method="method" @save="handleSave">
+  <RecordForm :record="exercise" :endpoint="endpoint" :method="method" @save="handleSave">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
-        <n-button @click="openDialog">Add Exercise</n-button>
+        <NButton label="Add Exercise" />
       </slot>
     </template>
     <template #title>
       <span>Add New Exercise</span>
     </template>
     <template #form="{ record }">
-      <v-form>
-        <NTextInput v-model:value="record.name" label="Exercise Name"></NTextInput>
-
-        <NSelectInput
-          v-model:value="record.exercise_type"
-          :options="[
-            { label: 'Weighted Exercise', value: 'weighted' },
-            { label: 'Timed Exercise', value: 'timed' }
-          ]"
+      <div class="workout-item-form">
+        <NSelect
+          v-model:value="exerciseType"
           label="Exercise Type"
-        ></NSelectInput>
+          :options="[
+            { value: 'weighted', label: 'Weighted Exercise' },
+            { value: 'timed', label: 'Timed Exercise' }
+          ]"
+          @update:value="handleExerciseTypeChange"
+        />
 
-        <template v-if="isWeightedExercise">
-          <NTextInput 
-            v-model:value="record.target_sets" 
-            label="Target Sets" 
-            type="number"
-          ></NTextInput>
+        <WeightedExerciseForm
+          v-if="exerciseType === 'weighted'"
+          :workoutId="workoutId"
+          :exercise="record"
+          @save="handleSave"
+        />
 
-          <NTextInput 
-            v-model:value="record.target_reps" 
-            label="Target Reps" 
-            type="number"
-          ></NTextInput>
-
-          <NTextInput 
-            v-model:value="record.target_weight" 
-            label="Target Weight (lbs)" 
-            type="number"
-          ></NTextInput>
-        </template>
-
-        <template v-if="isTimedExercise">
-          <NTextInput 
-            v-model:value="record.target_sets" 
-            label="Target Sets" 
-            type="number"
-          ></NTextInput>
-
-          <NTextInput 
-            v-model:value="record.target_duration" 
-            label="Target Duration (seconds)" 
-            type="number"
-          ></NTextInput>
-        </template>
-      </v-form>
+        <TimedExerciseForm
+          v-if="exerciseType === 'timed'"
+          :workoutId="workoutId"
+          :exercise="record"
+          @save="handleSave"
+        />
+      </div>
     </template>
   </RecordForm>
-</template> 
+</template>
+
+<style scoped>
+.workout-item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+</style>

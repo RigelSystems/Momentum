@@ -2,8 +2,8 @@
 import { defineComponent, onMounted, ref, watch } from 'vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import WorkoutForm from '@/components/workouts/WorkoutForm.vue'
-import WorkoutItemForm from '@/components/checklist_items/WorkoutItemForm.vue'
-import WorkoutItem from '@/components/checklist_items/WorkoutItem.vue'
+import WorkoutItemForm from '@/components/workouts/WorkoutItemForm.vue'
+import WorkoutItem from '@/components/workouts/WorkoutItem.vue'
 import { useRoute } from 'vue-router'
 import { useAuthToken } from '@/composables/useAuthToken'
 

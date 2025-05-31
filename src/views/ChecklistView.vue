@@ -1,33 +1,42 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue'
+import { useAuth0 } from '@auth0/auth0-vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
-import TaskForm from '@/components/tasks/TaskForm.vue'
-import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue'
-import ChecklistItem from '@/components/checklist_items/ChecklistItem.vue'
+import ChecklistForm from '@/components/checklists/ChecklistForm.vue'
+import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue';
+import ChecklistItem from '@/components/checklist_items/ChecklistItem.vue';
 import { useRoute } from 'vue-router'
 import { useAuthToken } from '@/composables/useAuthToken'
 
-export interface Task {
-  id?: number
-  name: string
-  description?: string
-  status: string
-  checklist_items: Array<any>
+export interface Checklist {
+  id?: number,
+  name: string,
+  status: string,
+  checklist_items: Array<ChecklistItem>
+}
+
+export interface ChecklistItem {
+  id: number,
+  name: string,
+  icon: string,
+  status: string,
+  checklist_id: number,
 }
 
 export default defineComponent({
-  name: 'TaskView',
+  name: 'ChecklistView',
   components: {
     PageHeader,
-    TaskForm,
     ChecklistItemForm,
-    ChecklistItem
+    ChecklistItem,
+    ChecklistForm,
   },
   setup() {
+    const { getAccessTokenSilently, user } = useAuth0()
     const { accessToken } = useAuthToken()
-    const task = ref<Task>({
+
+    const checklist = ref<Checklist>({
       name: '',
-      description: '',
       status: '',
       checklist_items: []
     })
@@ -35,20 +44,20 @@ export default defineComponent({
     const loading = ref(true)
     const breadcrumbs = ref([
       {
-        title: 'Tasks',
+        title: 'Checklists',
         disabled: false,
-        href: '/#/tasks',
+        href: '/#/checklists',
       }
     ])
     const route = useRoute()
-    const taskId = ref(route.params.id)
+    const checklistId = ref(route.params.id)
 
     watch(() => route.params.id, (newId) => {
-      taskId.value = newId
+      checklistId.value = newId
     })
 
-    const fetchTask = async () => {
-      const apiUrl = `${import.meta.env.VITE_API_URL}checklists/${taskId.value}`
+    const fetchChecklist = async () => {
+      const apiUrl = `${import.meta.env.VITE_API_URL}checklists/${checklistId.value}`
       const response = await fetch(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
@@ -59,11 +68,11 @@ export default defineComponent({
       if (response.ok) {
         loading.value = false
         const responseBody = await response.json()
-        task.value = responseBody
+        checklist.value = responseBody
         breadcrumbs.value.push({
           title: responseBody.name,
           disabled: true,
-          href: `/tasks/${taskId}`,
+          href: `/checklists/${checklistId}`,
         })
       } else {
         loading.value = false
@@ -72,16 +81,19 @@ export default defineComponent({
       }
     }
 
-    watch(accessToken, (newValue) => {
-      if (newValue) {
-        fetchTask()
-      }
-    }, { immediate: true })
+    const getAccessToken = async () => {
+      accessToken.value = await getAccessTokenSilently();
+    };
+
+    onMounted(async () => {
+      await getAccessToken()
+      await fetchChecklist()
+    })
 
     const checklistItemBulkUpdateUrl = `${import.meta.env.VITE_API_URL}checklist_items/bulk_update`
 
     return {
-      task,
+      checklist,
       breadcrumbs,
       checklistItemBulkUpdateUrl,
       accessToken,
@@ -94,14 +106,14 @@ export default defineComponent({
 
 <template>
   <div class="page-header">
-    <PageHeader :title="task.name" />
-    <TaskForm :task="task">
-      <template #trigger="{ openDialog }">
-        <n-button
-          @click="openDialog"
-        >Edit Task</n-button>
-      </template>
-    </TaskForm>
+    <PageHeader :title="checklist.name" />
+    <ChecklistForm :checklist="checklist">
+        <template #trigger="{ openDialog }">
+          <n-button
+            @click="openDialog"
+          >Edit List</n-button>
+        </template>
+    </ChecklistForm>
 
     <v-breadcrumbs :items="breadcrumbs">
       <template v-slot:prepend>
@@ -111,9 +123,10 @@ export default defineComponent({
   </div>
 
   <div class="p-1">
-    <n-order-list :items="task.checklist_items" :updateUrl="checklistItemBulkUpdateUrl" :accessToken="accessToken" :loading="loading" modelName="checklist_items">
+    <n-order-list :items="checklist.checklist_items" :updateUrl="checklistItemBulkUpdateUrl" :accessToken="accessToken" :loading="loading" modelName="checklist_items">
       <template #default="checklist_item">
-        <ChecklistItem :checklistItem="checklist_item" />
+        <ChecklistItem
+          :checklistItem="checklist_item"/>
       </template>
     </n-order-list>
   </div>
@@ -122,8 +135,8 @@ export default defineComponent({
     <template #trigger="{ openDialog }">
       <n-button
         class="m-1"
-        @click="openDialog"
-      >New Task Item</n-button>
+          @click="openDialog"
+        >New List Item</n-button>
     </template>
   </ChecklistItemForm>
-</template> 
+</template>

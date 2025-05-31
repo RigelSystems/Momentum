@@ -51,15 +51,15 @@ const router = createRouter({
       beforeEnter: authGuard,
     },
     {
-      path: '/tasks',
-      name: 'tasks',
-      component: () => import('../views/TasksView.vue'),
+      path: '/checklists',
+      name: 'checklists',
+      component: () => import('../views/ChecklistsView.vue'),
       beforeEnter: authGuard,
     },
     {
-      path: '/tasks/:id',
-      name: 'task',
-      component: () => import('../views/TaskView.vue'),
+      path: '/checklists/:id',
+      name: 'checklist',
+      component: () => import('../views/ChecklistView.vue'),
       beforeEnter: authGuard,
     },
     {

@@ -2,7 +2,6 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import Navigation from './components/Navigation.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
-import { useAccessTokenStore } from '@/stores/accessTokenStore'
 import User from './components/User.vue'
 
 export default defineComponent({
@@ -12,8 +11,7 @@ export default defineComponent({
     User,
   },
   setup() {
-    const accessTokenStore = useAccessTokenStore()
-    const { getAccessTokenSilently, isAuthenticated, user, loginWithRedirect } = useAuth0()
+    const { user } = useAuth0()
 
     const currentPath = ref(window.location.hash.replace(/^#/, '') || '/')
     const updatePath = () => {
@@ -37,8 +35,15 @@ export default defineComponent({
       { label: 'Dashboard',  url: '/#/dashboard', visible: isLoggedIn.value },
       { label: 'Habits',     url: '/#/habits',    visible: isLoggedIn.value },
       { label: 'Timeline',   url: '/#/timeline',  visible: isLoggedIn.value },
-      { label: 'Workouts', url: '/#/workouts', visible: isLoggedIn.value },
-      { label: 'Tasks', url: '/#/tasks', visible: isLoggedIn.value },
+      { 
+        label: 'Lists', 
+        url: '/#/lists',
+        visible: isLoggedIn.value,
+        dropdown: [
+          { label: 'Workouts', url: '/#/workouts' },
+          { label: 'Checklists', url: '/#/checklists' }
+        ]
+      },
       { label: 'Admin',    url: '/#/admin',   visible: isLoggedIn.value },
       { label: 'Account',    url: '/#/account',   visible: isLoggedIn.value },
     ])
@@ -47,7 +52,7 @@ export default defineComponent({
       { icon: 'mdi-view-dashboard-outline', url: '/#/dashboard', visible: isLoggedIn.value, label: 'Dashboard' },
       { icon: 'mdi-check-circle-outline',   url: '/#/habits',    visible: isLoggedIn.value, label: 'Habits' },
       { icon: 'mdi-timeline-text',          url: '/#/timeline',  visible: isLoggedIn.value, label: 'Timeline' },
-      { icon: 'mdi-format-list-checks',     url: '/#/lists',visible: isLoggedIn.value, label: 'Lists' },
+      { icon: 'mdi-cog',                    url: '/#/admin',   visible: isLoggedIn.value, label: 'Admin' },
       { icon: 'mdi-account-outline',        url: '/#/account',   visible: isLoggedIn.value, label: 'Account' },
     ])
 

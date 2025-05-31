@@ -18,6 +18,8 @@ export interface Habit {
   goal_value?: number,
   habit_type?: string,
   wants_reminder?: boolean,
+  check_in_time?: string,
+  wants_check_in?: boolean,
 }
 
 export default defineComponent({
@@ -147,7 +149,7 @@ export default defineComponent({
         <p>Would you like a reminder set for this habit? <input type="checkbox" v-model="record.wants_reminder"></p>
 
         <NTimeInput
-          v-if="record.wants_reminder"
+          v-if="record.wants_reminder || record.start_time"
           label="Select Time"
           v-model:value="record.start_time"
         />
@@ -163,6 +165,16 @@ export default defineComponent({
           name="duration"
           v-model="record.duration"
         ></v-number-input>
+
+        <h1>Check-in</h1>
+
+        <p>Would you like a check-in set for this habit? <input type="checkbox" v-model="record.wants_check_in"></p>
+
+        <NTimeInput
+          v-if="record.wants_check_in || record.check_in_time"
+          label="Select Time"
+          v-model:value="record.check_in_time"
+        />
 
         <h1>Access</h1>
 

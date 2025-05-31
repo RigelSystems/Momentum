@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch, toRefs } from 'vue';
 import { useAuthToken } from '@/composables/useAuthToken';
-import ChecklistItemWeightedExercise from '../checklist_items/ChecklistItemWeightedExercise.vue';
+import ChecklistItemWeightedExercise from '../workouts/ChecklistItemWeightedExercise.vue';
 import ChecklistItemTask from '../checklist_items/ChecklistItemTask.vue';
 
 export interface ChecklistItem {

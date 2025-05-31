@@ -1,8 +1,8 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue'
+import { defineComponent, computed, ref, watch } from 'vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import { useAuthToken } from '@/composables/useAuthToken'
-import TaskForm from '@/components/tasks/TaskForm.vue'
+import ChecklistForm from '@/components/checklists/ChecklistForm.vue'
 
 export interface Task {
   id: number
@@ -13,18 +13,18 @@ export interface Task {
 }
 
 export default defineComponent({
-  name: 'TasksView',
+  name: 'ChecklistsView',
   components: {
     PageHeader,
-    TaskForm
+    ChecklistForm
   },
   setup() {
     const { accessToken } = useAuthToken()
     const loading = ref(true)
-    const tasks = ref<Task[]>([])
+    const checklists = ref<Task[]>([])
     const errorMessage = ref<string | null>(null)
 
-    const fetchTasks = async () => {
+    const fetchChecklists = async () => {
       const apiUrl = `${import.meta.env.VITE_API_URL}checklists`
       const response = await fetch(apiUrl, {
         headers: {
@@ -35,7 +35,7 @@ export default defineComponent({
 
       if (response.ok) {
         const responseBody = await response.json()
-        tasks.value = responseBody.filter((task: any) => task.checklist_type === 'tasks')
+        checklists.value = responseBody
         loading.value = false
       } else {
         const responseBody = await response.json()
@@ -46,19 +46,23 @@ export default defineComponent({
 
     watch(accessToken, (newValue) => {
       if (newValue) {
-        fetchTasks()
+        fetchChecklists()
       }
     }, { immediate: true })
 
     const handleTaskSaved = () => {
-      fetchTasks()
+      fetchChecklists()
     }
 
+    const checklistBulkUpdateUrl = computed(() => `${import.meta.env.VITE_API_URL}checklists/bulk_update`)
+
     return {
-      tasks,
+      checklists,
       loading,
       errorMessage,
-      handleTaskSaved
+      handleTaskSaved,
+      checklistBulkUpdateUrl,
+      accessToken
     }
   },
 })
@@ -66,28 +70,30 @@ export default defineComponent({
 
 <template>
   <div class="standard-container p-1">
-    <PageHeader title="Tasks" />
+    <PageHeader title="Checklists" />
   </div>
 
   <div class="p-1">
-    <TaskForm @saved="handleTaskSaved">
+    <ChecklistForm @saved="handleTaskSaved">
       <template #trigger="{ openDialog }">
-        <n-button @click="openDialog">New Task</n-button>
+        <n-button @click="openDialog">New Checklist</n-button>
       </template>
-    </TaskForm>
+    </ChecklistForm>
   </div>
 
   <n-order-list
-    :items="tasks"
+    :items="checklists"
     :loading="loading"
-    modelName="tasks"
+    modelName="checklists"
+    :updateUrl="checklistBulkUpdateUrl"
+    :accessToken="accessToken"
   >
     <template #default="task">
       <NCard :title="task.name">
         <template #content>
           <p>{{ task.description }}</p>
           <RouterLink
-            :to="{ name: 'task', params: { id: task.id } }"
+            :to="{ name: 'checklist', params: { id: task.id } }"
             class="mr-2"
           >
             View

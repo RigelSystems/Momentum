@@ -63,7 +63,7 @@ export default defineComponent({
       </template>
     </HabitGroupForm>
 
-    <HabitForm @saved="fetchHabitGroups" v-if="habitGroups.length > 0">
+    <HabitForm @save="fetchHabitGroups" v-if="habitGroups.length > 0">
         <template #trigger="{ openDialog }">
           <n-button
             @click="openDialog"

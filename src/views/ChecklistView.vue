@@ -7,6 +7,8 @@ import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vu
 import ChecklistItem from '@/components/checklist_items/ChecklistItem.vue';
 import { useRoute } from 'vue-router'
 import { useAuthToken } from '@/composables/useAuthToken'
+import ChecklistItemTask from '@/components/checklist_items/ChecklistItemTask.vue'
+import ChecklistItemRating from '@/components/checklist_items/ChecklistItemRating.vue'
 
 export interface Checklist {
   id?: number,
@@ -30,6 +32,8 @@ export default defineComponent({
     ChecklistItemForm,
     ChecklistItem,
     ChecklistForm,
+    ChecklistItemTask,
+    ChecklistItemRating,
   },
   setup() {
     const { getAccessTokenSilently, user } = useAuth0()
@@ -69,6 +73,7 @@ export default defineComponent({
         loading.value = false
         const responseBody = await response.json()
         checklist.value = responseBody
+        console.log(checklist.value)
         breadcrumbs.value.push({
           title: responseBody.name,
           disabled: true,
@@ -99,6 +104,7 @@ export default defineComponent({
       accessToken,
       errorMessage,
       loading,
+      fetchChecklist
     }
   },
 })
@@ -125,8 +131,12 @@ export default defineComponent({
   <div class="p-1">
     <n-order-list :items="checklist.checklist_items" :updateUrl="checklistItemBulkUpdateUrl" :accessToken="accessToken" :loading="loading" modelName="checklist_items">
       <template #default="checklist_item">
-        <ChecklistItem
-          :checklistItem="checklist_item"/>
+        <component
+          :is="`ChecklistItem${checklist_item.checklist_item_type_classify}`"
+          :checklistItem="checklist_item"
+          @save="fetchChecklist"
+          >
+        </component>
       </template>
     </n-order-list>
   </div>

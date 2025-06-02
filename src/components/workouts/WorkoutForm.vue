@@ -24,7 +24,7 @@ export default defineComponent({
       }),
     }
   },
-  emits: ['saved'],
+  emits: ['save'],
   components: {
     RecordForm,
     NSelectInputFromRequest
@@ -42,7 +42,7 @@ export default defineComponent({
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
 
     const handleSave = (savedRecord: Workout) => {
-      emit('saved', savedRecord)
+      emit('save', savedRecord)
     }
 
     return {

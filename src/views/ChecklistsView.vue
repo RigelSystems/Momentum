@@ -74,7 +74,7 @@ export default defineComponent({
   </div>
 
   <div class="p-1">
-    <ChecklistForm @saved="handleTaskSaved">
+    <ChecklistForm @save="handleTaskSaved">
       <template #trigger="{ openDialog }">
         <n-button @click="openDialog">New Checklist</n-button>
       </template>

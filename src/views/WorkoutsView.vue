@@ -70,7 +70,7 @@ export default defineComponent({
   </div>
 
   <div class="p-1">
-    <WorkoutForm @saved="handleWorkoutSaved">
+    <WorkoutForm @save="handleWorkoutSaved">
       <template #trigger="{ openDialog }">
         <n-button @click="openDialog">New Workout</n-button>
       </template>

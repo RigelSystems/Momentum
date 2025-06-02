@@ -35,7 +35,7 @@ export default defineComponent({
       }),
     }
   },
-  emits: ['saved'],
+  emits: ['save'],
   components: {
     RecordForm,
     SelectIcon,
@@ -63,7 +63,7 @@ export default defineComponent({
       console.log('habit form handle save', savedRecord)
       // reload the page for now
       window.location.reload()
-      emit('saved', savedRecord)
+      emit('save', savedRecord)
     }
 
     const friendsUrl = `${import.meta.env.VITE_API_URL}/friends/friends`

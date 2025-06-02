@@ -5,6 +5,7 @@ import { useAuthToken } from '@/composables/useAuthToken'
 import SelectIcon from '../inputs/SelectIcon.vue'
 import { useRoute } from 'vue-router'
 import SelectFromRequest from '../inputs/SelectFromRequest.vue'
+import { emit } from 'process'
 
 export interface ChecklistItem {
   id?: number // Optional for new records
@@ -32,7 +33,7 @@ export default defineComponent({
     SelectIcon,
     SelectFromRequest
   },
-  setup(props) {
+  setup(props, {emit}) {
     const { accessToken } = useAuthToken()
     const value = ref<string[]>([])
     const route = useRoute()
@@ -53,7 +54,7 @@ export default defineComponent({
     const method = computed(() => (isEditMode.value ? 'PUT' : 'POST'))
 
     const handleSave = async (savedRecord: ChecklistItem) => {
-      window.location.reload()
+      emit('save')
     }
 
     const statusUrl = `${import.meta.env.VITE_API_URL}/checklist_items/statuses`
@@ -114,6 +115,18 @@ export default defineComponent({
           :accessToken="accessToken"
           v-model="record.status"
           label="statuses"
+        />
+
+        <input
+          v-if="record.checklist_item_type === 'rating'"
+          type="number"
+          v-model="record.value"
+          name="value"
+          step="0.5"
+          min="0"
+          max="5"
+          class="form-control"
+          placeholder="Rating (0-5)"
         />
 
         <NTextInput

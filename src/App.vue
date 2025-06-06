@@ -3,15 +3,17 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import Navigation from './components/Navigation.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import User from './components/User.vue'
+import LogoutButton from './components/LogoutButton.vue'
 
 export default defineComponent({
   name: 'App',
   components: {
     Navigation,
     User,
+    LogoutButton
   },
   setup() {
-    const { user } = useAuth0()
+    const { user, loginWithRedirect } = useAuth0()
 
     const currentPath = ref(window.location.hash.replace(/^#/, '') || '/')
     const updatePath = () => {
@@ -60,7 +62,8 @@ export default defineComponent({
       links,
       mobileBottomLinks,
       currentPath,
-      user
+      user,
+      loginWithRedirect
     }
   },
 })
@@ -73,14 +76,14 @@ export default defineComponent({
     </template>
 
     <template #user>
-      <User v-if="user"/>
       <NButton
-        v-else
+        v-if="!user"
         class="login-button"
         size="small"
         text
         @click="loginWithRedirect"
       >Log in / Sign up</NButton>
+      <LogoutButton v-else />
     </template>
   </NNavigationBar>
 

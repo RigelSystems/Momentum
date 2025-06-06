@@ -57,6 +57,10 @@ export default defineComponent({
       emit('save')
     }
 
+    const handleDelete = async () => {
+      emit('delete')
+    }
+
     const statusUrl = `${import.meta.env.VITE_API_URL}/checklist_items/statuses`
     const typesUrl = `${import.meta.env.VITE_API_URL}/checklist_items/checklist_item_types`
 
@@ -66,6 +70,7 @@ export default defineComponent({
       endpoint,
       method,
       handleSave,
+      handleDelete,
       value,
       checklistId,
       statusOptions,
@@ -77,7 +82,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <RecordForm :record="checklistItem" :endpoint="endpoint" :method="method" @save="handleSave">
+  <RecordForm :record="checklistItem" :endpoint="endpoint" :method="method" @save="handleSave" @delete="handleDelete">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
         <NButton :label="isEditMode ? 'Edit Checklist Item' : 'Add Checklist Item'" />

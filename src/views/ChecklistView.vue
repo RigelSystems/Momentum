@@ -1,14 +1,10 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue'
-import { useAuth0 } from '@auth0/auth0-vue'
+import { defineComponent, ref, watch } from 'vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import ChecklistForm from '@/components/checklists/ChecklistForm.vue'
-import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue';
 import ChecklistItem from '@/components/checklist_items/ChecklistItem.vue';
 import { useRoute } from 'vue-router'
 import { useAuthToken } from '@/composables/useAuthToken'
-import ChecklistItemTask from '@/components/checklist_items/ChecklistItemTask.vue'
-import ChecklistItemRating from '@/components/checklist_items/ChecklistItemRating.vue'
 
 export interface Checklist {
   id?: number,
@@ -29,14 +25,10 @@ export default defineComponent({
   name: 'ChecklistView',
   components: {
     PageHeader,
-    ChecklistItemForm,
     ChecklistItem,
     ChecklistForm,
-    ChecklistItemTask,
-    ChecklistItemRating,
   },
   setup() {
-    const { getAccessTokenSilently, user } = useAuth0()
     const { accessToken } = useAuthToken()
 
     const checklist = ref<Checklist>({
@@ -61,6 +53,7 @@ export default defineComponent({
     })
 
     const fetchChecklist = async () => {
+      checklist.value.checklist_items = []
       const apiUrl = `${import.meta.env.VITE_API_URL}checklists/${checklistId.value}`
       const response = await fetch(apiUrl, {
         headers: {
@@ -86,12 +79,24 @@ export default defineComponent({
       }
     }
 
-    const getAccessToken = async () => {
-      accessToken.value = await getAccessTokenSilently();
-    };
+    const createChecklistItem = () => {
+      const apiUrl = `${import.meta.env.VITE_API_URL}checklist_items`
+      const response = fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken.value}`,
+        },
+        body: JSON.stringify({
+          checklist_id: checklistId.value,
+        }),
+      })
+      response.then(() => {
+        fetchChecklist()
+      })
+    }
 
-    onMounted(async () => {
-      await getAccessToken()
+    watch(accessToken, async () => {
       await fetchChecklist()
     })
 
@@ -104,7 +109,8 @@ export default defineComponent({
       accessToken,
       errorMessage,
       loading,
-      fetchChecklist
+      fetchChecklist,
+      createChecklistItem
     }
   },
 })
@@ -113,6 +119,7 @@ export default defineComponent({
 <template>
   <div class="page-header">
     <PageHeader :title="checklist.name" />
+    
     <ChecklistForm :checklist="checklist">
         <template #trigger="{ openDialog }">
           <n-button
@@ -120,33 +127,15 @@ export default defineComponent({
           >Edit List</n-button>
         </template>
     </ChecklistForm>
-
-    <v-breadcrumbs :items="breadcrumbs">
-      <template v-slot:prepend>
-        <v-icon icon="$vuetify" size="small"></v-icon>
-      </template>
-    </v-breadcrumbs>
   </div>
 
   <div class="p-1">
     <n-order-list :items="checklist.checklist_items" :updateUrl="checklistItemBulkUpdateUrl" :accessToken="accessToken" :loading="loading" modelName="checklist_items">
       <template #default="checklist_item">
-        <component
-          :is="`ChecklistItem${checklist_item.checklist_item_type_classify}`"
-          :checklistItem="checklist_item"
-          @save="fetchChecklist"
-          >
-        </component>
+        <ChecklistItem :checklistItem="checklist_item" @save="fetchChecklist" />
       </template>
     </n-order-list>
   </div>
 
-  <ChecklistItemForm>
-    <template #trigger="{ openDialog }">
-      <n-button
-        class="m-1"
-          @click="openDialog"
-        >New List Item</n-button>
-    </template>
-  </ChecklistItemForm>
+  <NButton @click="createChecklistItem">Create Checklist Item</NButton>
 </template>

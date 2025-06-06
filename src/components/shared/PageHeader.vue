@@ -19,6 +19,5 @@ export default defineComponent({
 <template>
   <div class="page-header-title">
     <h1>{{ title }}</h1>
-    <User />
   </div>
 </template>

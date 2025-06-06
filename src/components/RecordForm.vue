@@ -9,9 +9,10 @@ export default defineComponent({
   name: 'RecordForm',
 
   props: {
-    record:   { type: Object,  default: () => ({}) },   // empty ⇒ “new” record
+    record:   { type: Object,  default: () => ({}) },   // empty ⇒ "new" record
     endpoint: { type: String,  required: true },
     method:   { type: String,  default: 'POST' },
+    dontReloadOnDelete: { type: Boolean, default: false },
   },
 
   setup(props, { emit }) {
@@ -81,7 +82,10 @@ export default defineComponent({
       if (!res.ok) {
         errorMessage.value = await res.json();
       } else {
-        window.location.reload();
+        emit('delete');
+        if (!props.dontReloadOnDelete) {
+          window.location.reload();
+        }
       }
     };
 

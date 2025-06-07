@@ -45,13 +45,7 @@ export default defineComponent({
       :fetchHabits="fetchHabits"
     >
       <template #trigger="{ openDialog }">
-        <v-btn
-        density="default"
-        icon="mdi-dots-vertical"
-        @click="openDialog"
-        size="x-small"
-        class="mr-2 kabab-menu"
-        ></v-btn>
+        <span class="mdi mdi-square-edit-outline clickable" @click="openDialog"></span>
       </template>
     </HabitForm>
     <v-icon class="mr-1">mdi-{{ habit.icon }}</v-icon>
@@ -64,5 +58,9 @@ export default defineComponent({
 <style scoped>
 .v-icon--size-default {
   font-size: 0.75rem;
+}
+
+.clickable {
+  cursor: pointer;
 }
 </style>

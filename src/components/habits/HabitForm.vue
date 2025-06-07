@@ -2,9 +2,8 @@
 import { defineComponent, computed, ref } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import SelectIcon from '../inputs/SelectIcon.vue'
-import NTextInput from '@rigelsystems/novaui/src/stories/NTextInput/NTextInput.vue'
 import { useAuthToken } from '@/composables/useAuthToken'
-import NSelectInputFromRequest from '@rigelsystems/novaui/src/stories/NSelectInputFromRequest/NSelectInputFromRequest.vue'
+import { useFeatureFlag } from '@/composables/useFeatureFlag'
 
 export interface Habit {
   id?: number,
@@ -32,6 +31,7 @@ export default defineComponent({
         name: '',
         colour: '#fff',
         icon: '',
+        goal_condition: 'No Goal'
       }),
     }
   },
@@ -41,6 +41,7 @@ export default defineComponent({
     SelectIcon,
   },
   setup(props, { emit }) {
+    const { isFeatureEnabled } = useFeatureFlag()
     const { accessToken } = useAuthToken()
     const value = ref<string[]>([])
       const allowedMinutes = v => v % 5 === 0
@@ -83,7 +84,8 @@ export default defineComponent({
       handleSave,
       value,
       updateRecordIcon,
-      allowedMinutes
+      allowedMinutes,
+      isFeatureEnabled
     }
   },
 })
@@ -139,53 +141,57 @@ export default defineComponent({
         />
 
         <NTextInput
-          v-if="!(record.goal_condition === 'No Goal' || record.goal_condition === 'Anything')"
+          v-if="!(record.goal_condition === 'No Goal' || record.goal_condition === 'Anything' || !record.goal_condition)"
           v-model:value="record.goal_value"
           label="Goal Value"
           ></NTextInput>
 
-        <h1>Reminder</h1>
 
-        <p>Would you like a reminder set for this habit? <input type="checkbox" v-model="record.wants_reminder"></p>
+        <template v-if="isFeatureEnabled()">
 
-        <NTimeInput
-          v-if="record.wants_reminder || record.start_time"
-          label="Select Time"
-          v-model:value="record.start_time"
-        />
+          <h1>Reminder</h1>
 
-        <v-number-input
-          v-if="record.wants_reminder"
-          :reverse="false"
-          controlVariant="default"
-          label="Duration"
-          :hideInput="false"
-          :inset="false"
-          key="duration"
-          name="duration"
-          v-model="record.duration"
-        ></v-number-input>
+          <p>Would you like a reminder set for this habit? <input type="checkbox" v-model="record.wants_reminder"></p>
 
-        <h1>Check-in</h1>
+          <NTimeInput
+            v-if="record.wants_reminder || record.start_time"
+            label="Select Time"
+            v-model:value="record.start_time"
+          />
 
-        <p>Would you like a check-in set for this habit? <input type="checkbox" v-model="record.wants_check_in"></p>
+          <v-number-input
+            v-if="record.wants_reminder"
+            :reverse="false"
+            controlVariant="default"
+            label="Duration"
+            :hideInput="false"
+            :inset="false"
+            key="duration"
+            name="duration"
+            v-model="record.duration"
+          ></v-number-input>
 
-        <NTimeInput
-          v-if="record.wants_check_in || record.check_in_time"
-          label="Select Time"
-          v-model:value="record.check_in_time"
-        />
+          <h1>Check-in</h1>
 
-        <h1>Access</h1>
+          <p>Would you like a check-in set for this habit? <input type="checkbox" v-model="record.wants_check_in"></p>
 
-        <NSelectInputFromRequest
-          :url="friendsUrl"
-          valueKey="id"
-          name="role"
-          label="Select Users"
-          :accessToken="accessToken"
-          v-model="record.users_id"
-        />
+          <NTimeInput
+            v-if="record.wants_check_in || record.check_in_time"
+            label="Select Time"
+            v-model:value="record.check_in_time"
+          />
+
+          <h1>Access</h1>
+
+          <NSelectInputFromRequest
+            :url="friendsUrl"
+            valueKey="id"
+            name="role"
+            label="Select Users"
+            :accessToken="accessToken"
+            v-model="record.users_id"
+          />
+        </template>
       </v-form>
     </template>
   </RecordForm>

@@ -29,6 +29,18 @@ interface Habit {
     bottomText: string
   }>
   colour: string
+  monthly_data: Array<{
+    month: string
+    first_day_of_week: number
+    entries: Array<{
+      id: number
+      date: string
+      entry: any
+    }>
+    total_entries: number
+    daily_average: number
+    monthly_average: number
+  }>
 }
 
 export default defineComponent({
@@ -113,13 +125,44 @@ export default defineComponent({
       await getAccessToken()
     })
 
+    function getOrdinal(n: number) {
+      if (n > 3 && n < 21) return 'th';
+      switch (n % 10) {
+        case 1:  return "st";
+        case 2:  return "nd";
+        case 3:  return "rd";
+        default: return "th";
+      }
+    }
+
+    function getMonthlyData(year) {
+      const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      return months.map((monthName, i) => {
+        const firstDayOfWeek = new Date(year, i, 1).getDay();
+        // ...build entries array for the month...
+        return {
+          month: monthName,
+          year,
+          first_day_of_week: firstDayOfWeek,
+          entries: [], // fill with your entries
+          total_entries: 0,
+          daily_average: 0,
+          monthly_average: 0,
+        };
+      });
+    }
+
     return {
       habit,
       breadcrumbs,
       lastSevenDays,
       lastSevenDaysNice,
       getHabitEntiryForDate,
-      accessToken
+      accessToken,
+      getOrdinal
     }
   },
 })
@@ -224,14 +267,32 @@ export default defineComponent({
     </template>
   </n-tabs>
 
-  <div>
-    <div v-for="month in habit.monthly_data" :key="month.month">
-      <div>
-        <h4>{{ month.month }}</h4>
-
-        <div class="habit-yearly-container">
-          <div class="habit-yearly-wrapper" v-for="entry in month.entries" :key="entry.id">
-            <HabitEntry
+  <div class="standard-container-3 calendar-yearly">
+    <div v-for="month in habit.monthly_data" :key="month.month" class="calendar-month-card">
+      <h4 class="calendar-month-title">
+        {{ month.month }} {{ month.year || habit.created_at?.slice(0, 4) }}
+      </h4>
+      <div class="calendar-days-header">
+        <span v-for="day in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="day" class="calendar-day-header">{{ day }}</span>
+      </div>
+      <div class="calendar-days-grid">
+        <!-- Pad empty days before the 1st of the month -->
+        <span
+          v-for="n in month.first_day_of_week"
+          :key="'empty-' + n"
+          class="calendar-day-cell empty"
+        ></span>
+        <!-- Render each day -->
+        <div
+          v-for="entry in month.entries"
+          :key="entry.id"
+          class="calendar-day-cell"
+          style="position: relative;"
+        >
+          <span class="calendar-day-number">
+            {{ new Date(entry.date).getDate() }}<sup>{{ getOrdinal(new Date(entry.date).getDate()) }}</sup>
+          </span>
+          <HabitEntry
             v-if="accessToken"
             :entry="entry.entry"
             :habit="habit"
@@ -239,10 +300,10 @@ export default defineComponent({
             :colour="habit.colour"
             :fetchHabits="fetchHabits"
             :accessToken="accessToken"
-            />
-          </div>
+          />
         </div>
-
+      </div>
+      <div class="calendar-month-stats">
         <p>Total: {{ month.total_entries }}</p>
         <p>Daily Average: {{ month.daily_average }}</p>
         <p>Monthly Average: {{ month.monthly_average }}</p>
@@ -250,4 +311,89 @@ export default defineComponent({
     </div>
   </div>
 </template>
+
+<style>
+.calendar-month-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calendar-month-title {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.calendar-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+.calendar-day-header {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #888;
+  font-weight: 600;
+}
+
+.calendar-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  width: 100%;
+  min-height: 120px;
+}
+
+.calendar-day-cell {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-day-cell.empty {
+  background: transparent;
+  pointer-events: none;
+}
+
+.calendar-month-stats {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #555;
+  text-align: center;
+}
+
+.calendar-day-number {
+  position: absolute;
+  left: 4px;
+  bottom: 2px;
+  font-size: 0.7em;
+  color: #888;
+  pointer-events: none;
+  z-index: 2;
+  font-weight: 500;
+  background: rgba(255,255,255,0.7);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+@media (max-width: 900px) {
+  .standard-container-3.calendar-yearly {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .standard-container-3.calendar-yearly {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 

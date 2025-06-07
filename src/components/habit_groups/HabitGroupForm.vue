@@ -62,18 +62,15 @@ export default defineComponent({
 </script>
 
 <template>
-  <RecordForm :record="habitGroup" :endpoint="endpoint" :method="method" @save="handleSave">
+  <RecordForm :record="habitGroup" :endpoint="endpoint" :method="method" @save="handleSave" modelName="Habit Group">
     <template #trigger="{ openDialog }">
       <slot name="trigger" :openDialog="openDialog">
         <n-button color="primary">{{ isEditMode ? 'Edit Habit Group' : 'Add Habit Group' }}</n-button>
       </slot>
     </template>
-    <template #title>
-      <span>{{ isEditMode ? 'Edit Habit Group' : 'Add New Habit Group' }}</span>
-    </template>
     <template #form="{ record }">
       <v-form>
-        <v-text-field v-model="record.name" label="Name" required></v-text-field>
+        <NTextInput v-model:value="record.name" label="Name" required></NTextInput>
 
         <SelectIcon v-model="record.icon" @update="updateRecordIcon"/>
       </v-form>

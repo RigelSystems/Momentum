@@ -148,8 +148,7 @@ export default defineComponent({
 
         <HabitGroupForm :habitGroup="habitGroup">
           <template #trigger="{ openDialog }">
-            <NButton icon="mdi-dots-vertical" @click="openDialog" size="medium"
-              class="mr-2 kabab-menu" />
+            <span class="mdi mdi-square-edit-outline clickable" @click="openDialog"></span>
           </template>
         </HabitGroupForm>
       </div>

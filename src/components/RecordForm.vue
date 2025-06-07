@@ -13,6 +13,7 @@ export default defineComponent({
     endpoint: { type: String,  required: true },
     method:   { type: String,  default: 'POST' },
     dontReloadOnDelete: { type: Boolean, default: false },
+    modelName: { type: String, default: 'Record' },
   },
 
   setup(props, { emit }) {
@@ -28,8 +29,8 @@ export default defineComponent({
 
     const modalTitle  = computed(() =>
       Object.keys(props.record ?? {}).length
-        ? 'Edit Record'
-        : 'Add Record'
+        ? 'Edit ' + props.modelName
+        : 'Add ' + props.modelName
     );
 
     /* ------------------------------------------------------------------

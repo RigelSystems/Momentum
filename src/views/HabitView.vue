@@ -267,7 +267,7 @@ export default defineComponent({
     </template>
   </n-tabs>
 
-  <div class="standard-container-3 calendar-yearly">
+  <div class="standard-container-3 calendar-yearly p-1">
     <div v-for="month in habit.monthly_data" :key="month.month" class="calendar-month-card">
       <h4 class="calendar-month-title">
         {{ month.month }} {{ month.year || habit.created_at?.slice(0, 4) }}
@@ -357,6 +357,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
+  border: solid 1px black;
 }
 
 .calendar-day-cell.empty {
@@ -373,15 +374,18 @@ export default defineComponent({
 
 .calendar-day-number {
   position: absolute;
-  left: 4px;
-  bottom: 2px;
-  font-size: 0.7em;
-  color: #888;
+  text-align: center;
+  bottom: 0;
+  right: 0;
+  border-left: 1px solid #000000;
+  border-top: 1px solid #000000;
+  font-size: 0.5em;
+  color: #000000;
   pointer-events: none;
   z-index: 2;
-  font-weight: 500;
-  background: rgba(255,255,255,0.7);
-  border-radius: 2px;
+  font-weight: 700;
+  background: rgba(255,255,255,1);
+  border-radius: 5px 0 0 0;
   padding: 0 2px;
 }
 

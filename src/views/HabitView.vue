@@ -39,7 +39,7 @@ interface Habit {
     }>
     total_entries: number
     daily_average: number
-    monthly_average: number
+    weekly_average: number
   }>
 }
 
@@ -150,7 +150,7 @@ export default defineComponent({
           entries: [], // fill with your entries
           total_entries: 0,
           daily_average: 0,
-          monthly_average: 0,
+          weekly_average: 0,
         };
       });
     }
@@ -306,7 +306,7 @@ export default defineComponent({
       <div class="calendar-month-stats">
         <p>Total: {{ month.total_entries }}</p>
         <p>Daily Average: {{ month.daily_average }}</p>
-        <p>Monthly Average: {{ month.monthly_average }}</p>
+        <p>Weekly Average: {{ month.weekly_average }}</p>
       </div>
     </div>
   </div>

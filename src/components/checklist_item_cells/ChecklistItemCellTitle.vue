@@ -22,7 +22,7 @@ export default defineComponent({
     const existingRecord = computed(() => props.cell?.id)
     const { accessToken } = useAuthToken()
     const record = ref({
-      content: props.cell?.content || 'Title',
+      content: props.cell?.cellable?.content || 'Title',
     })
 
     const createTitle = () => {
@@ -59,14 +59,15 @@ export default defineComponent({
     }
 
     const deleteTitle = () => {
-      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_titles/${props.cell.id}`
+      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cells/${props.cell.id}`
       fetch(delete_url, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken.value}`,
         },
       }).then(() => {
-        emit('deleted')
+        console.log('deleted from cell title')
+        emit('delete')
       })
     }
 
@@ -87,9 +88,9 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="checklist-item-cell-title">
+  <div :class="['checklist-item-cell-title', { 'checklist-item-cell-title--edit': editMode }]">
     <input v-if="editMode" type="text" v-model="record.content" />
-    <span v-else>{{ record.content }}</span>
+    <h3 v-else>{{ record.content }}</h3>
 
     <div v-if="editMode" class="checklist-item-cell-title__actions">
       <button v-if="!existingRecord" 
@@ -106,8 +107,15 @@ export default defineComponent({
 
 <style scoped>
 .checklist-item-cell-title input {
-  width: 100%;
+  width: 80%;
   height: 30px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  line-height: 1.25;
+  font-size: 1.17rem;
+  color: #111;
+  border: none;
+  outline: none;
 }
 
 .checklist-item-cell-title {
@@ -118,6 +126,10 @@ export default defineComponent({
 .checklist-item-cell-title__actions {
   display: flex;
   gap: 0.5rem;
+}
+
+.checklist-item-cell-title--edit {
+  border: dashed 2px grey;
 }
 
 .checklist-item-cell-title__actions button {

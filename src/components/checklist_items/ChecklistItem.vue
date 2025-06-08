@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, watch } from 'vue';
 import ChecklistItemForm from '@/components/checklist_items/ChecklistItemForm.vue'
 import ChecklistItemCellForm from '@/components/checklist_item_cells/ChecklistItemCellForm.vue';
 import ChecklistItemCellTitle from '@/components/checklist_item_cells/ChecklistItemCellTitle.vue';
@@ -48,21 +48,43 @@ export default defineComponent({
     const creatingNewCell = ref('')
     const editMode = ref(false)
     const { accessToken } = useAuthToken()
+    const checklistItemCells = ref([])
     const handleSave = () => {
-      console.log('saved from checklist item')
-      emit('save')
+      fetchChecklistItem()
+      creatingNewCell.value = ''
+    }
+    
+    const handleDelete = () => {
+      fetchChecklistItem()
     }
 
     const checklistItemBulkUpdateUrl = computed(() => {
       return `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItem.id}/checklist_item_cells`
     })
 
+    const fetchChecklistItem = async () => {
+      checklistItemCells.value = []
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItem.id}/checklist_item_cells`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`
+        }
+      })
+      const data = await response.json()
+      checklistItemCells.value = data
+    }
+
+    watch(accessToken, () => {
+      fetchChecklistItem()
+    })
+
     return {
       handleSave,
+      checklistItemCells,
       creatingNewCell,
       checklistItemBulkUpdateUrl,
       accessToken,
       editMode,
+      handleDelete,
     }
   },
 });
@@ -77,7 +99,7 @@ export default defineComponent({
     
 
     <n-order-list
-      :items="checklistItem.checklist_item_cells"
+      :items="checklistItemCells"
       modelName="checklist_item_cells"
       :updateUrl="checklistItemBulkUpdateUrl"
       :accessToken="accessToken"
@@ -86,8 +108,9 @@ export default defineComponent({
         <component 
           :is="`ChecklistItemCell${cell.cell_type}`" 
           :checklistItemId="checklistItem.id"
-          :cell="cell.cellable" 
+          :cell="cell" 
           :editMode="editMode"
+          @delete="handleDelete"
         />
       </template>
     </n-order-list>

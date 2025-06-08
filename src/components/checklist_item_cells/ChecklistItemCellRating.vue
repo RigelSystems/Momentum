@@ -1,42 +1,3 @@
-<template>
-  <div>
-    <input v-if="editMode" type="text" v-model="record.label" placeholder="Label" />
-    <div v-else class="checklist-item-cell-rating__label">{{ record.label }}</div>
-    
-    <div v-if="editMode" 
-         class="checklist-item-cell-rating__stars"
-         @mouseleave="handleMouseLeave">
-      <span v-for="star in 5" 
-            :key="star"
-            class="checklist-item-cell-rating__star"
-            :class="{ 'is-active': star <= (hoverRating || record.value) }"
-            @mouseover="handleStarHover(star)"
-            @click="handleStarClick(star)">
-        <span class="mdi" :class="star <= (hoverRating || record.value) ? 'mdi-star' : 'mdi-star-outline'"></span>
-      </span>
-    </div>
-    <div v-else class="checklist-item-cell-rating__stars">
-      <span v-for="star in 5" 
-            :key="star"
-            class="checklist-item-cell-rating__star"
-            :class="{ 'is-active': star <= record.value }">
-        <span class="mdi" :class="star <= record.value ? 'mdi-star' : 'mdi-star-outline'"></span>
-      </span>
-    </div>
-
-    <div v-if="editMode" class="checklist-item-cell-rating__actions">
-      <button v-if="!existingRecord" 
-              @click="createRating">
-        <span class="mdi mdi-content-save"></span>
-      </button>
-      <button v-if="existingRecord" 
-              @click="deleteRating">
-        <span class="mdi mdi-trash-can-outline"></span>
-      </button>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue';
 import { useAuthToken } from '@/composables/useAuthToken'
@@ -61,8 +22,7 @@ export default defineComponent({
     const existingRecord = computed(() => props.cell?.id)
     const { accessToken } = useAuthToken()
     const record = ref({
-      label: props.cell?.label || '',
-      value: props.cell?.value || 0,
+      value: props.cell?.cellable?.value || 0,
     })
     const hoverRating = ref(0)
 
@@ -79,7 +39,7 @@ export default defineComponent({
         },
         body: JSON.stringify(data),
       }).then(() => {
-        emit('saved')
+        emit('save')
       })
     }
 
@@ -99,14 +59,14 @@ export default defineComponent({
     }
 
     const deleteRating = () => {
-      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_ratings/${props.cell.id}`
+      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cells/${props.cell.id}`
       fetch(delete_url, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken.value}`,
         },
       }).then(() => {
-        emit('deleted')
+        emit('delete')
       })
     }
 
@@ -146,7 +106,54 @@ export default defineComponent({
 });
 </script>
 
+<template>
+  <div :class="['checklist-item-cell-rating', { 'checklist-item-cell-rating--edit': editMode }]">
+    <div v-if="editMode" 
+         class="checklist-item-cell-rating__stars"
+         @mouseleave="handleMouseLeave">
+      <span v-for="star in 5" 
+            :key="star"
+            class="checklist-item-cell-rating__star"
+            :class="{ 'is-active': star <= (hoverRating || record.value) }"
+            @mouseover="handleStarHover(star)"
+            @click="handleStarClick(star)">
+        <span class="mdi" :class="star <= (hoverRating || record.value) ? 'mdi-star' : 'mdi-star-outline'"></span>
+      </span>
+    </div>
+    <div v-else class="checklist-item-cell-rating__stars">
+      <span v-for="star in 5" 
+            :key="star"
+            class="checklist-item-cell-rating__star"
+            :class="{ 'is-active': star <= record.value }">
+        <span class="mdi" :class="star <= record.value ? 'mdi-star' : 'mdi-star-outline'"></span>
+      </span>
+    </div>
+
+    <div v-if="editMode" class="checklist-item-cell-rating__actions">
+      <button v-if="!existingRecord" 
+              @click="createRating">
+        <span class="mdi mdi-content-save"></span>
+      </button>
+      <button v-if="existingRecord" 
+              @click="deleteRating">
+        <span class="mdi mdi-trash-can-outline"></span>
+      </button>
+    </div>
+  </div>
+</template>
+
 <style scoped>
+.checklist-item-cell-rating--edit {
+  align-items: flex-start;
+  border: dashed 2px grey;
+}
+
+.checklist-item-cell-rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .checklist-item-cell-rating__label {
   font-size: 0.9em;
   color: var(--color-text-light);

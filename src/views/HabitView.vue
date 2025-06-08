@@ -355,9 +355,10 @@ export default defineComponent({
 .calendar-day-cell {
   min-height: 24px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   border: solid 1px black;
+  padding-bottom: 15px;
 }
 
 .calendar-day-cell.empty {
@@ -376,16 +377,14 @@ export default defineComponent({
   position: absolute;
   text-align: center;
   bottom: 0;
-  right: 0;
-  border-left: 1px solid #000000;
+  width: 100%;
   border-top: 1px solid #000000;
   font-size: 0.5em;
   color: #000000;
   pointer-events: none;
   z-index: 2;
   font-weight: 700;
-  background: rgba(255,255,255,1);
-  border-radius: 5px 0 0 0;
+  background: rgb(246, 246, 246);
   padding: 0 2px;
 }
 

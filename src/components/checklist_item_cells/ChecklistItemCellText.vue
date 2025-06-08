@@ -1,23 +1,3 @@
-<template>
-  <div>
-    <input v-if="editMode" type="text" v-model="record.label" placeholder="Label" />
-    <div v-else class="checklist-item-cell-text__label">{{ record.label }}</div>
-    <textarea v-if="editMode" v-model="record.content" placeholder="Content"></textarea>
-    <div v-else class="checklist-item-cell-text__content">{{ record.content }}</div>
-
-    <div v-if="editMode" class="checklist-item-cell-text__actions">
-      <button v-if="!existingRecord" 
-              @click="createText">
-        <span class="mdi mdi-content-save"></span>
-      </button>
-      <button v-if="existingRecord" 
-              @click="deleteText">
-        <span class="mdi mdi-trash-can-outline"></span>
-      </button>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue';
 import { useAuthToken } from '@/composables/useAuthToken'
@@ -42,8 +22,8 @@ export default defineComponent({
     const existingRecord = computed(() => props.cell?.id)
     const { accessToken } = useAuthToken()
     const record = ref({
-      content: props.cell?.content || '',
-      label: props.cell?.label || '',
+      content: props.cell?.cellable?.content || '',
+      label: props.cell?.cellable?.label || '',
     })
 
     const createText = () => {
@@ -59,7 +39,7 @@ export default defineComponent({
         },
         body: JSON.stringify(data),
       }).then(() => {
-        emit('saved')
+        emit('save')
       })
     }
 
@@ -79,14 +59,14 @@ export default defineComponent({
     }
 
     const deleteText = () => {
-      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_texts/${props.cell.id}`
+      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cells/${props.cell.id}`
       fetch(delete_url, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken.value}`,
         },
       }).then(() => {
-        emit('deleted')
+        emit('delete')
       })
     }
 
@@ -106,7 +86,30 @@ export default defineComponent({
 });
 </script>
 
+<template>
+  <div :class="['checklist-item-cell-text', { 'checklist-item-cell-text--edit': editMode }]">
+    <textarea v-if="editMode" v-model="record.content" placeholder="Content"></textarea>
+    <div v-else class="checklist-item-cell-text__content">{{ record.content }}</div>
+
+    <div v-if="editMode" class="checklist-item-cell-text__actions">
+      <button v-if="!existingRecord" 
+              @click="createText">
+        <span class="mdi mdi-content-save"></span>
+      </button>
+      <button v-if="existingRecord" 
+              @click="deleteText">
+        <span class="mdi mdi-trash-can-outline"></span>
+      </button>
+    </div>
+  </div>
+</template>
+
 <style scoped>
+.checklist-item-cell-text {
+  display: flex;
+  justify-content: space-between;
+}
+
 .checklist-item-cell-text__label {
   font-size: 0.9em;
   color: var(--color-text-light);
@@ -154,5 +157,9 @@ export default defineComponent({
 
 .checklist-item-cell-text__actions button:last-child:hover {
   color: var(--color-danger);
+}
+
+.checklist-item-cell-text--edit {
+  border: dashed 2px grey;
 }
 </style> 

@@ -304,9 +304,9 @@ export default defineComponent({
         </div>
       </div>
       <div class="calendar-month-stats">
-        <p>Total: {{ month.total_entries }}</p>
-        <p>Daily Average: {{ month.daily_average }}</p>
-        <p>Weekly Average: {{ month.weekly_average }}</p>
+        <p class="calendar-month-stat">Total: <b>{{ habit.habit_type === 'Currency' ? `£${month.total_entries}` : month.total_entries }}</b></p>
+        <p class="calendar-month-stat">Daily Average: <b>{{ habit.habit_type === 'Currency' ? `£${month.daily_average}` : month.daily_average }}</b></p>
+        <p class="calendar-month-stat">Weekly Average: <b>{{ habit.habit_type === 'Currency' ? `£${month.weekly_average}` : month.weekly_average }}</b></p>
       </div>
     </div>
   </div>
@@ -371,6 +371,15 @@ export default defineComponent({
   font-size: 0.85rem;
   color: #555;
   text-align: center;
+  width: 100%;
+}
+
+.calendar-month-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 10px;
 }
 
 .calendar-day-number {

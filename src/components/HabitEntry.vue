@@ -39,9 +39,18 @@ export default defineComponent({
     let loading = false;
     let value = ref(props.entry?.value || 0);
 
+    const habitValueForNumericalOrCurrency = computed(() => {
+      if (props.habit.habit_type === 'Numerical') {
+        return value.value || '-';
+      } else if (props.habit.habit_type === 'Currency') {
+        return `£${value.value || '-'}`;
+      }
+    });
+
     const habitEntryStyle = computed(() => {
       let fontSize = null;
-      const stringValue = props.entry?.value?.toString()?.length || 0;
+      let stringValue = props.entry?.value?.toString()?.length || 0;
+      if (props.habit.habit_type === 'Currency') {stringValue += 1}
       const backgroundColor = !value.value ? null : `${props.colour} !important`
 
       if (stringValue === 1) {
@@ -53,7 +62,7 @@ export default defineComponent({
       } else if (stringValue === 4) {
         fontSize = '8px';
       } else if (stringValue >= 5) {
-        fontSize = '6px';
+        fontSize = '5px';
       }
 
       return {
@@ -146,6 +155,7 @@ export default defineComponent({
       updateRecordIcon,
       checklistUrl,
       habitEntryStyle,
+      habitValueForNumericalOrCurrency
     };
   },
 });
@@ -161,7 +171,7 @@ export default defineComponent({
     </button>
   </div>
 
-  <div v-if="habit.habit_type === 'Numerical'">
+  <div v-if="habit.habit_type === 'Numerical' || habit.habit_type === 'Currency'">
     <v-dialog max-width="500" v-model="modalIsActive" persistent>
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
@@ -171,7 +181,7 @@ export default defineComponent({
           @touchstart="startHold"
           @touchend="endHold"
           color="surface-variant"
-          :text="value || '-'"
+          :text="habitValueForNumericalOrCurrency"
           variant="flat"
           class="habit-entry habit-entry--number"
           :style="habitEntryStyle"

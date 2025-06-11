@@ -44,7 +44,7 @@ export default defineComponent({
     }
 
     const updateText = () => {
-      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_texts/${props.cell.id}`
+      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_texts/${props.cell?.cellabel?.id}`
       const data = {
         checklist_item_cell: record.value,
       }
@@ -58,18 +58,6 @@ export default defineComponent({
       })
     }
 
-    const deleteText = () => {
-      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cells/${props.cell.id}`
-      fetch(delete_url, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${accessToken.value}`,
-        },
-      }).then(() => {
-        emit('delete')
-      })
-    }
-
     watch(() => props.editMode, (newValue, oldValue) => {
       if (oldValue === true && newValue === false && existingRecord.value) {
         updateText()
@@ -80,25 +68,20 @@ export default defineComponent({
       record,
       existingRecord,
       createText,
-      deleteText,
     };
   },
 });
 </script>
 
 <template>
-  <div :class="['checklist-item-cell-text', { 'checklist-item-cell-text--edit': editMode }]">
-    <textarea v-if="editMode" v-model="record.content" placeholder="Content"></textarea>
+  <div :class="['checklist-item-cell-text', 'checklist-item-cell' , { 'checklist-item-cell-text--edit': editMode }]">
+    <textarea v-if="editMode" v-model="record.content" placeholder="Content" class="checklist-item-cell-text__input"></textarea>
     <div v-else class="checklist-item-cell-text__content">{{ record.content }}</div>
 
     <div v-if="editMode" class="checklist-item-cell-text__actions">
       <button v-if="!existingRecord" 
               @click="createText">
         <span class="mdi mdi-content-save"></span>
-      </button>
-      <button v-if="existingRecord" 
-              @click="deleteText">
-        <span class="mdi mdi-trash-can-outline"></span>
       </button>
     </div>
   </div>
@@ -108,6 +91,7 @@ export default defineComponent({
 .checklist-item-cell-text {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 
 .checklist-item-cell-text__label {
@@ -157,9 +141,5 @@ export default defineComponent({
 
 .checklist-item-cell-text__actions button:last-child:hover {
   color: var(--color-danger);
-}
-
-.checklist-item-cell-text--edit {
-  border: dashed 2px grey;
 }
 </style> 

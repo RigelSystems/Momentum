@@ -56,7 +56,7 @@ export default defineComponent({
       { icon: 'mdi-view-dashboard-outline', url: '/#/dashboard', visible: isLoggedIn.value, label: 'Dashboard' },
       { icon: 'mdi-check-circle-outline',   url: '/#/habits',    visible: isLoggedIn.value, label: 'Habits' },
       { icon: 'mdi-timeline-text',          url: '/#/timeline',  visible: isFeatureEnabled(), label: 'Timeline' },
-      { icon: 'mdi-cog',                    url: '/#/admin',   visible: isLoggedIn.value, label: 'Admin' },
+      { icon: 'mdi-list-box-outline',   url: '/#/checklists',    visible: isLoggedIn.value, label: 'Lists' },
       { icon: 'mdi-account-outline',        url: '/#/account',   visible: isLoggedIn.value, label: 'Account' },
     ])
 

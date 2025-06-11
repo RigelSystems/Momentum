@@ -45,7 +45,7 @@ export default defineComponent({
       :fetchHabits="fetchHabits"
     >
       <template #trigger="{ openDialog }">
-        <span class="mdi mdi-square-edit-outline clickable" @click="openDialog"></span>
+        <span class="mdi mdi-pencil clickable" @click="openDialog"></span>
       </template>
     </HabitForm>
     <v-icon class="mr-1">mdi-{{ habit.icon }}</v-icon>

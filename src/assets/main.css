@@ -10,6 +10,14 @@
   --theme-color: #88bdb9;
 }
 
+.mdi {
+  color: #000000 !important;
+}
+
+.n-navigation-bar__mobile-bottom--active .mdi {
+  color: var(--theme-color) !important;
+}
+
 .hero-image {
   width: 100%;
   max-width: 450px;

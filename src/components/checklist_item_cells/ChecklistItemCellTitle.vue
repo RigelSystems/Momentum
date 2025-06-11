@@ -44,7 +44,7 @@ export default defineComponent({
     }
 
     const updateTitle = () => {
-      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_titles/${props.cell.id}`
+      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_titles/${props.cell?.cellable?.id}`
       const data = {
         checklist_item_cell: record.value,
       }
@@ -58,19 +58,6 @@ export default defineComponent({
       })
     }
 
-    const deleteTitle = () => {
-      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cells/${props.cell.id}`
-      fetch(delete_url, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${accessToken.value}`,
-        },
-      }).then(() => {
-        console.log('deleted from cell title')
-        emit('delete')
-      })
-    }
-
     watch(() => props.editMode, (newValue, oldValue) => {
       if (oldValue === true && newValue === false && existingRecord.value) {
         updateTitle()
@@ -81,14 +68,13 @@ export default defineComponent({
       record,
       existingRecord,
       createTitle,
-      deleteTitle,
     };
   },
 });
 </script>
 
 <template>
-  <div :class="['checklist-item-cell-title', { 'checklist-item-cell-title--edit': editMode }]">
+  <div :class="['checklist-item-cell-title', 'checklist-item-cell', { 'checklist-item-cell-title--edit': editMode }]">
     <input v-if="editMode" type="text" v-model="record.content" />
     <h3 v-else>{{ record.content }}</h3>
 
@@ -96,10 +82,6 @@ export default defineComponent({
       <button v-if="!existingRecord" 
               @click="createTitle">
         <span class="mdi mdi-content-save"></span>
-      </button>
-      <button v-if="existingRecord" 
-              @click="deleteTitle">
-        <span class="mdi mdi-trash-can-outline"></span>
       </button>
     </div>
   </div>
@@ -126,10 +108,6 @@ export default defineComponent({
 .checklist-item-cell-title__actions {
   display: flex;
   gap: 0.5rem;
-}
-
-.checklist-item-cell-title--edit {
-  border: dashed 2px grey;
 }
 
 .checklist-item-cell-title__actions button {

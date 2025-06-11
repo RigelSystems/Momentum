@@ -20,20 +20,20 @@ export default defineConfig({
       manifest: {
         start_url: '/#/dashboard',
         scope: '/',
-        name: 'My Vue App',
-        short_name: 'VueApp',
-        description: 'My awesome Vue app as a PWA',
+        name: 'Momentum',
+        short_name: 'Momentum',
+        description: 'Your daily habits, tasks, and more',
         theme_color: '#42b883',
         background_color: '#ffffff',
         display: 'standalone',
         icons: [
           {
-            src: 'icons/icons8-check-192x192.png',
+            src: 'icons/momentum-favicon-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: 'icons/icons8-check-512x512.png',
+            src: 'icons/momentum-favicon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
           },

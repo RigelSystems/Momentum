@@ -148,7 +148,7 @@ export default defineComponent({
 
         <HabitGroupForm :habitGroup="habitGroup">
           <template #trigger="{ openDialog }">
-            <span class="mdi mdi-square-edit-outline clickable" @click="openDialog"></span>
+            <span class="mdi mdi-pencil clickable" @click="openDialog"></span>
           </template>
         </HabitGroupForm>
       </div>

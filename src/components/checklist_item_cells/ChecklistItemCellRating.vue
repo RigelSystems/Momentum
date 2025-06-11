@@ -12,7 +12,7 @@ export default defineComponent({
     cell: {
       type: Object,
       required: true,
-    },
+    },  
     editMode: {
       type: Boolean,
       default: false
@@ -44,7 +44,7 @@ export default defineComponent({
     }
 
     const updateRating = () => {
-      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_ratings/${props.cell.id}`
+      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_ratings/${props.cell?.cellable?.id}`
       const data = {
         checklist_item_cell: record.value,
       }
@@ -55,18 +55,6 @@ export default defineComponent({
           'Authorization': `Bearer ${accessToken.value}`,
         },
         body: JSON.stringify(data),
-      })
-    }
-
-    const deleteRating = () => {
-      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cells/${props.cell.id}`
-      fetch(delete_url, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${accessToken.value}`,
-        },
-      }).then(() => {
-        emit('delete')
       })
     }
 
@@ -100,14 +88,13 @@ export default defineComponent({
       handleStarClick,
       handleMouseLeave,
       createRating,
-      deleteRating,
     };
   },
 });
 </script>
 
 <template>
-  <div :class="['checklist-item-cell-rating', { 'checklist-item-cell-rating--edit': editMode }]">
+  <div :class="['checklist-item-cell-rating', 'checklist-item-cell', { 'checklist-item-cell-rating--edit': editMode }]">
     <div v-if="editMode" 
          class="checklist-item-cell-rating__stars"
          @mouseleave="handleMouseLeave">
@@ -134,23 +121,15 @@ export default defineComponent({
               @click="createRating">
         <span class="mdi mdi-content-save"></span>
       </button>
-      <button v-if="existingRecord" 
-              @click="deleteRating">
-        <span class="mdi mdi-trash-can-outline"></span>
-      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.checklist-item-cell-rating--edit {
-  align-items: flex-start;
-  border: dashed 2px grey;
-}
 
 .checklist-item-cell-rating {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between;   
   align-items: center;
 }
 

@@ -1,16 +1,11 @@
 <template>
   <div>
-    <input v-if="editMode" type="text" v-model="record.url" placeholder="Image URL" />
-    <img v-else :src="record.url" :alt="record.alt_text" class="checklist-item-cell-image__image" />
+    <input v-if="editMode" type="text" v-model="record.image_url" placeholder="Image URL" />
+    <img v-else :src="record.image_url" class="checklist-item-cell-image__image" />
 
     <div v-if="editMode" class="checklist-item-cell-image__actions">
-      <button v-if="!existingRecord" 
-              @click="createImage">
+      <button v-if="!existingRecord" @click="createImage">
         <span class="mdi mdi-content-save"></span>
-      </button>
-      <button v-if="existingRecord" 
-              @click="deleteImage">
-        <span class="mdi mdi-trash-can-outline"></span>
       </button>
     </div>
   </div>
@@ -40,8 +35,7 @@ export default defineComponent({
     const existingRecord = computed(() => props.cell?.id)
     const { accessToken } = useAuthToken()
     const record = ref({
-      url: props.cell?.url || '',
-      alt_text: props.cell?.alt_text || '',
+      image_url: props.cell?.cellable?.image_url || '',
     })
 
     const createImage = () => {
@@ -57,12 +51,12 @@ export default defineComponent({
         },
         body: JSON.stringify(data),
       }).then(() => {
-        emit('saved')
+        emit('save')
       })
     }
 
     const updateImage = () => {
-      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_images/${props.cell.id}`
+      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_images/${props.cell?.cellable?.id}`
       const data = {
         checklist_item_cell: record.value,
       }
@@ -76,18 +70,6 @@ export default defineComponent({
       })
     }
 
-    const deleteImage = () => {
-      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_images/${props.cell.id}`
-      fetch(delete_url, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${accessToken.value}`,
-        },
-      }).then(() => {
-        emit('deleted')
-      })
-    }
-
     watch(() => props.editMode, (newValue, oldValue) => {
       if (oldValue === true && newValue === false && existingRecord.value) {
         updateImage()
@@ -97,8 +79,7 @@ export default defineComponent({
     return {
       record,
       existingRecord,
-      createImage,
-      deleteImage,
+      createImage,  
     };
   },
 });

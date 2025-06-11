@@ -4,21 +4,18 @@
     <div v-else class="checklist-item-cell-toggle__label">{{ record.label }}</div>
     
     <div class="checklist-item-cell-toggle__toggle">
-      <input type="checkbox" 
-             :id="`toggle-${$props.cell?.id || 'new'}`"
-             v-model="record.value"
-             :disabled="!editMode" />
-      <label :for="`toggle-${$props.cell?.id || 'new'}`"></label>
+      <button 
+        :class="['toggle-button', { 'is-checked': record.value }]"
+        @click="toggleValue"
+        :disabled="!editMode">
+        <span :class="['mdi', record.value ? 'mdi-check' : 'mdi-close']"></span>
+      </button>
     </div>
 
     <div v-if="editMode" class="checklist-item-cell-toggle__actions">
-      <button v-if="!existingRecord" 
+      <button v-if="!existingRecord"
               @click="createToggle">
         <span class="mdi mdi-content-save"></span>
-      </button>
-      <button v-if="existingRecord" 
-              @click="deleteToggle">
-        <span class="mdi mdi-trash-can-outline"></span>
       </button>
     </div>
   </div>
@@ -28,6 +25,12 @@
 import { defineComponent, ref, computed, watch } from 'vue';
 import { useAuthToken } from '@/composables/useAuthToken'
 
+export interface ToggleRecord {
+  id?: number;
+  label: string;
+  value: boolean;
+}
+
 export default defineComponent({
   name: 'ChecklistItemCellToggle',
   props: {
@@ -36,7 +39,7 @@ export default defineComponent({
       required: true,
     },
     cell: {
-      type: Object,
+      type: Object as () => ToggleRecord | undefined,     
       required: true,
     },
     editMode: {
@@ -47,7 +50,9 @@ export default defineComponent({
   setup(props, { emit }) {
     const existingRecord = computed(() => props.cell?.id)
     const { accessToken } = useAuthToken()
-    const record = ref({
+
+    const record = ref<ToggleRecord>({
+      id: props.cell?.id,
       label: props.cell?.label || '',
       value: props.cell?.value || false,
     })
@@ -65,11 +70,13 @@ export default defineComponent({
         },
         body: JSON.stringify(data),
       }).then(() => {
-        emit('saved')
+        emit('save')
       })
     }
 
     const updateToggle = () => {
+      if (!props.cell?.id) return;
+      
       const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_toggles/${props.cell.id}`
       const data = {
         checklist_item_cell: record.value,
@@ -84,29 +91,18 @@ export default defineComponent({
       })
     }
 
-    const deleteToggle = () => {
-      const delete_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_toggles/${props.cell.id}`
-      fetch(delete_url, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${accessToken.value}`,
-        },
-      }).then(() => {
-        emit('deleted')
-      })
-    }
-
-    watch(() => props.editMode, (newValue, oldValue) => {
-      if (oldValue === true && newValue === false && existingRecord.value) {
+    const toggleValue = () => {
+      record.value.value = !record.value.value
+      if (existingRecord.value) {
         updateToggle()
       }
-    })
+    }
 
     return {
       record,
       existingRecord,
       createToggle,
-      deleteToggle,
+      toggleValue,
     };
   },
 });
@@ -120,50 +116,39 @@ export default defineComponent({
 }
 
 .checklist-item-cell-toggle__toggle {
-  position: relative;
   display: inline-block;
 }
 
-.checklist-item-cell-toggle__toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.checklist-item-cell-toggle__toggle label {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-  background-color: #ccc;
-  border-radius: 34px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.checklist-item-cell-toggle__toggle label:before {
-  content: '';
-  position: absolute;
-  width: 26px;
-  height: 26px;
+.toggle-button {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  top: 4px;
-  left: 4px;
-  background-color: white;
-  transition: transform 0.2s ease;
+  border: 2px solid var(--color-text-light);
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
-.checklist-item-cell-toggle__toggle input:checked + label {
+.toggle-button.is-checked {
   background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
 }
 
-.checklist-item-cell-toggle__toggle input:checked + label:before {
-  transform: translateX(26px);
+.toggle-button:not(.is-checked) {
+  color: var(--color-text-light);
 }
 
-.checklist-item-cell-toggle__toggle input:disabled + label {
+.toggle-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.toggle-button .mdi {
+  font-size: 1.5em;
 }
 
 .checklist-item-cell-toggle__actions {

@@ -23,6 +23,7 @@ export default defineComponent({
     const loading = ref(true)
     const checklists = ref<Task[]>([])
     const errorMessage = ref<string | null>(null)
+    const dataGrid = ref<any>(null)
 
     const fetchChecklists = async () => {
       const apiUrl = `${import.meta.env.VITE_API_URL}checklists`
@@ -55,14 +56,17 @@ export default defineComponent({
     }
 
     const checklistBulkUpdateUrl = computed(() => `${import.meta.env.VITE_API_URL}checklists/bulk_update`)
+    const checklistUrl = computed(() => `${import.meta.env.VITE_API_URL}checklists`)
 
     return {
       checklists,
       loading,
-      errorMessage,
+      errorMessage, 
       handleTaskSaved,
       checklistBulkUpdateUrl,
-      accessToken
+      accessToken,
+      checklistUrl,
+      dataGrid
     }
   },
 })
@@ -71,35 +75,24 @@ export default defineComponent({
 <template>
   <div class="standard-container p-1">
     <PageHeader title="Checklists" />
-  </div>
-
-  <div class="p-1">
     <ChecklistForm @save="handleTaskSaved">
       <template #trigger="{ openDialog }">
-        <n-button @click="openDialog">New Checklist</n-button>
+        <NButton @click="openDialog">New Checklist</NButton>
       </template>
     </ChecklistForm>
   </div>
 
-  <n-order-list
-    :items="checklists"
-    :loading="loading"
-    modelName="checklists"
-    :updateUrl="checklistBulkUpdateUrl"
-    :accessToken="accessToken"
-  >
-    <template #default="task">
-      <NCard :title="task.name">
-        <template #content>
-          <p>{{ task.description }}</p>
-          <RouterLink
-            :to="{ name: 'checklist', params: { id: task.id } }"
-            class="mr-2"
-          >
-            View
-          </RouterLink>
-        </template>
-      </NCard>
-    </template>
-  </n-order-list>
+  <div class="standard-container p-1">
+    <NDataGrid
+      v-if="accessToken"
+      ref="dataGrid"
+      :url="checklistUrl"
+      :accessToken="accessToken"
+      :pageSize="10"
+      :search="true"
+      :sortable="true"
+      :searchableFields="['name']"
+      :sortableFields="['name']"
+    />
+  </div>
 </template> 

@@ -138,4 +138,5 @@ export default defineComponent({
   </div>
 
   <NButton @click="createChecklistItem">Create Checklist Item</NButton>
+
 </template>

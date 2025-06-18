@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="checklist-item-cell-toggle__container">
     <input v-if="editMode" type="text" v-model="record.label" placeholder="Label" />
     <div v-else class="checklist-item-cell-toggle__label">{{ record.label }}</div>
-    
+
     <div class="checklist-item-cell-toggle__toggle">
       <button 
         :class="['toggle-button', { 'is-checked': record.value }]"
@@ -29,6 +29,16 @@ export interface ToggleRecord {
   id?: number;
   label: string;
   value: boolean;
+  checklist_item_cell: {
+    id?: number;
+    label: string;
+    value: boolean;
+  }
+  cellable: {
+    id?: number;
+    label: string;
+    value: boolean;
+  }
 }
 
 export default defineComponent({
@@ -52,9 +62,17 @@ export default defineComponent({
     const { accessToken } = useAuthToken()
 
     const record = ref<ToggleRecord>({
-      id: props.cell?.id,
-      label: props.cell?.label || '',
-      value: props.cell?.value || false,
+      id: props.cell?.cellable?.id,
+      label: props.cell?.cellable?.label || '',
+      value: props.cell?.cellable?.value || false,
+      checklist_item_cell: props.cell?.cellable || {
+        label: '',
+        value: false,
+      },
+      cellable: props.cell?.cellable || {
+        label: '',
+        value: false,
+      },
     })
 
     const createToggle = () => {
@@ -75,9 +93,7 @@ export default defineComponent({
     }
 
     const updateToggle = () => {
-      if (!props.cell?.id) return;
-      
-      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_toggles/${props.cell.id}`
+      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_toggles/${props.cell?.cellable?.id}`
       const data = {
         checklist_item_cell: record.value,
       }
@@ -98,6 +114,12 @@ export default defineComponent({
       }
     }
 
+    watch(() => props.editMode, (newValue, oldValue) => {
+      if (oldValue === true && newValue === false && existingRecord.value) {
+        updateToggle()
+      }
+    })
+
     return {
       record,
       existingRecord,
@@ -109,10 +131,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.checklist-item-cell-toggle__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .checklist-item-cell-toggle__label {
   font-size: 0.9em;
   color: var(--color-text-light);
-  margin-bottom: 0.5em;
 }
 
 .checklist-item-cell-toggle__toggle {

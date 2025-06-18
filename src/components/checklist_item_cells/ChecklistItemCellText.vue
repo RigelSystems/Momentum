@@ -23,7 +23,6 @@ export default defineComponent({
     const { accessToken } = useAuthToken()
     const record = ref({
       content: props.cell?.cellable?.content || '',
-      label: props.cell?.cellable?.label || '',
     })
 
     const createText = () => {
@@ -44,7 +43,7 @@ export default defineComponent({
     }
 
     const updateText = () => {
-      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_texts/${props.cell?.cellabel?.id}`
+      const save_url = `${import.meta.env.VITE_API_URL}/checklist_items/${props.checklistItemId}/checklist_item_cell_texts/${props.cell?.cellable?.id}`
       const data = {
         checklist_item_cell: record.value,
       }

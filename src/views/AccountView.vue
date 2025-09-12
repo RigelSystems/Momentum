@@ -65,32 +65,23 @@ export default defineComponent({
   <n-tabs>
     <template #tabs="{ activeTab, setActiveTab }">
       <n-tab
-        label="Overview"
+        label="Friends"
         :active="activeTab === 0"
         @click="setActiveTab(0)"
       />
       <n-tab
-        label="Friends"
+        label="Settings"
         :active="activeTab === 1"
         @click="setActiveTab(1)"
-      />
-      <n-tab
-        label="Settings"
-        :active="activeTab === 2"
-        @click="setActiveTab(2)"
       />
     </template>
 
     <template #default="{ activeTab }">
       <n-tab-panel :index="0" :activeTab="activeTab">
-        <!-- Overview -->
-        <User></User>
-      </n-tab-panel>
-      <n-tab-panel :index="1" :activeTab="activeTab">
         <!-- Friends -->
         <Friends v-if="accessToken" :accessToken="accessToken"/>
       </n-tab-panel>
-      <n-tab-panel :index="2" :activeTab="activeTab">
+      <n-tab-panel :index="1" :activeTab="activeTab">
         <!-- Settings -->
         <NRow :cols="{sm: [100], md: [100], lg: [100]}">
           <NCard subtitle="Get notifications and ask helpful questions about your data" title="Helpful Bot">

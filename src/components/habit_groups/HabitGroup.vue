@@ -137,6 +137,7 @@ export default defineComponent({
           <NCircleProgress
             :current="habitGroup.completed_today_count"
             :total="habitGroup.habits_with_goals_count"
+            v-if="habitGroup.habits_with_goals_count > 0"
             :fontSize="35"
             :size="30"
             :strokeWidth="11"

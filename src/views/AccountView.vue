@@ -62,6 +62,8 @@ export default defineComponent({
 </script>
 
 <template>
+<p class="p-1">Welcome {{ user?.name }}</p>
+
   <n-tabs>
     <template #tabs="{ activeTab, setActiveTab }">
       <n-tab

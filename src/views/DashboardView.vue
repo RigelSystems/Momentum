@@ -61,8 +61,7 @@ export default defineComponent({
     ></NDashboardTile>
   </div>
 
-
-  <div v-if="data.error.length > 0" class="p-1">
+  <div v-if="data.error?.length > 0" class="p-1">
     <p>Please create some habits to to see your dashboard</p>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, computed, ref, watch } from 'vue'
 import RecordForm from '../RecordForm.vue'
 import SelectIcon from '../inputs/SelectIcon.vue'
 import { useAuthToken } from '@/composables/useAuthToken'
@@ -44,7 +44,31 @@ export default defineComponent({
     const { isFeatureEnabled } = useFeatureFlag()
     const { accessToken } = useAuthToken()
     const value = ref<string[]>([])
-      const allowedMinutes = v => v % 5 === 0
+    const allowedMinutes = v => v % 5 === 0
+    const currentHabitType = ref(props.habit.habit_type || '')
+    const goalConditionOptions = ref<Array<{ value: string, label: string }>>([])
+
+    const updateGoalConditionOptions = () => {
+      if (currentHabitType.value === 'Yes or No') {
+        goalConditionOptions.value = [
+          { value: "No Goal", label: "No Goal" },
+          { value: "Equals", label: "Equals" },
+        ]
+      } else {
+        goalConditionOptions.value = [
+          { value: "No Goal", label: "No Goal" },
+          { value: "Equals", label: "Equals" },
+          { value: "Greater than", label: "Greater than" },
+          { value: "Less than", label: "Less than" },
+          { value: "Anything", label: "Anything" },
+          { value: "Not equals", label: "Not equals" },
+          { value: "Not greater than", label: "Not greater than" },
+          { value: "Not less than", label: "Not less than" }
+        ]
+      }
+    }
+
+    watch(currentHabitType, updateGoalConditionOptions, { immediate: true })
 
     const isEditMode = computed(() => !!props.habit.id)
 
@@ -67,10 +91,13 @@ export default defineComponent({
       emit('save', savedRecord)
     }
 
+    const updateHabitType = (habitType: string) => {
+      currentHabitType.value = habitType
+    }
+
     const friendsUrl = `${import.meta.env.VITE_API_URL}/friends/friends`
     const habitGroupsUrl = `${import.meta.env.VITE_API_URL}/habit_groups`
     const habitTypesUrl = `${import.meta.env.VITE_API_URL}/habits/types`
-    const goalConditionsUrl = `${import.meta.env.VITE_API_URL}/habits/goal_conditions`
 
     return {
       isEditMode,
@@ -78,12 +105,13 @@ export default defineComponent({
       friendsUrl,
       habitGroupsUrl,
       habitTypesUrl,
-      goalConditionsUrl,
+      goalConditionOptions,
       endpoint,
       method,
       handleSave,
       value,
       updateRecordIcon,
+      updateHabitType,
       allowedMinutes,
       isFeatureEnabled
     }
@@ -123,29 +151,35 @@ export default defineComponent({
           label="Habit Type"
           :accessToken="accessToken"
           v-model="record.habit_type"
+          @update:modelValue="updateHabitType"
         />
-
-        <SelectIcon v-model="record.icon" @update="updateRecordIcon"/>
 
         <NColourPicker v-model="record.colour"></NColourPicker>
 
         <h1>Goal</h1>
 
-        <NSelectInputFromRequest
-          :url="goalConditionsUrl"
-          valueKey="name"
+         <NSelect
+          v-model:value="record.goal_condition"
           name="goal_condition"
           label="Goal Condition"
-          :accessToken="accessToken"
-          v-model="record.goal_condition"
+          :options="goalConditionOptions"
         />
 
         <NTextInput
-          v-if="!(record.goal_condition === 'No Goal' || record.goal_condition === 'Anything' || !record.goal_condition)"
+          v-if="!(record.goal_condition === 'No Goal' || record.goal_condition === 'Anything' || record.habit_type === 'Yes or No' || !record.goal_condition)"
           v-model:value="record.goal_value"
           label="Goal Value"
           ></NTextInput>
 
+        <NSelect
+          v-if="record.goal_condition === 'Equals' && record.habit_type === 'Yes or No'"
+          v-model:value="record.goal_value"
+          name="goal_value"
+          label="Goal value"
+          :options="[
+            { value: '1', label: 'Yes' },
+          ]">
+        </NSelect>
 
         <template v-if="isFeatureEnabled()">
 

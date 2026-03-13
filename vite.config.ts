@@ -1,10 +1,14 @@
 import { fileURLToPath, URL } from 'node:url'
+import { existsSync } from 'node:fs'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import vuetify from 'vite-plugin-vuetify';
 import { VitePWA } from 'vite-plugin-pwa'
+
+const localNovaUIDir = fileURLToPath(new URL('../NovaUI', import.meta.url))
+const useLocalNovaUI = existsSync(localNovaUIDir + '/index.ts')
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -44,7 +48,10 @@ export default defineConfig({
   base: '/',
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      ...(useLocalNovaUI && {
+        '@rigelsystems/novaui': localNovaUIDir,
+      }),
     },
   },
 })

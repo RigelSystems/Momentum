@@ -35,6 +35,7 @@ export default defineComponent({
 
     const last30daysNiceFormat = getLastXDaysFormatted(30, 'ddd<br>D');
     const last30days = getLastXDaysFormatted(30, 'YYYY-MM-DD');
+    const todayISO = last30days[0];
 
     const habits = ref<Array<any>>([])
     const loading = ref(true)
@@ -123,6 +124,7 @@ export default defineComponent({
       fetchHabits,
       habitBulkUpdateUrl,
       getHabitEntiryForDate,
+      todayISO,
     };
   },
 });
@@ -159,7 +161,7 @@ export default defineComponent({
       <p class="p-1" v-if="habits.length === 0">Add your first habit to this group.</p>
       <div v-else class="completion-percentages-container">
         <div class="table-habit-name"></div>
-        <small class="table-cell" v-for="date in last30daysNiceFormat" :key="date">
+        <small class="table-cell" v-for="(date, i) in last30daysNiceFormat" :key="date" :class="{ 'table-cell--today': i === 0 }">
           <span class="table-date" v-html="date"></span>
         </small>
       </div>
@@ -170,7 +172,7 @@ export default defineComponent({
           <div class="table-habit-name">
             <Habit :habit="habit" />
           </div>
-          <div class="table-cell" v-for="date in last30days" :key="date">
+          <div class="table-cell" v-for="date in last30days" :key="date" :class="{ 'table-cell--today': date === todayISO }">
             <HabitEntry v-if="accessToken" :accessToken="accessToken" :entry="getHabitEntiryForDate(habit, date)" :habit="habit" :date="date"
               :colour="habit.colour" @updated="updateComponent" :loading="loading" />
           </div>

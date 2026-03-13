@@ -9,6 +9,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 const localNovaUIDir = fileURLToPath(new URL('../NovaUI', import.meta.url))
 const useLocalNovaUI = existsSync(localNovaUIDir + '/index.ts')
+const novaUIAlias = useLocalNovaUI
+  ? localNovaUIDir
+  : fileURLToPath(new URL('./node_modules/@rigelsystems/novaui/index.ts', import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -49,9 +52,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      ...(useLocalNovaUI && {
-        '@rigelsystems/novaui': localNovaUIDir,
-      }),
+      '@rigelsystems/novaui': novaUIAlias,
     },
   },
 })

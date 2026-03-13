@@ -155,6 +155,13 @@ export default defineComponent({
       });
     }
 
+    function formatMinutes(minutes: number): string {
+      if (!minutes) return '0m';
+      const h = Math.floor(minutes / 60);
+      const m = minutes % 60;
+      return h > 0 ? `${h}h ${m}m` : `${m}m`;
+    }
+
     return {
       habit,
       breadcrumbs,
@@ -162,7 +169,8 @@ export default defineComponent({
       lastSevenDaysNice,
       getHabitEntiryForDate,
       accessToken,
-      getOrdinal
+      getOrdinal,
+      formatMinutes,
     }
   },
 })
@@ -304,9 +312,15 @@ export default defineComponent({
         </div>
       </div>
       <div class="calendar-month-stats">
-        <p class="calendar-month-stat">Total: <b>{{ habit.habit_type === 'Currency' ? `£${month.total_entries}` : month.total_entries }}</b></p>
-        <p class="calendar-month-stat">Daily Average: <b>{{ habit.habit_type === 'Currency' ? `£${month.daily_average}` : month.daily_average }}</b></p>
-        <p class="calendar-month-stat">Weekly Average: <b>{{ habit.habit_type === 'Currency' ? `£${month.weekly_average}` : month.weekly_average }}</b></p>
+        <p class="calendar-month-stat">Total:
+          <b>{{ habit.habit_type === 'Currency' ? `£${month.total_entries}` : habit.habit_type === 'Time' ? formatMinutes(month.total_entries) : month.total_entries }}</b>
+        </p>
+        <p class="calendar-month-stat">Daily Average:
+          <b>{{ habit.habit_type === 'Currency' ? `£${month.daily_average}` : habit.habit_type === 'Time' ? formatMinutes(Math.round(month.daily_average)) : month.daily_average }}</b>
+        </p>
+        <p class="calendar-month-stat">Weekly Average:
+          <b>{{ habit.habit_type === 'Currency' ? `£${month.weekly_average}` : habit.habit_type === 'Time' ? formatMinutes(Math.round(month.weekly_average)) : month.weekly_average }}</b>
+        </p>
       </div>
     </div>
   </div>

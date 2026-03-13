@@ -47,10 +47,28 @@ export default defineComponent({
       }
     });
 
+    const timeHours = ref(Math.floor((parseInt(value.value) || 0) / 60));
+    const timeMinutes = ref((parseInt(value.value) || 0) % 60);
+
+    const habitValueForTime = computed(() => {
+      const total = parseInt(value.value) || 0;
+      if (!total) return '-';
+      const h = Math.floor(total / 60);
+      const m = total % 60;
+      return h > 0 ? `${h}h ${m}m` : `${m}m`;
+    });
+
+    const saveTimeEntry = async (closeDialog: () => void) => {
+      const totalMinutes = (timeHours.value * 60) + timeMinutes.value;
+      await updateEntry(totalMinutes.toString());
+      closeDialog();
+    };
+
     const habitEntryStyle = computed(() => {
       let fontSize = null;
       let stringValue = props.entry?.value?.toString()?.length || 0;
-      if (props.habit.habit_type === 'Currency') {stringValue += 1}
+      if (props.habit.habit_type === 'Currency') { stringValue += 1 }
+      if (props.habit.habit_type === 'Time') { stringValue = habitValueForTime.value.length }
       const backgroundColor = !value.value ? null : `${props.colour} !important`
 
       if (stringValue === 1) {
@@ -155,7 +173,11 @@ export default defineComponent({
       updateRecordIcon,
       checklistUrl,
       habitEntryStyle,
-      habitValueForNumericalOrCurrency
+      habitValueForNumericalOrCurrency,
+      habitValueForTime,
+      timeHours,
+      timeMinutes,
+      saveTimeEntry,
     };
   },
 });
@@ -205,6 +227,53 @@ export default defineComponent({
               text="Update Entry"
               @click="isActive.value = false; updateEntry(value)"
             ></v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
+  </div>
+
+  <div v-if="habit.habit_type === 'Time'">
+    <v-dialog max-width="500" v-model="modalIsActive" persistent>
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          v-bind="activatorProps"
+          color="surface-variant"
+          :text="habitValueForTime"
+          variant="flat"
+          class="habit-entry habit-entry--number"
+          :style="habitEntryStyle"
+        ></v-btn>
+      </template>
+
+      <template v-slot:default="{ isActive }">
+        <v-card :title="`${habit.name}: ${date}`">
+          <v-card-text>
+            <div class="d-flex gap-2 align-center">
+              <v-text-field
+                v-model.number="timeHours"
+                label="Hours"
+                type="number"
+                min="0"
+                style="max-width: 120px"
+              ></v-text-field>
+              <span class="mx-2">h</span>
+              <v-text-field
+                v-model.number="timeMinutes"
+                label="Minutes"
+                type="number"
+                min="0"
+                max="59"
+                style="max-width: 120px"
+              ></v-text-field>
+              <span class="mx-2">m</span>
+            </div>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text="Cancel" @click="isActive.value = false"></v-btn>
+            <v-btn text="Save" @click="saveTimeEntry(() => { isActive.value = false })"></v-btn>
           </v-card-actions>
         </v-card>
       </template>

@@ -118,7 +118,7 @@ body {
 }
 
 .horizontal-scroll {
-  overflow-x: scroll;
+  overflow-x: auto;
   white-space: nowrap;
 }
 
@@ -332,7 +332,7 @@ body {
 }
 
 .n-dropdown__content {
-  overflow-x: scroll !important;
+  overflow-x: auto !important;
 }
 
 .habit-entires__container {

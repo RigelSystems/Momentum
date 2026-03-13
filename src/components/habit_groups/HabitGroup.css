@@ -32,3 +32,27 @@
 .habit-group .mdi-pencil:hover {
   opacity: 1;
 }
+
+.add-habit-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.75rem;
+  margin: 0.25rem 0 0.1rem 0;
+  border: 1.5px dashed #d1d5db;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  user-select: none;
+  min-width: 150px;
+  max-width: 150px;
+  min-height: 34px;
+}
+
+.add-habit-row:hover {
+  border-color: var(--theme-color, #88bdb9);
+  color: var(--theme-color, #88bdb9);
+}

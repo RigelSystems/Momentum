@@ -158,8 +158,7 @@ export default defineComponent({
     </template>
 
     <template #content>
-      <p class="p-1" v-if="habits.length === 0">Add your first habit to this group.</p>
-      <div v-else class="completion-percentages-container">
+      <div v-if="habits.length > 0" class="completion-percentages-container">
         <div class="table-habit-name"></div>
         <small class="table-cell" v-for="(date, i) in last30daysNiceFormat" :key="date" :class="{ 'table-cell--today': i === 0 }">
           <span class="table-date" v-html="date"></span>
@@ -178,6 +177,18 @@ export default defineComponent({
           </div>
         </template>
       </n-order-list>
+
+      <HabitForm
+        :habit="{ name: '', colour: '#ffffff', icon: '', goal_condition: 'No Goal', habit_group_id: habitGroup.id }"
+        @save="updateComponent"
+      >
+        <template #trigger="{ openDialog }">
+          <div class="add-habit-row" @click="openDialog">
+            <span class="mdi mdi-plus-circle-outline"></span>
+            <span>Add habit</span>
+          </div>
+        </template>
+      </HabitForm>
     </template>
   </n-dropdown>
 </template>

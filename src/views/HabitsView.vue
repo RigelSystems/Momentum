@@ -2,7 +2,6 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import HabitGroup from '@/components/habit_groups/HabitGroup.vue'
 import HabitGroupForm from '@/components/habit_groups/HabitGroupForm.vue'
-import HabitForm from '@/components/habits/HabitForm.vue'
 import requestApi from '@/utils/requestApi'
 import { useAuthToken } from '@/composables/useAuthToken'
 
@@ -16,7 +15,6 @@ export default defineComponent({
   name: 'HabitsView',
   components: {
     HabitGroup,
-    HabitForm,
     HabitGroupForm,
   },
   setup() {
@@ -101,22 +99,6 @@ export default defineComponent({
         <p class="habits-header__sub">Track your daily consistency</p>
       </div>
       <div class="habits-header__actions">
-        <HabitGroupForm>
-          <template #trigger="{ openDialog }">
-            <n-button :primary="false" size="small" @click="openDialog">
-              <span class="mdi mdi-folder-plus-outline"></span> New Group
-            </n-button>
-          </template>
-        </HabitGroupForm>
-
-        <HabitForm @save="fetchHabitGroups" v-if="habitGroups.length > 0">
-          <template #trigger="{ openDialog }">
-            <n-button size="small" @click="openDialog">
-              <span class="mdi mdi-plus"></span> New Habit
-            </n-button>
-          </template>
-        </HabitForm>
-
         <label class="habits-csv-label">
           <n-button :primary="false" size="small" :disabled="importing">
             <span class="mdi mdi-upload-outline"></span>
@@ -152,6 +134,16 @@ export default defineComponent({
         <div class="horizontal-scroll">
           <div v-for="habitGroup in habitGroups" :key="habitGroup.id" class="table-habit-group">
             <HabitGroup :habitGroup="habitGroup" />
+          </div>
+          <div class="table-habit-group">
+            <HabitGroupForm>
+              <template #trigger="{ openDialog }">
+                <div class="add-group-card" @click="openDialog">
+                  <span class="mdi mdi-plus"></span>
+                  <span>New Group</span>
+                </div>
+              </template>
+            </HabitGroupForm>
           </div>
         </div>
       </div>
@@ -201,6 +193,28 @@ export default defineComponent({
 
 .habits-csv-label {
   cursor: pointer;
+}
+
+.add-group-card {
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 0.85rem 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  font-weight: 500;
+  min-height: 48px;
+  transition: border-color 0.15s, color 0.15s;
+  user-select: none;
+}
+
+.add-group-card:hover {
+  border-color: var(--theme-color, #88bdb9);
+  color: var(--theme-color, #88bdb9);
 }
 
 .habits-import-badge {

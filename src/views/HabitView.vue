@@ -367,16 +367,32 @@ export default defineComponent({
 }
 
 .calendar-day-cell {
-  min-height: 24px;
+  aspect-ratio: 1;
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: center;
-  border: solid 1px black;
-  padding-bottom: 15px;
+  border: solid 1px #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.calendar-day-cell > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.calendar-day-cell .habit-entry {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: unset !important;
+  border-radius: 0 !important;
+  font-size: 1rem !important;
 }
 
 .calendar-day-cell.empty {
   background: transparent;
+  border-color: transparent;
   pointer-events: none;
 }
 
@@ -401,14 +417,14 @@ export default defineComponent({
   text-align: center;
   bottom: 0;
   width: 100%;
-  border-top: 1px solid #000000;
   font-size: 0.5em;
-  color: #000000;
+  color: rgba(255,255,255,0.9);
   pointer-events: none;
   z-index: 2;
   font-weight: 700;
-  background: rgb(246, 246, 246);
-  padding: 0 2px;
+  background: rgba(0,0,0,0.18);
+  padding: 1px 2px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 @media (max-width: 900px) {

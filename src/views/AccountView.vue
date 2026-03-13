@@ -5,6 +5,7 @@ import PageHeader from '@/components/shared/PageHeader.vue'
 import Friends from '@/components/friends/Friends.vue'
 import FriendForm from '@/components/friends/FriendForm.vue'
 import User from '@/components/User.vue'
+import { useUser } from '@/composables/useUser'
 
 export default defineComponent({
   name: 'AccountView',
@@ -17,45 +18,16 @@ export default defineComponent({
   setup() {
     const { getAccessTokenSilently } = useAuth0()
     const accessToken = ref<string | null>(null)
-    const loading = ref(true)
-    const errorMessage = ref<string | null>(null)
-    const user = ref<any>(null)
-
-    const fetchUser = async () => {
-      const apiUrl = `${import.meta.env.VITE_API_URL}users/me`
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken.value}`,
-        },
-      })
-
-      if (response.ok) {
-        loading.value = false
-        const responseBody = await response.json()
-
-        user.value = responseBody
-
-      } else {
-        loading.value = false
-        const responseBody = await response.json()
-        errorMessage.value = responseBody.error
-      }
-    }
-
-    const getAccessToken = async () => {
-      accessToken.value = await getAccessTokenSilently();
-    };
+    const { user, fetchUser } = useUser()
 
     onMounted(async () => {
-      await getAccessToken()
-      fetchUser()
+      accessToken.value = await getAccessTokenSilently()
+      await fetchUser()
     })
 
     return {
       accessToken,
-      user
+      user,
     }
   }
 })
@@ -72,9 +44,14 @@ export default defineComponent({
         @click="setActiveTab(0)"
       />
       <n-tab
-        label="Settings"
+        label="Plan"
         :active="activeTab === 1"
         @click="setActiveTab(1)"
+      />
+      <n-tab
+        label="Settings"
+        :active="activeTab === 2"
+        @click="setActiveTab(2)"
       />
     </template>
 
@@ -84,6 +61,22 @@ export default defineComponent({
         <Friends v-if="accessToken" :accessToken="accessToken"/>
       </n-tab-panel>
       <n-tab-panel :index="1" :activeTab="activeTab">
+        <!-- Plan -->
+        <NRow :cols="{sm: [100], md: [100], lg: [100]}">
+          <NCard title="Your Plan">
+            <template #content>
+              <br>
+              <p v-if="user?.premium">
+                <b>Premium</b> — You have access to all premium features including AI-powered habit import.
+              </p>
+              <p v-else>
+                <b>Free</b> — Upgrade to Premium to unlock AI-powered habit import and more.
+              </p>
+            </template>
+          </NCard>
+        </NRow>
+      </n-tab-panel>
+      <n-tab-panel :index="2" :activeTab="activeTab">
         <!-- Settings -->
         <NRow :cols="{sm: [100], md: [100], lg: [100]}">
           <NCard subtitle="Get notifications and ask helpful questions about your data" title="Helpful Bot">
